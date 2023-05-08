@@ -164,12 +164,12 @@ CreatureAI* GetAI_GurubashiBerserker(Creature* pCreature)
 // npc_hakkari_doctor (11831)
 /*
 5 Techniques
-- Maléfice http://www.wowhead.com/spell=24053
-- Libération des crapauds http://www.wowhead.com/spell=24058
+- Malfice http://www.wowhead.com/spell=24053
+- Libration des crapauds http://www.wowhead.com/spell=24058
 - Horion de l'ombre http://www.wowhead.com/spell=17289
-- Rapetisser http://www.wowhead.com/spell=24054 Sort lancé mais pas d'effet de réduction de taille
+- Rapetisser http://www.wowhead.com/spell=24054 Sort lanc mais pas d'effet de rduction de taille
 
-Particularité :
+Particularit :
 Quand le sorcier-docteur meurt, un Esprit Vaudou (http://www.wowhead.com/npc=15009) apparait.
 Il se dirige lentement vers une cible prise au hasard puis explose (explosion spirituelle http://www.wowhead.com/spell=24050) s'il touche la cible ; il disparait ensuite.
 S'il ne touche personne, l'esprit vaudou disparait au bout de quelques secondes.
@@ -396,19 +396,19 @@ struct go_pile_dechetsAI: public GameObjectAI
                     GetCreatureListWithEntryInGrid(MobList, Guru, 11361, 45.0f);          // Tigre Zulien
                     GetCreatureListWithEntryInGrid(MobList, Guru, 11831, 45.0f);          // Sorcier Docteur
                     GetCreatureListWithEntryInGrid(MobList, Guru, 11350, 45.0f);          // Lanceur de Haches
-                    GetCreatureListWithEntryInGrid(MobList, Guru, 11830, 45.0f);          // Prêtre
+                    GetCreatureListWithEntryInGrid(MobList, Guru, 11830, 45.0f);          // Prtre
                     GetCreatureListWithEntryInGrid(MobList, Guru, 11368, 45.0f);          // Chauve Souris Sanguinaire
-                    GetCreatureListWithEntryInGrid(MobList, Guru, 11365, 45.0f);          // Panthère
+                    GetCreatureListWithEntryInGrid(MobList, Guru, 11365, 45.0f);          // Panthre
                     GetCreatureListWithEntryInGrid(MobList, Guru, 11353, 45.0f);          // Buveur de sang
                     GetCreatureListWithEntryInGrid(MobList, Guru, 11356, 45.0f);          // Champion Guru
                     GetCreatureListWithEntryInGrid(MobList, Guru, 14821, 45.0f);          // Raptor razza
                     GetCreatureListWithEntryInGrid(MobList, Guru, 14532, 45.0f);          // Fils du venin
                     GetCreatureListWithEntryInGrid(MobList, Guru, 11370, 45.0f);          // Sombre veuve
                     GetCreatureListWithEntryInGrid(MobList, Guru, 11360, 45.0f);          // Jeune Zulien
-                    GetCreatureListWithEntryInGrid(MobList, Guru, 14825, 45.0f);          // Maitresse dessechée
+                    GetCreatureListWithEntryInGrid(MobList, Guru, 14825, 45.0f);          // Maitresse desseche
                     GetCreatureListWithEntryInGrid(MobList, Guru, 14882, 45.0f);          // Maitresse Atalai
-                    GetCreatureListWithEntryInGrid(MobList, Guru, 14826, 45.0f);          // Troll sacrifié
-                    GetCreatureListWithEntryInGrid(MobList, Guru, 11351, 45.0f);          // Chasseur tête
+                    GetCreatureListWithEntryInGrid(MobList, Guru, 14826, 45.0f);          // Troll sacrifi
+                    GetCreatureListWithEntryInGrid(MobList, Guru, 11351, 45.0f);          // Chasseur tte
 
                     for (const auto& itr : MobList)
                     {
