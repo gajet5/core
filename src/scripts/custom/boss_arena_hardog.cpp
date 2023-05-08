@@ -1,7 +1,7 @@
 /* ScriptData
  SDName: Szerelmes
  SD%Complete:
- Update 15/02/13 à 23h
+ Update 15/02/13  23h
  SDComment: Quest support: (id=44)
  SDCategory: Arenes
  EndScriptData */
@@ -40,13 +40,13 @@
 //--------------------------------------------------------
 // QUETES :
 //--------------------------------------------------------
-// Quête 44
-INSERT INTO `quest_template` VALUES (44, 2, 1637, 60, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Defi : Szerelmes', 'Il est temps de révèler votre talent, $N. Pensez vous être a la hauteur du défi que je vous prépares ?\r\n\r\nVous vous en sentez capable ? Très bien, écoutez moi alors ! je vais appeler notre champion en titre, mais attention vous n\'avez que très peu de temps pour le défié.\r\n\r\nParlez à Mac\'fly lorsque vous serez pret, il sera en mesure de vous téléporter dans notre aréne.', 'Combattre Szerelmes en moins de 2 minutes, et devenir le nouveau champion de l\'arêne pour ainsi démontrer votre domination.', 'Quel magnifique combat ! J\'en ai eu le souffle coupé ! $B$B Vous avez reçu toute ma gratitude $N !', 'Comment se porte Szerelmes ? Toujours en vie ?! ', '', 'Prouvez votre talent', '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 72, 0, 0, 0, 0, 250, 0, 0, 0, 0, 25, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+// Qute 44
+INSERT INTO `quest_template` VALUES (44, 2, 1637, 60, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Defi : Szerelmes', 'Il est temps de rvler votre talent, $N. Pensez vous tre a la hauteur du dfi que je vous prpares ?\r\n\r\nVous vous en sentez capable ? Trs bien, coutez moi alors ! je vais appeler notre champion en titre, mais attention vous n\'avez que trs peu de temps pour le dfi.\r\n\r\nParlez  Mac\'fly lorsque vous serez pret, il sera en mesure de vous tlporter dans notre arne.', 'Combattre Szerelmes en moins de 2 minutes, et devenir le nouveau champion de l\'arne pour ainsi dmontrer votre domination.', 'Quel magnifique combat ! J\'en ai eu le souffle coup ! $B$B Vous avez reu toute ma gratitude $N !', 'Comment se porte Szerelmes ? Toujours en vie ?! ', '', 'Prouvez votre talent', '', '', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 72, 0, 0, 0, 0, 250, 0, 0, 0, 0, 25, 1000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 //--------------------------------------------------------
 // CREATURES :
 //--------------------------------------------------------
 // npc_szerelmes (id=31)
-INSERT INTO `creature_template` VALUES (31, 0, 0, 413, 413, 'Szerelmes', 'Champion de l\'arêne', 0, 60, 60, 32800, 32800, 0, 0, 0, 14, 14, 0, 1, 1.14286, 4, 3, 0, 298, 127, 175, 1.4, 1500, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 200, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 3, 0, 0, 1, 0, 0, 0, 0, 0, 'arena_szerelmes');
+INSERT INTO `creature_template` VALUES (31, 0, 0, 413, 413, 'Szerelmes', 'Champion de l\'arne', 0, 60, 60, 32800, 32800, 0, 0, 0, 14, 14, 0, 1, 1.14286, 4, 3, 0, 298, 127, 175, 1.4, 1500, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 200, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 0, 3, 0, 0, 1, 0, 0, 0, 0, 0, 'arena_szerelmes');
 // npc_Gladiateur (id=32)
 INSERT INTO `creature_template` VALUES (32, 0, 0, 10820, 0, 'Sbire asservis', '', 0, 60, 60, 1050, 1600, 0, 0, 0, 14, 14, 0, 1, 1.14286, 0, 0, 90, 150, 0, 27, 1, 2000, 1600, 0, 0, 0, 0, 0, 0, 0, 0, 20, 20, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'AggressorA', 0, 3, 0, 0, 1, 0, 0, 0, 0, 0, '');
 // npc_hulrik (id=33)
@@ -163,12 +163,12 @@ INSERT INTO `gameobject` VALUES (3996187, 99540, 1, 2144.36, -4744.92, 51.5089, 
 
 /*
 Last Updated le 17/02/13 13h!
-      Reste à faire :
-      - Si le joueur meurt, l'évent doit s'arréter et le cadavre du joueur se fait teleporter hors de l'arene.
-      - Si le joueur est aidé, l'évent doit s'arréter et les joueurs se font teleporter hors de l'arene.
-      - Les adds doivent despawn à la fin de l'event.
-      - Laska doit télèporter les joueurs, si l'event est annulé ou complété, mais pas pendant que l'event est lancé.
-      - L'event doit se stopper pas si la quête est echoué ou complèté.
+      Reste  faire :
+      - Si le joueur meurt, l'vent doit s'arrter et le cadavre du joueur se fait teleporter hors de l'arene.
+      - Si le joueur est aid, l'vent doit s'arrter et les joueurs se font teleporter hors de l'arene.
+      - Les adds doivent despawn  la fin de l'event.
+      - Laska doit tlporter les joueurs, si l'event est annul ou complt, mais pas pendant que l'event est lanc.
+      - L'event doit se stopper pas si la qute est echou ou complt.
 
 */
 // corner, sud
@@ -266,7 +266,7 @@ struct arena_szerelmesAI : public ScriptedAI
         else
             KnockAway_Timer -= diff;
 
-        /* enlevé car trop dure!
+        /* enlev car trop dure!
                 if (Shoot_Timer < diff)
                 {
                     DoCastSpellIfCan(m_creature->GetVictim(),SPELL_SHOOT);
@@ -370,7 +370,7 @@ struct npc_karlekAI : public ScriptedAI
         }
 
         // Verifier que le mob ne soit pas deja pop!
-        // Le Boss pop et depop 25 secondes aprés si il reste hors combat.
+        // Le Boss pop et depop 25 secondes aprs si il reste hors combat.
         if (Creature * pSzerelmes = m_creature->SummonCreature(npc_szerelmes, 2206.47f, -4741.44f, 54.90f, 3.88f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000))
         {
             m_uiSzerelmesGUID = pSzerelmes->GetObjectGuid();
@@ -437,9 +437,9 @@ bool GossipHello_npc_karlek(Player *player, Creature *pCreature)
 
 bool GossipSelect_npc_karlek(Player* player, Creature* pCreature, uint32 sender, uint32 action)
 {
-    ArenaBossSzerelmesStatus eEventStatus; // Penser à déclarer la variable
+    ArenaBossSzerelmesStatus eEventStatus; // Penser  dclarer la variable
 
-    // Récupérer l'état de la variable comme elle est dans l'IA (npc_karlekAI)
+    // Rcuprer l'tat de la variable comme elle est dans l'IA (npc_karlekAI)
     npc_karlekAI* pKarlekAI = dynamic_cast<npc_karlekAI*>(pCreature->AI());
     if (pKarlekAI)
     {
