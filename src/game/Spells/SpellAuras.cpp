@@ -8273,8 +8273,8 @@ bool _IsExclusiveSpellAura(SpellEntry const* spellproto, SpellEffectIndex eff, A
         case 6114:
         case 5020:
         case 5021:
-        case 23179: //le proc de l'�p�e de Razorgore (+300 force) devrait se cumuler avec TOUT : ID 23179
-        case 20007: //le proc Crois� devrait se cumuler avec TOUT : ID 20007
+        case 23179: //le proc de l'pe de Razorgore (+300 force) devrait se cumuler avec TOUT : ID 23179
+        case 20007: //le proc Crois devrait se cumuler avec TOUT : ID 20007
         case 20572: //Le racial Orc (ID 20572)
         case 17038: //l'Eau des Tombe-Hiver (ID 17038)
         case 16329: //le Juju's Might (ID 16329)
@@ -8286,9 +8286,9 @@ bool _IsExclusiveSpellAura(SpellEntry const* spellproto, SpellEffectIndex eff, A
         case 19506:
         case 20905:
         case 20906:
-        case 18262: // Pierre � Aiguiser El�mentaire (+2% crit)
+        case 18262: // Pierre  Aiguiser Elmentaire (+2% crit)
         case 24932: // chef de la Meute
-        case 24907: // aura S�l�nien
+        case 24907: // aura Slnien
         case 22888: // Buff Onyxia
         case 15366: // Buff Felwood
         case 22820: // HT +3% crit sorts
