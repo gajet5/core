@@ -119,7 +119,7 @@ struct npc_attack_masterAI : public ScriptedAI
         fCityBossPositionX   = -8958.0f;
         fCityBossPositionY   = 517.0f;
         fCityBossPositionZ   = 96.9f;
-        // Retourné
+        // Retourn
         fCityBossOrientation = pCreature->GetOrientation() + M_PI;
         Reset();
     }
@@ -376,7 +376,7 @@ struct npc_attack_masterAI : public ScriptedAI
     // ################################
     // Certaines vagues sont encore dans la ville.
     // Le BOSS de la capitale intervient dans la bataille, avec des gardes.
-    // Le PNJ qui a invoqué le portail invoque des adds.
+    // Le PNJ qui a invoqu le portail invoque des adds.
     // Les invocateurs disparaissent.
     // Les 2 camps se rentrent l'un dans l'autre
     Unit* GetCityBoss()
