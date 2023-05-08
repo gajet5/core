@@ -72,9 +72,9 @@ enum
     MAX_VISCIDUS_GLOBS          = 20,                       // there are 20 summoned globs; each glob = 5% hp
 
     // hitcounts
-    HITCOUNT_SLOW               = 100,
-    HITCOUNT_SLOW_MORE          = 150,
-    HITCOUNT_FREEZE             = 200,
+    HITCOUNT_SLOW               = 10,
+    HITCOUNT_SLOW_MORE          = 15,
+    HITCOUNT_FREEZE             = 20,
 
     // phases
     PHASE_NORMAL                = 1,
