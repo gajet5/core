@@ -4433,6 +4433,8 @@ uint32 Player::GetResetTalentsCost() const
 
 bool Player::ResetTalents(bool no_cost)
 {
+    if(HasItemCount(26001, 1))
+        no_cost = true;
     // not need after this call
     if (HasAtLoginFlag(AT_LOGIN_RESET_TALENTS))
         RemoveAtLoginFlag(AT_LOGIN_RESET_TALENTS, true);
