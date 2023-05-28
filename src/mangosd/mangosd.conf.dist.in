@@ -2492,6 +2492,10 @@ Visibility.ForceActiveObjects      = 1
 #         Default: 0 (the real pool size will be used)
 #                  X (the real pool size will be overriden with X)
 #
+#    SwapSpecInterval
+#         Swap spec at interval of several seconds.
+#         Default: 900
+#
 ###################################################################################################################
 
 Rate.Health = 1
@@ -2565,6 +2569,7 @@ Death.Ghost.RunSpeed.Battleground = 1.0
 Rate.WarEffortResourceComplete = 0.0
 WarEffortResourceCompletePeriod = 86400
 PvP.PoolSizePerFaction = 0
+SwapSpecInterval = 900
 
 ###################################################################################################################
 # BATTLEGROUND CONFIG
@@ -2949,4 +2954,3 @@ DynamicRespawn.AffectRespawnTimeBelow   = 0
 DynamicRespawn.AffectLevelBelow         = 0
 DynamicRespawn.PlayersThreshold         = 0
 DynamicRespawn.PlayersMaxLevelDiff      = 0
-
