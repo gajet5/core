@@ -5722,3 +5722,28 @@ bool ChatHandler::HandleListExploredAreasCommand(char* args)
     }
     return true;
 }
+
+//Dual Talent Specialization
+bool ChatHandler::HandleSwapSpec(char* /*args*/)
+{
+    if(m_session->GetPlayer()->HasItemCount(26001, 1))
+    {
+        uint32 res = m_session->GetPlayer()->SwapSpec();
+        switch (res) {
+            case 3: {
+                PSendSysMessage("Please try again later!");
+			    break;
+            }
+		    case 2: {
+			    PSendSysMessage("Level above 10 required.");
+			    break;
+		    }
+		    case 1: {
+                PSendSysMessage("Succeed!");
+			    break;
+		    }
+	    }
+	    return true;
+    }
+	return false;
+}
