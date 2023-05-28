@@ -1405,6 +1405,8 @@ class Player final: public Unit
         void _LoadSpells(QueryResult* result);
         bool _LoadHomeBind(QueryResult* result);
         void _LoadBGData(QueryResult* result);
+        //Dual Talent Specialization
+        void _LoadAlternativeSpec();
         void _LoadIntoDataField(char const* data, uint32 startOffset, uint32 count);
         void _LoadGuild(QueryResult* result);
         uint32 m_atLoginFlags;
@@ -1434,6 +1436,8 @@ class Player final: public Unit
         void _SaveSpells();
         void _SaveBGData();
         void _SaveStats();
+        //Dual Talent Specialization
+        void _SaveAlternativeSpec();
         uint32 m_nextSave;
         bool m_saveDisabled; // used for temporary bots and faction change
     public:
@@ -1479,6 +1483,10 @@ class Player final: public Unit
         void RemoveMiniPet();
         Pet* GetMiniPet() const override;
         void AutoReSummonPet();
+
+        //Dual Talent Specialization
+        typedef std::list<uint32> SpellIDList;
+		SpellIDList m_altspec_talents;
 
         // use only in Pet::Unsummon/Spell::DoSummon
         void _SetMiniPet(Pet* pet) { m_miniPetGuid = pet ? pet->GetObjectGuid() : ObjectGuid(); }
@@ -1989,6 +1997,9 @@ class Player final: public Unit
 
         uint32 GetHomeBindMap() const { return m_homebind.mapId; }
         uint16 GetHomeBindAreaId() const { return m_homebindAreaId; }
+
+        //Dual Talent Specialization
+        uint32 SwapSpec();
 
         void SendSummonRequest(ObjectGuid summonerGuid, uint32 mapId, uint32 zoneId, float x, float y, float z);
         void SetSummonPoint(uint32 mapid, float x, float y, float z)
