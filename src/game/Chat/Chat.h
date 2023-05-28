@@ -998,6 +998,9 @@ class ChatHandler
         bool HandleRepairitemsCommand(char* args);
         bool HandleStableCommand(char* args);
         bool HandleQuitCommand(char* args);
+        
+        //Dual Talent Specialization
+        bool HandleSwapSpec(char* args);
 
         //! Development Commands
         bool HandleSaveAllCommand(char* args);
