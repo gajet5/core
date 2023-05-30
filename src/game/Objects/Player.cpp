@@ -19968,6 +19968,11 @@ void Player::RewardSinglePlayerAtKill(Unit* pVictim)
     bool PvP = pVictim->IsCharmerOrOwnerPlayerOrPlayerItself();
     uint32 xp = PvP ? 0 : MaNGOS::XP::Gain(this, static_cast<Creature*>(pVictim));
     
+    //Double Experience
+    if(HasItemCount(26002, 1))
+    {
+        xp = xp * 2;
+    }
     // honor can be in PvP and !PvP (racial leader) cases
     RewardHonor(pVictim, 1);
 
@@ -19981,7 +19986,15 @@ void Player::RewardSinglePlayerAtKill(Unit* pVictim)
         if (xp)
         {
             if (Pet* pet = GetPet())
-                pet->GivePetXP(MaNGOS::XP::Gain(pet, static_cast<Creature*>(pVictim)));
+            {
+                //Double Experience
+                uint32 xp_pet = MaNGOS::XP::Gain(pet, static_cast<Creature*>(pVictim));
+                if(HasItemCount(26002, 1))
+                {
+                    xp_pet = xp_pet * 2;
+                }
+                pet->GivePetXP(xp_pet);
+            }   
         }
 
         // normal creature (not pet/etc) can be only in !PvP case
