@@ -1752,6 +1752,12 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
 
                 dmg = m_casterUnit->SpellDamageBonusDone(m_casterUnit, m_spellInfo, effIdx, dmg > 0 ? dmg : 0, SPELL_DIRECT_DAMAGE);
                 dmg = m_casterUnit->SpellDamageBonusTaken(m_casterUnit, m_spellInfo, effIdx, dmg, SPELL_DIRECT_DAMAGE);
+
+                //JieFuFuTi(34001) reduce 99% taken damage do not work on life tap.
+                if(m_casterUnit->HasAura(34001)){
+                    dmg = 100 * dmg;
+                }
+                
                 int32 idmg = dither(dmg);
 
                 if (int32(m_casterUnit->GetHealth()) > idmg)
