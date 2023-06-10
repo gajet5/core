@@ -1515,10 +1515,12 @@ struct mob_naxxramasGarboyleAI : public ScriptedAI
         }
     }
 
+    uint32 hasStoneskined;
     uint32 acidVolleyTimer;
 
     void Reset() override
     {
+        hasStoneskined = 0;
         acidVolleyTimer = 4000;
     }
 
@@ -1561,10 +1563,13 @@ struct mob_naxxramasGarboyleAI : public ScriptedAI
 
         if (m_creature->GetHealthPercent() < 30.0f && !m_creature->IsNonMeleeSpellCasted() && !m_creature->HasAura(28995))
         {
-            if (DoCastSpellIfCan(m_creature, 28995) == CAST_OK)
-            {
-                m_creature->CastSpell(m_creature, 28995, true); // Stoneskin
-                DoScriptText(10755, m_creature); // %s emits a strange noise.
+            if(!hasStoneskined){
+                if (DoCastSpellIfCan(m_creature, 28995) == CAST_OK)
+                {
+                    m_creature->CastSpell(m_creature, 28995, true); // Stoneskin
+                    DoScriptText(10755, m_creature); // %s emits a strange noise.
+                }
+                hasStoneskined = 1;
             }
         }
 
@@ -1593,6 +1598,7 @@ struct mob_naxxramasPlagueSlimeAI : public ScriptedAI
         prev_spell = 0;
     }
 
+    uint32 hasChanged;
     uint32 colorChangeTimer;
     uint32 prev_spell;
 
@@ -1613,6 +1619,7 @@ struct mob_naxxramasPlagueSlimeAI : public ScriptedAI
 
     void Reset() override
     {
+        hasChanged = 0;
         colorChangeTimer = 0;
         ChangeColor();
     }
@@ -1630,7 +1637,10 @@ struct mob_naxxramasPlagueSlimeAI : public ScriptedAI
         if (colorChangeTimer < diff)
         {
             colorChangeTimer = urand(9000, 12000); // todo: no idea if timer is correct
-            ChangeColor();
+            if(!hasChanged){
+                ChangeColor();
+                hasChanged = 1;
+            }           
         }
         else
             colorChangeTimer -= diff;
