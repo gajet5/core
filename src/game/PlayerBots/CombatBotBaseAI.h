@@ -283,6 +283,7 @@ public:
         struct
         {
             SpellEntry const* pAura;
+            SpellEntry const* pQuZhu;
             SpellEntry const* pSeal;
             SpellEntry const* pBlessingBuff;
             SpellEntry const* pBlessingOfProtection;
@@ -348,6 +349,8 @@ public:
             SpellEntry const* pIceArmor;
             SpellEntry const* pArcaneIntellect;
             SpellEntry const* pArcaneBrilliance;
+            SpellEntry const* pATuoSiZhiGun;
+            SpellEntry const* pBlinkDagger;
             SpellEntry const* pIceBarrier;
             SpellEntry const* pManaShield;
             SpellEntry const* pPolymorph;
@@ -373,6 +376,7 @@ public:
         struct
         {
             SpellEntry const* pPowerWordFortitude;
+            SpellEntry const* pXuLingZhiRen;
             SpellEntry const* pDivineSpirit;
             SpellEntry const* pPrayerofSpirit;
             SpellEntry const* pPrayerofFortitude;
@@ -400,6 +404,7 @@ public:
         struct
         {
             SpellEntry const* pDemonArmor;
+            SpellEntry const* pEMoFuTi;
             SpellEntry const* pDeathCoil;
             SpellEntry const* pDetectInvisibility;
             SpellEntry const* pShadowWard;
