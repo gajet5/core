@@ -230,9 +230,9 @@ void CombatBotBaseAI::PopulateSpellData()
                 }
                 else if (pSpellEntry->SpellName[0].find("Qu Zhu") != std::string::npos)
                 {
-                    if (!pQuZhu ||
-                        pQuZhu->Id < pSpellEntry->Id)
-                        pQuZhu = pSpellEntry;
+                    if (!m_spells.paladin.pQuZhu ||
+                        m_spells.paladin.pQuZhu->Id < pSpellEntry->Id)
+                        m_spells.paladin.pQuZhu = pSpellEntry;
                 }
                 else if (pSpellEntry->SpellName[0].find("Seal of Command") != std::string::npos)
                 {
