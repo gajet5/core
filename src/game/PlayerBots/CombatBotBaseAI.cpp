@@ -228,6 +228,12 @@ void CombatBotBaseAI::PopulateSpellData()
                         pSealOfRighteousness->Id < pSpellEntry->Id)
                         pSealOfRighteousness = pSpellEntry;
                 }
+                else if (pSpellEntry->SpellName[0].find("Qu Zhu") != std::string::npos)
+                {
+                    if (!pQuZhu ||
+                        pQuZhu->Id < pSpellEntry->Id)
+                        pQuZhu = pSpellEntry;
+                }
                 else if (pSpellEntry->SpellName[0].find("Seal of Command") != std::string::npos)
                 {
                     if (!pSealOfCommand ||
@@ -738,6 +744,18 @@ void CombatBotBaseAI::PopulateSpellData()
                         pFrostArmor->Id < pSpellEntry->Id)
                         pFrostArmor = pSpellEntry;
                 }
+                else if (pSpellEntry->SpellName[0].find("A Tuo Si Zhi Gun") != std::string::npos)
+                {
+                    if (!m_spells.mage.pATuoSiZhiGun ||
+                        m_spells.mage.pATuoSiZhiGun->Id < pSpellEntry->Id)
+                        m_spells.mage.pATuoSiZhiGun = pSpellEntry;
+                }
+                else if (pSpellEntry->SpellName[0].find("Blink Dagger") != std::string::npos)
+                {
+                    if (!m_spells.mage.pBlinkDagger ||
+                        m_spells.mage.pBlinkDagger->Id < pSpellEntry->Id)
+                        m_spells.mage.pBlinkDagger = pSpellEntry;
+                }
                 else if (pSpellEntry->SpellName[0].find("Ice Barrier") != std::string::npos)
                 {
                     if (!m_spells.mage.pIceBarrier ||
@@ -904,6 +922,12 @@ void CombatBotBaseAI::PopulateSpellData()
                         m_spells.priest.pPowerWordFortitude->Id < pSpellEntry->Id)
                         m_spells.priest.pPowerWordFortitude = pSpellEntry;
                 }
+                else if (pSpellEntry->SpellName[0].find("Xu Ling Zhi Ren") != std::string::npos)
+                {
+                    if (!m_spells.priest.pXuLingZhiRen ||
+                        m_spells.priest.pXuLingZhiRen->Id < pSpellEntry->Id)
+                        m_spells.priest.pXuLingZhiRen = pSpellEntry;
+                }
                 else if (pSpellEntry->SpellName[0].find("Divine Spirit") != std::string::npos)
                 {
                     if (!m_spells.priest.pDivineSpirit ||
@@ -1051,6 +1075,12 @@ void CombatBotBaseAI::PopulateSpellData()
                     if (!m_spells.warlock.pDemonArmor ||
                         m_spells.warlock.pDemonArmor->Id < pSpellEntry->Id)
                         m_spells.warlock.pDemonArmor = pSpellEntry;
+                }
+                else if (pSpellEntry->SpellName[0].find("E Mo Fu Ti") != std::string::npos)
+                {
+                    if (!m_spells.warlock.pEMoFuTi ||
+                        m_spells.warlock.pEMoFuTi->Id < pSpellEntry->Id)
+                        m_spells.warlock.pEMoFuTi = pSpellEntry;
                 }
                 else if (pSpellEntry->SpellName[0].find("Death Coil") != std::string::npos)
                 {
