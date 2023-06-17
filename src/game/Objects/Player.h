@@ -744,7 +744,7 @@ struct InstancePlayerBind
     InstancePlayerBind() : state(nullptr), perm(false) {}
 };
 
-#define MAX_INSTANCE_PER_ACCOUNT_PER_HOUR 5
+#define MAX_INSTANCE_PER_ACCOUNT_PER_HOUR 10
 
 enum PlayerRestState
 {
