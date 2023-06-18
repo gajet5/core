@@ -4988,6 +4988,13 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
     // Interrupt resurrect spells
     InterruptSpellsCastedOnMe(false, true);
 
+    // Hardcore Challenger Can Not Resurrect
+    if (GetLevel()<60 && GetQuestStatus(10000) == QUEST_STATUS_COMPLETE)
+    {
+        sLog.Out(LOG_BASIC, LOG_LVL_BASIC, "Hardcore Challenger Can Not Resurrect");
+        return;
+    }
+
     SetDeathState(ALIVE);
 
     if (GetRace() == RACE_NIGHTELF)
