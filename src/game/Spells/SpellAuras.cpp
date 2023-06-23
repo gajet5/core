@@ -5861,8 +5861,9 @@ void Aura::HandleSchoolAbsorb(bool apply, bool Real)
                     // Power Word: Shield
                     if (spellProto->IsFitToFamilyMask<CF_PRIEST_POWER_WORD_SHIELD>())
                     {
-                        //+10% from +healing bonus
-                        DoneActualBenefit = caster->SpellBaseHealingBonusDone(spellProto->GetSpellSchoolMask()) * 0.1f;
+                        // 10% coeff from healing bonus in vanilla
+                        // 100% coeff mod by jianggn
+                        DoneActualBenefit = caster->SpellBaseHealingBonusDone(spellProto->GetSpellSchoolMask()) * 1.0f;
                         break;
                     }
                     break;
@@ -6680,22 +6681,35 @@ void Aura::HandleManaShield(bool apply, bool Real)
     if (!Real)
         return;
 
+    Unit* caster = GetCaster();
+    if (!caster)
+        return;
+
+    Unit* target = GetTarget();
+    SpellEntry const* spellProto = GetSpellProto();
     // prevent double apply bonuses
-    if (apply && (GetTarget()->GetTypeId() != TYPEID_PLAYER || !((Player*)GetTarget())->GetSession()->PlayerLoading()))
+    if (apply && (target->GetTypeId() != TYPEID_PLAYER || !((Player*)target)->GetSession()->PlayerLoading()))
     {
-        if (Unit* caster = GetCaster())
+        float DoneActualBenefit = 0.0f;
+        switch (spellProto->SpellFamilyName)
         {
-            float DoneActualBenefit = 0.0f;
-
-            // Mana Shield
-            // 0% coeff in vanilla (changed patch 2.4.0)
-            // if (GetSpellProto()->IsFitToFamily<SPELLFAMILY_MAGE, CF_MAGE_MANA_SHIELD>())
-            //    DoneActualBenefit = caster->SpellBaseDamageBonusDone(GetSpellSchoolMask(GetSpellProto())) * 0.5f;
-
-            // DoneActualBenefit *= caster->CalculateLevelPenalty(GetSpellProto());
-
-            m_modifier.m_amount += DoneActualBenefit;
+            case SPELLFAMILY_MAGE:
+                // Mana Shield
+                if (spellProto->IsFitToFamilyMask<CF_MAGE_MANA_SHIELD>())
+                {
+                    // 0% coeff in vanilla (changed patch 2.4.0)
+                    // 200% coeff mod by jianggn
+                    DoneActualBenefit = caster->SpellBaseDamageBonusDone(spellProto->GetSpellSchoolMask()) * 2.0f;
+                    break;
+                }
+                break;
+            default:
+                break;
         }
+
+        DoneActualBenefit *= caster->CalculateLevelPenalty(GetSpellProto());
+
+        m_modifier.m_amount += DoneActualBenefit;
     }
 }
 
