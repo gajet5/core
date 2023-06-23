@@ -6710,6 +6710,8 @@ void Aura::HandleManaShield(bool apply, bool Real)
         DoneActualBenefit *= caster->CalculateLevelPenalty(GetSpellProto());
 
         m_modifier.m_amount += DoneActualBenefit;
+
+        m_modifier.m_amount = dither(m_modifier.m_amount);
     }
 }
 
