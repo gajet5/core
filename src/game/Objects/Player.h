@@ -1081,6 +1081,7 @@ class Player final: public Unit
         void SendItemDurations() const;
         uint32 CountFreeInventorySlots() const;
     public:
+        void ReplaceCharacterTransmog(uint64 guid, uint64 entry, uint64 character);
         Item* AddItem(uint32 itemId, uint32 count = 1);
         void InterruptSpellsWithCastItem(Item* item);
         uint8 FindEquipSlot(ItemPrototype const* proto, uint32 slot, bool swap) const;
