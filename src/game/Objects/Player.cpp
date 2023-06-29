@@ -4991,7 +4991,7 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
     // Hardcore Challenger Can Not Resurrect
     if (GetLevel()<60 && GetQuestStatus(10000) == QUEST_STATUS_COMPLETE)
     {
-        sLog.Out(LOG_BASIC, LOG_LVL_BASIC, "Hardcore Challenger Can Not Resurrect");
+        GetSession()->SendNotification("Hardcore Challenger Can Not Resurrect.");
         return;
     }
 
@@ -10737,7 +10737,18 @@ void Player::SetVisibleItemSlot(uint8 slot, Item* pItem)
         SetGuidValue(PLAYER_VISIBLE_ITEM_1_CREATOR + (slot * MAX_VISIBLE_ITEM_OFFSET), pItem->GetGuidValue(ITEM_FIELD_CREATOR));
 
         int VisibleBase = PLAYER_VISIBLE_ITEM_1_0 + (slot * MAX_VISIBLE_ITEM_OFFSET);
-        SetUInt32Value(VisibleBase + 0, pItem->GetEntry());
+        //Transmogrification
+        uint64 item_guid = pItem->GetGUIDLow();
+        uint64 character_guid = pItem->GetOwnerGuid();
+        QueryResult* result = CharacterDatabase.PQuery("SELECT `entry` FROM `character_transmog` WHERE `guid` = '%u' and `character` = '%u'", item_guid, character_guid);
+        if(result){
+            Field* fields = result->Fetch();
+            uint64 item_entry = fields[0].GetUInt64();
+            SetUInt32Value(VisibleBase + 0, item_entry);
+            delete result;
+        }else{
+            SetUInt32Value(VisibleBase + 0, pItem->GetEntry());
+        }
 
         for (int i = 0; i < MAX_INSPECTED_ENCHANTMENT_SLOT; ++i)
             SetUInt32Value(VisibleBase + 1 + i, pItem->GetEnchantmentId(EnchantmentSlot(i)));
@@ -10759,6 +10770,11 @@ void Player::SetVisibleItemSlot(uint8 slot, Item* pItem)
         SetUInt32Value(PLAYER_VISIBLE_ITEM_1_PROPERTIES + 0 + (slot * MAX_VISIBLE_ITEM_OFFSET), 0);
         SetUInt32Value(PLAYER_VISIBLE_ITEM_1_PROPERTIES + 1 + (slot * MAX_VISIBLE_ITEM_OFFSET), 0);
     }
+}
+
+void Player::ReplaceCharacterTransmog(uint64 guid, uint64 entry, uint64 character)
+{
+    CharacterDatabase.PExecute("REPLACE INTO `character_transmog` (`guid`, `entry`, `character`) VALUES (%u, %u, %u)", guid, entry, character);
 }
 
 void Player::VisualizeItem(uint8 slot, Item* pItem)
