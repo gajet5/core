@@ -556,6 +556,89 @@ bool GossipSelect_TeleportNPC(Player *player, Creature *_Creature, uint32 sender
     return true;
 }
 
+bool GossipHello_TransmogNPC(Player* player, Creature* creature)
+{
+    player->ADD_GOSSIP_ITEM(5, "头部",      GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_HEAD);
+    player->ADD_GOSSIP_ITEM(5, "肩部",      GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_SHOULDERS);
+    player->ADD_GOSSIP_ITEM(5, "胸部",      GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_CHEST);
+    player->ADD_GOSSIP_ITEM(5, "腰部",    GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_WAIST);
+    player->ADD_GOSSIP_ITEM(5, "腿部",    GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_LEGS);
+    player->ADD_GOSSIP_ITEM(5, "脚部",      GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_FEET);
+    player->ADD_GOSSIP_ITEM(5, "手腕",    GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_WRISTS);
+    player->ADD_GOSSIP_ITEM(5, "手部",     GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_HANDS);
+    player->ADD_GOSSIP_ITEM(5, "背部",   GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_BACK);
+    player->ADD_GOSSIP_ITEM(5, "主手",   GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_MAINHAND);
+    player->ADD_GOSSIP_ITEM(5, "副手",    GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_OFFHAND);
+    player->ADD_GOSSIP_ITEM(5, "远程武器",    GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_RANGED);
+
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(creature), creature->GetGUID());
+    return true;
+}
+
+bool GossipSelect_TransmogNPC(Player* player, Creature* creature, uint32 sender, uint32 action)
+{
+    if (sender != GOSSIP_SENDER_MAIN)
+        return true;
+
+    Item* item = nullptr;
+    Item* item_transmog = nullptr;
+    switch (action)
+    {
+        case EQUIPMENT_SLOT_HEAD:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_HEAD);
+            break;
+        case EQUIPMENT_SLOT_SHOULDERS:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_SHOULDERS);
+            break;
+        case EQUIPMENT_SLOT_CHEST:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_CHEST);
+            break;
+        case EQUIPMENT_SLOT_WAIST:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_WAIST);
+            break;
+        case EQUIPMENT_SLOT_LEGS:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_LEGS);
+            break;
+        case EQUIPMENT_SLOT_FEET:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_FEET);
+            break;
+        case EQUIPMENT_SLOT_WRISTS:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_WRISTS);
+            break;
+        case EQUIPMENT_SLOT_HANDS:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_HANDS);
+            break;
+        case EQUIPMENT_SLOT_BACK:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_BACK);
+            break;
+        case EQUIPMENT_SLOT_MAINHAND:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND);
+            break;
+        case EQUIPMENT_SLOT_OFFHAND:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND);
+            break;
+        case EQUIPMENT_SLOT_RANGED:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_RANGED);
+            break;
+    }
+    item_transmog = player->GetItemByPos(INVENTORY_SLOT_BAG_0, INVENTORY_SLOT_ITEM_START);
+
+    if (!item || !item_transmog){
+        player->GetSession()->SendNotification("幻化部位或行囊首格未检测到装备。");
+    }else if((item->GetProto()->Class == 2 && item->GetProto()->Class == item_transmog->GetProto()->Class && item->GetProto()->SubClass == item_transmog->GetProto()->SubClass)||(item->GetProto()->Class == 4 && item->GetProto()->Class == item_transmog->GetProto()->Class && item->GetProto()->InventoryType == item_transmog->GetProto()->InventoryType)){
+        uint64 item_guid = item->GetGUIDLow();
+        uint64 item_entry = item_transmog->GetEntry();
+        uint64 character_guid = item->GetOwnerGuid();
+        player->ReplaceCharacterTransmog(item_guid, item_entry, character_guid);
+        player->GetSession()->SendNotification("幻化成功，重新装备后生效。");
+    }
+    else{
+        player->GetSession()->SendNotification("幻化部位或行囊首格装备类型不同。");
+    }
+    player->CLOSE_GOSSIP_MENU();
+    return true;
+}
+
 enum Enchants
 {
     WEP2H_SUPERIOR_IMPACT = 20,
@@ -1163,6 +1246,12 @@ void AddSC_custom_creatures()
     newscript->Name = "custom_enchant_npc";
     newscript->pGossipHello = &GossipHello_EnchantNPC;
     newscript->pGossipSelect = &GossipSelect_EnchantNPC;
+    newscript->RegisterSelf(false);
+
+    newscript = new Script;
+    newscript->Name = "custom_transmog_npc";
+    newscript->pGossipHello = &GossipHello_TransmogNPC;
+    newscript->pGossipSelect = &GossipSelect_TransmogNPC;
     newscript->RegisterSelf(false);
 
     newscript = new Script;
