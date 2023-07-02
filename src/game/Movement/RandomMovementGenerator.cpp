@@ -95,7 +95,8 @@ void RandomMovementGenerator::Initialize(Creature &creature)
         }
 
         if (i_randomPoints.empty())
-            sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "Failed to generate random points for %s!", creature.GetGuidStr().c_str());
+            ;
+            //sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "Failed to generate random points for %s!", creature.GetGuidStr().c_str());
     
         i_randomPoints.push_back(i_startPosition);
     }
