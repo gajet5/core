@@ -625,9 +625,9 @@ bool GossipSelect_TransmogNPC(Player* player, Creature* creature, uint32 sender,
 
     if (!item || !item_transmog){
         player->GetSession()->SendNotification("幻化部位或行囊首格未检测到装备。");
-    }else if((item->GetProto()->Class == 2 && item->GetProto()->Class == item_transmog->GetProto()->Class && item->GetProto()->SubClass == item_transmog->GetProto()->SubClass)||(item->GetProto()->Class == 4 && item->GetProto()->Class == item_transmog->GetProto()->Class && item->GetProto()->InventoryType == item_transmog->GetProto()->InventoryType)){
+    }else if((item->GetProto()->Class == 2 && item->GetProto()->Class == item_transmog->GetProto()->Class && item->GetProto()->SubClass == item_transmog->GetProto()->SubClass)||(item->GetProto()->Class == 4 && item->GetProto()->Class == item_transmog->GetProto()->Class && item->GetProto()->InventoryType == item_transmog->GetProto()->InventoryType)||item_transmog->GetEntry() == 6948){
         uint64 item_guid = item->GetGUIDLow();
-        uint64 item_entry = item_transmog->GetEntry();
+        uint64 item_entry = item_transmog->GetEntry() == 6948 ? item->GetEntry() : item_transmog->GetEntry();
         uint64 character_guid = item->GetOwnerGuid();
         player->ReplaceCharacterTransmog(item_guid, item_entry, character_guid);
         player->GetSession()->SendNotification("幻化成功，重新装备后生效。");
