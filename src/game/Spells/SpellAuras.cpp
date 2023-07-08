@@ -2648,8 +2648,11 @@ void Aura::HandleAuraModShapeshift(bool apply, bool Real)
                     }
                     if (target->GetPower(POWER_RAGE) > Rage_val)
                     {
-                        uint32 Life_val = (uint32)((target->GetPower(POWER_RAGE) - Rage_val) * target->GetMaxHealth() / target->GetMaxPower(POWER_RAGE) / 5);
-                        target->ModifyHealth(Life_val);
+                        if (target->HasAura(12296))
+                        {
+                            uint32 Life_val = (uint32)((target->GetPower(POWER_RAGE) - Rage_val) * target->GetMaxHealth() / target->GetMaxPower(POWER_RAGE) / 5);
+                            target->ModifyHealth(Life_val);
+                        }
                         target->SetPower(POWER_RAGE, Rage_val);
                     }
                     break;
