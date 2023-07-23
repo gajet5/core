@@ -5236,6 +5236,12 @@ bool Unit::IsSpellCrit(Unit const* pVictim, SpellEntry const* spellProto, SpellS
                 // For other schools
                 else if (IsPlayer())
                     crit_chance = ((Player*)this)->GetSpellCritPercent(GetFirstSchoolInMask(schoolMask));
+                else if (IsPet() && GetOwnerGuid().IsPlayer() && (spellProto->Id == 34060 || spellProto->Id == 34061))
+                {
+                    Player* pOwner = ::ToPlayer(GetOwner());
+                    crit_chance = pOwner->GetSpellCritPercent(GetFirstSchoolInMask(schoolMask));
+                    crit_chance += GetTotalAuraModifierByMiscMask(SPELL_AURA_MOD_SPELL_CRIT_CHANCE_SCHOOL, schoolMask);
+                }
                 else
                 {
                     crit_chance = float(m_baseSpellCritChance);
