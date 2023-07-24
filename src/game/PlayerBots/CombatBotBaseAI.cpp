@@ -24,6 +24,7 @@ enum CombatBotSpells
     SPELL_MOONKIN_FORM = 24858,
     SPELL_LEADER_OF_THE_PACK = 17007,
 
+    SPELL_SUMMON_WATER_ELEMENTAL = 34059,
     SPELL_SUMMON_IMP = 688,
     SPELL_SUMMON_VOIDWALKER = 697,
     SPELL_SUMMON_FELHUNTER = 691,
@@ -2587,6 +2588,13 @@ void CombatBotBaseAI::SummonPetIfNeeded()
             vSummons.push_back(SPELL_SUMMON_SUCCUBUS);
         if (!vSummons.empty())
             me->CastSpell(me, SelectRandomContainerElement(vSummons), true);
+    }
+    else if (me->GetClass() == CLASS_MAGE)
+    {
+        if (me->GetPetGuid() || me->GetCharmGuid())
+            return;
+        if (me->HasSpell(SPELL_SUMMON_WATER_ELEMENTAL))
+            me->CastSpell(me, SPELL_SUMMON_WATER_ELEMENTAL, true);
     }
 }
 
