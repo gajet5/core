@@ -5240,7 +5240,6 @@ bool Unit::IsSpellCrit(Unit const* pVictim, SpellEntry const* spellProto, SpellS
                 {
                     Player* pOwner = ::ToPlayer(GetOwner());
                     crit_chance = pOwner->GetSpellCritPercent(GetFirstSchoolInMask(schoolMask));
-                    crit_chance += GetTotalAuraModifierByMiscMask(SPELL_AURA_MOD_SPELL_CRIT_CHANCE_SCHOOL, schoolMask);
                 }
                 else
                 {
