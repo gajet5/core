@@ -2593,8 +2593,7 @@ void CombatBotBaseAI::SummonPetIfNeeded()
     {
         if (me->GetPetGuid() || me->GetCharmGuid())
             return;
-        if (me->HasSpell(SPELL_SUMMON_WATER_ELEMENTAL))
-            me->CastSpell(me, SPELL_SUMMON_WATER_ELEMENTAL, true);
+        me->CastSpell(me, SPELL_SUMMON_WATER_ELEMENTAL, true);
     }
 }
 
