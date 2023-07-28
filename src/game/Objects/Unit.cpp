@@ -5240,6 +5240,7 @@ bool Unit::IsSpellCrit(Unit const* pVictim, SpellEntry const* spellProto, SpellS
                 {
                     Player* pOwner = ::ToPlayer(GetOwner());
                     crit_chance = pOwner->GetSpellCritPercent(GetFirstSchoolInMask(schoolMask));
+                    crit_chance = crit_chance * 0.5 + float(m_baseSpellCritChance);
                 }
                 else
                 {
