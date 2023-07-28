@@ -1441,8 +1441,8 @@ bool Pet::InitStatsForLevel(uint32 petlevel, Unit* owner)
                 }
                 else if(owner->IsPlayer() && creatureId == 200009)
                 {
-                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(damageMod * (pInfo->dmgMin + warlock_spell_power / 3.5) * (float)GetAttackTime(BASE_ATTACK) / 2000));
-                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(damageMod * (pInfo->dmgMax + warlock_spell_power / 3.5) * (float)GetAttackTime(BASE_ATTACK) / 2000));
+                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(damageMod * (pInfo->dmgMin + warlock_spell_power / 7) * (float)GetAttackTime(BASE_ATTACK) / 2000));
+                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(damageMod * (pInfo->dmgMax + warlock_spell_power / 7) * (float)GetAttackTime(BASE_ATTACK) / 2000));
                 }
                 else
                 {
@@ -1477,7 +1477,7 @@ bool Pet::InitStatsForLevel(uint32 petlevel, Unit* owner)
                 }
                 else if(owner->IsPlayer() && creatureId == 200009)
                 {
-                    SetCreateResistance(SPELL_SCHOOL_NORMAL, int32(pInfo->armor + warlock_armor));
+                    SetCreateResistance(SPELL_SCHOOL_NORMAL, int32(pInfo->armor + warlock_armor * 0.5));
                 }
                 else
                 {
@@ -1510,8 +1510,8 @@ bool Pet::InitStatsForLevel(uint32 petlevel, Unit* owner)
                 }
                 else if(owner->IsPlayer() && creatureId == 200009)
                 {
-                    SetCreateHealth((pInfo->health + warlock_max_hp) * healthMod);
-                    SetCreateMana(pInfo->mana + warlock_max_mp);
+                    SetCreateHealth((pInfo->health + warlock_max_hp * 0.5) * healthMod);
+                    SetCreateMana(pInfo->mana + warlock_max_mp * 0.5);
                 }
                 else
                 {
