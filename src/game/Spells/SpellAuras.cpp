@@ -4116,6 +4116,11 @@ void Aura::HandleModTaunt(bool apply, bool Real)
 
     Unit* target = GetTarget();
 
+    if (apply)
+        target->AddTauntCaster(GetCasterGuid());
+    else
+        target->RemoveTauntCaster(GetCasterGuid());
+
     if (!target->IsAlive() || !target->CanHaveThreatList())
         return;
 
