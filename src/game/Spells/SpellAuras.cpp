@@ -5876,8 +5876,7 @@ void Aura::HandleSchoolAbsorb(bool apply, bool Real)
                     {
                         // 10% coeff from healing bonus in vanilla
                         // 100% coeff mod by jianggn
-                        DoneActualBenefit = caster->SpellBaseHealingBonusDone(spellProto->GetSpellSchoolMask()) * 1.0f;
-                        DoneActualBenefit += caster->SpellBaseDamageBonusDone(spellProto->GetSpellSchoolMask()) * 1.0f;
+                        DoneActualBenefit = caster->SpellBaseHealingBonusDone(spellProto->GetSpellSchoolMask()) * 1.0f + caster->SpellBaseDamageBonusDone(spellProto->GetSpellSchoolMask()) * 1.0f;
                         break;
                     }
                     break;
