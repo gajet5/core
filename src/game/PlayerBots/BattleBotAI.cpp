@@ -1844,8 +1844,24 @@ void BattleBotAI::UpdateOutOfCombatAI_Priest()
         m_isBuffing = false;
     }
 
-    if (me->GetVictim())
+    if (Unit* pVictim = me->GetVictim())
+    {
+        if (Pet* pPet = me->GetPet())
+        {
+            pPet->ToggleAutocast(34067, true);
+            pPet->ToggleAutocast(34068, true);
+            pPet->ToggleAutocast(34069, true);
+            if (!pPet->GetVictim())
+            {
+                pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                pPet->AI()->AttackStart(pVictim);
+            }
+        }
+
         UpdateInCombatAI_Priest();
+    }
+    else
+        SummonPetIfNeeded();
 }
 
 void BattleBotAI::UpdateInCombatAI_Priest()
@@ -1938,6 +1954,21 @@ void BattleBotAI::UpdateInCombatAI_Priest()
     // Attack
     if (Unit* pVictim = me->GetVictim())
     {
+        if (Pet* pPet = me->GetPet())
+        {
+            if (pPet->IsAlive())
+            {
+                pPet->ToggleAutocast(34067, true);
+                pPet->ToggleAutocast(34068, true);
+                pPet->ToggleAutocast(34069, true);
+                if (!pPet->GetVictim())
+                {
+                    pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                    pPet->AI()->AttackStart(pVictim);
+                }
+            }
+        }
+
         if (m_spells.priest.pXuLingZhiRen &&
             CanTryToCastSpell(pVictim, m_spells.priest.pXuLingZhiRen) &&
             (me->GetDistance(pVictim) < 30.0f) &&

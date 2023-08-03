@@ -1891,8 +1891,24 @@ void PartyBotAI::UpdateOutOfCombatAI_Priest()
         FindAndHealInjuredAlly())
         return;
 
-    if (me->GetVictim())
+    if (Unit* pVictim = me->GetVictim())
+    {
+        if (Pet* pPet = me->GetPet())
+        {
+            pPet->ToggleAutocast(34067, true);
+            pPet->ToggleAutocast(34068, true);
+            pPet->ToggleAutocast(34069, true);
+            if (!pPet->GetVictim())
+            {
+                pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                pPet->AI()->AttackStart(pVictim);
+            }
+        }
+
         UpdateInCombatAI_Priest();
+    }
+    else
+        SummonPetIfNeeded();
 }
 
 void PartyBotAI::UpdateInCombatAI_Priest()
@@ -1955,7 +1971,25 @@ void PartyBotAI::UpdateInCombatAI_Priest()
     {
         DoCastSpell(me, m_spells.priest.pInnerFocus);
     }
-
+    
+    if (Unit* pVictim_pet = me->GetVictim())
+    {
+        if (Pet* pPet = me->GetPet())
+        {
+            if (pPet->IsAlive())
+            {
+                pPet->ToggleAutocast(34067, true);
+                pPet->ToggleAutocast(34068, true);
+                pPet->ToggleAutocast(34069, true);
+                if (!pPet->GetVictim())
+                {
+                    pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                    pPet->AI()->AttackStart(pVictim_pet);
+                }
+            }
+        }
+    }
+    
     if (m_role == ROLE_HEALER || (!me->GetVictim() && me->GetShapeshiftForm() == FORM_NONE))
     {
         // Shield allies being attacked.
