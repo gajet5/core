@@ -1972,19 +1972,22 @@ void PartyBotAI::UpdateInCombatAI_Priest()
         DoCastSpell(me, m_spells.priest.pInnerFocus);
     }
     
-    if (Unit* pVictim_pet = me->GetVictim())
+    if (Unit* pFriend_pet = me->FindLowestHpFriendlyUnit(40.0f, 1, false, me))
     {
-        if (Pet* pPet = me->GetPet())
+        if (Unit* pVictim_pet = pFriend_pet->GetVictim())
         {
-            if (pPet->IsAlive())
+            if (Pet* pPet = me->GetPet())
             {
-                pPet->ToggleAutocast(34067, true);
-                pPet->ToggleAutocast(34068, true);
-                pPet->ToggleAutocast(34069, true);
-                if (!pPet->GetVictim())
+                if (pPet->IsAlive())
                 {
-                    pPet->GetCharmInfo()->SetIsCommandAttack(true);
-                    pPet->AI()->AttackStart(pVictim_pet);
+                    pPet->ToggleAutocast(34067, true);
+                    pPet->ToggleAutocast(34068, true);
+                    pPet->ToggleAutocast(34069, true);
+                    if (!pPet->GetVictim())
+                    {
+                        pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                        pPet->AI()->AttackStart(pVictim_pet);
+                    }
                 }
             }
         }
