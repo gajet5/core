@@ -503,7 +503,7 @@ struct boss_kelthuzadAI : public ScriptedAI
     bool SpawnAndSendP1Creature(uint32 type)
     {
         float const* spawnLoc = alcoves[urand(0, NUM_ALCOVES - 1)];
-        if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0, nullptr, SELECT_FLAG_PLAYER))
+        if (Unit* pTarget = m_creature->SelectRandomUnfriendlyTarget(nullptr, 40.0f))
         {
             float spawnAng = 3.14f + pTarget->GetAngle(spawnLoc[0], spawnLoc[1]);
             if (Creature* pAdd = m_creature->SummonCreature(type, spawnLoc[0], spawnLoc[1], alcoveZ, spawnAng, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 1000))
