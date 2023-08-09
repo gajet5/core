@@ -182,6 +182,11 @@ void GameObject::RemoveFromWorld()
 
 bool GameObject::Create(uint32 guidlow, uint32 name_id, Map* map, float x, float y, float z, float ang, float rotation0, float rotation1, float rotation2, float rotation3, uint32 animprogress, GOState go_state)
 {
+    if(name_id == 181356 && map->GetId() == 533)
+    {
+        ang = 4.4855;
+    }
+    
     MANGOS_ASSERT(map);
     Relocate(x, y, z, ang);
     SetMap(map);
