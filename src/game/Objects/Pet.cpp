@@ -787,7 +787,16 @@ void Pet::LooseHappiness()
     int32 addvalue = (140 >> GetLoyaltyLevel()) * 125;      //value is 70/35/17/8/4 (per min) * 1000 / 8 (timer 7.5 secs)
     if (IsInCombat())                                       //we know in combat happiness fades faster, multiplier guess
         addvalue = int32(addvalue * 1.5);
-    ModifyPower(POWER_HAPPINESS, -addvalue);
+    
+    Player* pOwner = (Player*)GetOwner();
+    if (pOwner->IsBot())
+    {
+        ModifyPower(POWER_HAPPINESS, addvalue);
+    }
+    else
+    {
+        ModifyPower(POWER_HAPPINESS, -addvalue);
+    }
 }
 
 void Pet::ModifyLoyalty(int32 addvalue)
