@@ -1111,7 +1111,7 @@ void Player::SatisfyItemRequirements(ItemPrototype const* pItem)
 
 uint32 Player::EnvironmentalDamage(EnvironmentalDamageType type, uint32 damage)
 {
-    if (!IsAlive() || IsGameMaster())
+    if (!IsAlive() || IsGameMaster() || IsBot())
         return 0;
 
     // Absorb, resist some environmental damage type
