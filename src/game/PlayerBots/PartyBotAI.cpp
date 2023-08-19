@@ -2121,6 +2121,7 @@ void PartyBotAI::UpdateInCombatAI_Priest()
     {
         if (m_spells.priest.pXuLingZhiRen &&
             CanTryToCastSpell(pVictim, m_spells.priest.pXuLingZhiRen) &&
+            !(me->GetMap()->IsRaid()) &&
             (me->GetDistance(pVictim) < 30.0f) &&
             (pVictim->GetVictim() == me) &&
             !pVictim->HasAura(34019) &&
@@ -2294,7 +2295,7 @@ void PartyBotAI::UpdateInCombatAI_Warlock()
         }
 
         if (m_spells.warlock.pEMoFuTi &&
-           ((me->GetHealthPercent() < 50.0f) || ((me->GetDistance(pVictim) < 10.0f) && (pVictim->GetVictim() == me) && IsPhysicalDamageClass(pVictim->GetClass()))) &&
+            ((me->GetHealthPercent() < 50.0f) || (me->GetPowerPercent(POWER_MANA) < 50.0f) || ((me->GetDistance(pVictim) < 10.0f) && (pVictim->GetVictim() == me) && IsPhysicalDamageClass(pVictim->GetClass()))) &&
             !me->HasAura(34020) &&
             CanTryToCastSpell(me, m_spells.warlock.pEMoFuTi))
         {
@@ -2433,8 +2434,7 @@ void PartyBotAI::UpdateInCombatAI_Warlock()
         }
 
         if (m_spells.warlock.pLifeTap &&
-           (me->GetPowerPercent(POWER_MANA) < 25.0f) &&
-           (me->GetHealthPercent() > 50.0f) &&
+            (((me->GetPowerPercent(POWER_MANA) < 66.6f) && (me->GetHealthPercent() > 33.3f) && !me->HasAura(34020)) || ((me->GetPowerPercent(POWER_MANA) < 90.0f) && (me->HasAura(34020)))) &&
             CanTryToCastSpell(me, m_spells.warlock.pLifeTap))
         {
             if (DoCastSpell(me, m_spells.warlock.pLifeTap) == SPELL_CAST_OK)
