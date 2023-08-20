@@ -2268,6 +2268,178 @@ void PartyBotAI::UpdateOutOfCombatAI_Warlock()
     {
         if (Pet* pPet = me->GetPet())
         {
+            if(pPet->GetEntry() == 416)
+            {
+                //Firebolt
+                if(pPet->GetLevel() >= 1 && pPet->GetLevel() < 8)
+                {
+                    pPet->ToggleAutocast(3110, true);
+                }
+                else if(pPet->GetLevel() >= 8 && pPet->GetLevel() < 18)
+                {
+                    pPet->ToggleAutocast(7799, true);
+                }
+                else if(pPet->GetLevel() >= 18 && pPet->GetLevel() < 28)
+                {
+                    pPet->ToggleAutocast(7800, true);
+                }
+                else if(pPet->GetLevel() >= 28 && pPet->GetLevel() < 38)
+                {
+                    pPet->ToggleAutocast(7801, true);
+                }
+                else if(pPet->GetLevel() >= 38 && pPet->GetLevel() < 48)
+                {
+                    pPet->ToggleAutocast(7802, true);
+                }
+                else if(pPet->GetLevel() >= 48 && pPet->GetLevel() < 58)
+                {
+                    pPet->ToggleAutocast(11762, true);
+                }
+                else if(pPet->GetLevel() >= 58 && pPet->GetLevel() <= 60)
+                {
+                    pPet->ToggleAutocast(11763, true);
+                }
+                //Blood Pact
+                if(pPet->GetLevel() >= 4 && pPet->GetLevel() < 14)
+                {
+                    pPet->ToggleAutocast(6307, true);
+                }
+                else if(pPet->GetLevel() >= 14 && pPet->GetLevel() < 26)
+                {
+                    pPet->ToggleAutocast(7804, true);
+                }
+                else if(pPet->GetLevel() >= 26 && pPet->GetLevel() < 38)
+                {
+                    pPet->ToggleAutocast(7805, true);
+                }
+                else if(pPet->GetLevel() >= 38 && pPet->GetLevel() < 50)
+                {
+                    pPet->ToggleAutocast(11766, true);
+                }
+                else if(pPet->GetLevel() >= 50 && pPet->GetLevel() <= 60)
+                {
+                    pPet->ToggleAutocast(11767, true);
+                }
+            }
+            else if(pPet->GetEntry() == 1860)
+            {
+                //Torment
+                if(pPet->GetLevel() >= 10 && pPet->GetLevel() < 20)
+                {
+                    pPet->ToggleAutocast(3716, true);
+                }
+                else if(pPet->GetLevel() >= 20 && pPet->GetLevel() < 30)
+                {
+                    pPet->ToggleAutocast(7809, true);
+                }
+                else if(pPet->GetLevel() >= 30 && pPet->GetLevel() < 40)
+                {
+                    pPet->ToggleAutocast(7810, true);
+                }
+                else if(pPet->GetLevel() >= 40 && pPet->GetLevel() < 50)
+                {
+                    pPet->ToggleAutocast(7811, true);
+                }
+                else if(pPet->GetLevel() >= 50 && pPet->GetLevel() < 60)
+                {
+                    pPet->ToggleAutocast(11774, true);
+                }
+                else if(pPet->GetLevel() == 60)
+                {
+                    pPet->ToggleAutocast(11775, true);
+                }
+                //Suffering
+                if(pPet->GetLevel() >= 24 && pPet->GetLevel() < 36)
+                {
+                    pPet->ToggleAutocast(17735, true);
+                }
+                else if(pPet->GetLevel() >= 36 && pPet->GetLevel() < 48)
+                {
+                    pPet->ToggleAutocast(17750, true);
+                }
+                else if(pPet->GetLevel() >= 48 && pPet->GetLevel() < 60)
+                {
+                    pPet->ToggleAutocast(17751, true);
+                }
+                else if(pPet->GetLevel() == 60)
+                {
+                    pPet->ToggleAutocast(17752, true);
+                }
+            }
+            else if(pPet->GetEntry() == 1863)
+            {
+                //Lash of Pain
+                if(pPet->GetLevel() >= 20 && pPet->GetLevel() < 28)
+                {
+                    pPet->ToggleAutocast(7814, true);
+                }
+                else if(pPet->GetLevel() >= 28 && pPet->GetLevel() < 36)
+                {
+                    pPet->ToggleAutocast(7815, true);
+                }
+                else if(pPet->GetLevel() >= 36 && pPet->GetLevel() < 44)
+                {
+                    pPet->ToggleAutocast(7816, true);
+                }
+                else if(pPet->GetLevel() >= 44 && pPet->GetLevel() < 52)
+                {
+                    pPet->ToggleAutocast(11778, true);
+                }
+                else if(pPet->GetLevel() >= 52 && pPet->GetLevel() < 60)
+                {
+                    pPet->ToggleAutocast(11779, true);
+                }
+                else if(pPet->GetLevel() == 60)
+                {
+                    pPet->ToggleAutocast(11780, true);
+                }
+                //Soothing Kiss
+                if(pPet->GetLevel() >= 22 && pPet->GetLevel() < 34)
+                {
+                    pPet->ToggleAutocast(6360, true);
+                }
+                else if(pPet->GetLevel() >= 34 && pPet->GetLevel() < 46)
+                {
+                    pPet->ToggleAutocast(7813, true);
+                }
+                else if(pPet->GetLevel() >= 46 && pPet->GetLevel() < 58)
+                {
+                    pPet->ToggleAutocast(11784, true);
+                }
+                else if(pPet->GetLevel() >= 58 && pPet->GetLevel() <= 60)
+                {
+                    pPet->ToggleAutocast(11785, true);
+                }
+            }
+            else if(pPet->GetEntry() == 417)
+            {
+                //Devour Magic
+                if(pPet->GetLevel() >= 30 && pPet->GetLevel() < 38)
+                {
+                    pPet->ToggleAutocast(19505, true);
+                }
+                else if(pPet->GetLevel() >= 38 && pPet->GetLevel() < 46)
+                {
+                    pPet->ToggleAutocast(19731, true);
+                }
+                else if(pPet->GetLevel() >= 46 && pPet->GetLevel() < 54)
+                {
+                    pPet->ToggleAutocast(19734, true);
+                }
+                else if(pPet->GetLevel() >= 54 && pPet->GetLevel() <= 60)
+                {
+                    pPet->ToggleAutocast(19736, true);
+                }
+                //Spell Lock
+                if(pPet->GetLevel() >= 36 && pPet->GetLevel() < 52)
+                {
+                    pPet->ToggleAutocast(19244, true);
+                }
+                else if(pPet->GetLevel() >= 52 && pPet->GetLevel() <= 60)
+                {
+                    pPet->ToggleAutocast(19647, true);
+                }
+            }
             if (!pPet->GetVictim())
             {
                 pPet->GetCharmInfo()->SetIsCommandAttack(true);
@@ -2287,19 +2459,202 @@ void PartyBotAI::UpdateInCombatAI_Warlock()
     {
         if (Pet* pPet = me->GetPet())
         {
-            if (!pPet->GetVictim() && pPet->IsAlive())
+            if (pPet->IsAlive())
             {
-                pPet->GetCharmInfo()->SetIsCommandAttack(true);
-                pPet->AI()->AttackStart(pVictim);
+                if(pPet->GetEntry() == 416)
+                {
+                    //Firebolt
+                    if(pPet->GetLevel() >= 1 && pPet->GetLevel() < 8)
+                    {
+                        pPet->ToggleAutocast(3110, true);
+                    }
+                    else if(pPet->GetLevel() >= 8 && pPet->GetLevel() < 18)
+                    {
+                        pPet->ToggleAutocast(7799, true);
+                    }
+                    else if(pPet->GetLevel() >= 18 && pPet->GetLevel() < 28)
+                    {
+                        pPet->ToggleAutocast(7800, true);
+                    }
+                    else if(pPet->GetLevel() >= 28 && pPet->GetLevel() < 38)
+                    {
+                        pPet->ToggleAutocast(7801, true);
+                    }
+                    else if(pPet->GetLevel() >= 38 && pPet->GetLevel() < 48)
+                    {
+                        pPet->ToggleAutocast(7802, true);
+                    }
+                    else if(pPet->GetLevel() >= 48 && pPet->GetLevel() < 58)
+                    {
+                        pPet->ToggleAutocast(11762, true);
+                    }
+                    else if(pPet->GetLevel() >= 58 && pPet->GetLevel() <= 60)
+                    {
+                        pPet->ToggleAutocast(11763, true);
+                    }
+                    //Blood Pact
+                    if(pPet->GetLevel() >= 4 && pPet->GetLevel() < 14)
+                    {
+                        pPet->ToggleAutocast(6307, true);
+                    }
+                    else if(pPet->GetLevel() >= 14 && pPet->GetLevel() < 26)
+                    {
+                        pPet->ToggleAutocast(7804, true);
+                    }
+                    else if(pPet->GetLevel() >= 26 && pPet->GetLevel() < 38)
+                    {
+                        pPet->ToggleAutocast(7805, true);
+                    }
+                    else if(pPet->GetLevel() >= 38 && pPet->GetLevel() < 50)
+                    {
+                        pPet->ToggleAutocast(11766, true);
+                    }
+                    else if(pPet->GetLevel() >= 50 && pPet->GetLevel() <= 60)
+                    {
+                        pPet->ToggleAutocast(11767, true);
+                    }
+                }
+                else if(pPet->GetEntry() == 1860)
+                {
+                    //Torment
+                    if(pPet->GetLevel() >= 10 && pPet->GetLevel() < 20)
+                    {
+                        pPet->ToggleAutocast(3716, true);
+                    }
+                    else if(pPet->GetLevel() >= 20 && pPet->GetLevel() < 30)
+                    {
+                        pPet->ToggleAutocast(7809, true);
+                    }
+                    else if(pPet->GetLevel() >= 30 && pPet->GetLevel() < 40)
+                    {
+                        pPet->ToggleAutocast(7810, true);
+                    }
+                    else if(pPet->GetLevel() >= 40 && pPet->GetLevel() < 50)
+                    {
+                        pPet->ToggleAutocast(7811, true);
+                    }
+                    else if(pPet->GetLevel() >= 50 && pPet->GetLevel() < 60)
+                    {
+                        pPet->ToggleAutocast(11774, true);
+                    }
+                    else if(pPet->GetLevel() == 60)
+                    {
+                        pPet->ToggleAutocast(11775, true);
+                    }
+                    //Suffering
+                    if(pPet->GetLevel() >= 24 && pPet->GetLevel() < 36)
+                    {
+                        pPet->ToggleAutocast(17735, true);
+                    }
+                    else if(pPet->GetLevel() >= 36 && pPet->GetLevel() < 48)
+                    {
+                        pPet->ToggleAutocast(17750, true);
+                    }
+                    else if(pPet->GetLevel() >= 48 && pPet->GetLevel() < 60)
+                    {
+                        pPet->ToggleAutocast(17751, true);
+                    }
+                    else if(pPet->GetLevel() == 60)
+                    {
+                        pPet->ToggleAutocast(17752, true);
+                    }
+                }
+                else if(pPet->GetEntry() == 1863)
+                {
+                    //Lash of Pain
+                    if(pPet->GetLevel() >= 20 && pPet->GetLevel() < 28)
+                    {
+                        pPet->ToggleAutocast(7814, true);
+                    }
+                    else if(pPet->GetLevel() >= 28 && pPet->GetLevel() < 36)
+                    {
+                        pPet->ToggleAutocast(7815, true);
+                    }
+                    else if(pPet->GetLevel() >= 36 && pPet->GetLevel() < 44)
+                    {
+                        pPet->ToggleAutocast(7816, true);
+                    }
+                    else if(pPet->GetLevel() >= 44 && pPet->GetLevel() < 52)
+                    {
+                        pPet->ToggleAutocast(11778, true);
+                    }
+                    else if(pPet->GetLevel() >= 52 && pPet->GetLevel() < 60)
+                    {
+                        pPet->ToggleAutocast(11779, true);
+                    }
+                    else if(pPet->GetLevel() == 60)
+                    {
+                        pPet->ToggleAutocast(11780, true);
+                    }
+                    //Soothing Kiss
+                    if(pPet->GetLevel() >= 22 && pPet->GetLevel() < 34)
+                    {
+                        pPet->ToggleAutocast(6360, true);
+                    }
+                    else if(pPet->GetLevel() >= 34 && pPet->GetLevel() < 46)
+                    {
+                        pPet->ToggleAutocast(7813, true);
+                    }
+                    else if(pPet->GetLevel() >= 46 && pPet->GetLevel() < 58)
+                    {
+                        pPet->ToggleAutocast(11784, true);
+                    }
+                    else if(pPet->GetLevel() >= 58 && pPet->GetLevel() <= 60)
+                    {
+                        pPet->ToggleAutocast(11785, true);
+                    }
+                }
+                else if(pPet->GetEntry() == 417)
+                {
+                    //Devour Magic
+                    if(pPet->GetLevel() >= 30 && pPet->GetLevel() < 38)
+                    {
+                        pPet->ToggleAutocast(19505, true);
+                    }
+                    else if(pPet->GetLevel() >= 38 && pPet->GetLevel() < 46)
+                    {
+                        pPet->ToggleAutocast(19731, true);
+                    }
+                    else if(pPet->GetLevel() >= 46 && pPet->GetLevel() < 54)
+                    {
+                        pPet->ToggleAutocast(19734, true);
+                    }
+                    else if(pPet->GetLevel() >= 54 && pPet->GetLevel() <= 60)
+                    {
+                        pPet->ToggleAutocast(19736, true);
+                    }
+                    //Spell Lock
+                    if(pPet->GetLevel() >= 36 && pPet->GetLevel() < 52)
+                    {
+                        pPet->ToggleAutocast(19244, true);
+                    }
+                    else if(pPet->GetLevel() >= 52 && pPet->GetLevel() <= 60)
+                    {
+                        pPet->ToggleAutocast(19647, true);
+                    }
+                }
+                if (!pPet->GetVictim())
+                {
+                    pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                    pPet->AI()->AttackStart(pVictim);
+                }
             }
         }
 
         if (m_spells.warlock.pEMoFuTi &&
-            ((me->GetHealthPercent() < 50.0f) || (me->GetPowerPercent(POWER_MANA) < 50.0f) || ((me->GetDistance(pVictim) < 10.0f) && (pVictim->GetVictim() == me) && IsPhysicalDamageClass(pVictim->GetClass()))) &&
+            ((me->GetHealthPercent() <= 35.0f) || ((me->GetDistance(pVictim) < 10.0f) && (pVictim->GetVictim() == me) && IsPhysicalDamageClass(pVictim->GetClass()))) &&
             !me->HasAura(34020) &&
             CanTryToCastSpell(me, m_spells.warlock.pEMoFuTi))
         {
             if (DoCastSpell(me, m_spells.warlock.pEMoFuTi) == SPELL_CAST_OK)
+                return;
+        }
+
+        if (m_spells.warlock.pLifeTap &&
+            (((me->GetPowerPercent(POWER_MANA) <= 65.0f) && (me->GetHealthPercent() > 35.0f) && !me->HasAura(34020)) || ((me->GetPowerPercent(POWER_MANA) <= 80.0f) && (me->HasAura(34020)))) &&
+            CanTryToCastSpell(me, m_spells.warlock.pLifeTap))
+        {
+            if (DoCastSpell(me, m_spells.warlock.pLifeTap) == SPELL_CAST_OK)
                 return;
         }
 
@@ -2352,6 +2707,7 @@ void PartyBotAI::UpdateInCombatAI_Warlock()
             if (Pet* pPet = me->GetPet())
             {
                 if (pPet->IsAlive() &&
+                    (pPet->GetHealthPercent() <= 20.0f) &&
                     CanTryToCastSpell(pPet, m_spells.warlock.pDemonicSacrifice))
                 {
                     if (DoCastSpell(pPet, m_spells.warlock.pDemonicSacrifice) == SPELL_CAST_OK)
@@ -2430,14 +2786,6 @@ void PartyBotAI::UpdateInCombatAI_Warlock()
             CanTryToCastSpell(pVictim, m_spells.warlock.pShadowBolt))
         {
             if (DoCastSpell(pVictim, m_spells.warlock.pShadowBolt) == SPELL_CAST_OK)
-                return;
-        }
-
-        if (m_spells.warlock.pLifeTap &&
-            (((me->GetPowerPercent(POWER_MANA) < 66.6f) && (me->GetHealthPercent() > 33.3f) && !me->HasAura(34020)) || ((me->GetPowerPercent(POWER_MANA) < 90.0f) && (me->HasAura(34020)))) &&
-            CanTryToCastSpell(me, m_spells.warlock.pLifeTap))
-        {
-            if (DoCastSpell(me, m_spells.warlock.pLifeTap) == SPELL_CAST_OK)
                 return;
         }
 
