@@ -2496,7 +2496,7 @@ void BattleBotAI::UpdateInCombatAI_Warlock()
         }
 
         if (m_spells.warlock.pEMoFuTi &&
-            ((me->GetHealthPercent() <= 30.0f) || ((me->GetDistance(pVictim) < 10.0f) && (pVictim->GetVictim() == me) && IsPhysicalDamageClass(pVictim->GetClass()))) &&
+            ((me->GetHealthPercent() <= 40.0f) || ((me->GetDistance(pVictim) < 10.0f) && (pVictim->GetVictim() == me) && IsPhysicalDamageClass(pVictim->GetClass()))) &&
             !me->HasAura(34020) &&
             CanTryToCastSpell(me, m_spells.warlock.pEMoFuTi))
         {
@@ -2505,7 +2505,7 @@ void BattleBotAI::UpdateInCombatAI_Warlock()
         }
 
         if (m_spells.warlock.pLifeTap &&
-            (((me->GetPowerPercent(POWER_MANA) <= 60.0f) && (me->GetHealthPercent() > 30.0f) && !me->HasAura(34020)) || ((me->GetPowerPercent(POWER_MANA) <= 80.0f) && (me->GetHealthPercent() > 20.0f) && (me->HasAura(34020)))) &&
+            (((me->GetPowerPercent(POWER_MANA) <= 60.0f) && (me->GetHealthPercent() > 40.0f) && !me->HasAura(34020)) || ((me->GetPowerPercent(POWER_MANA) <= 80.0f) && (me->GetHealthPercent() > 30.0f) && (me->HasAura(34020)))) &&
             CanTryToCastSpell(me, m_spells.warlock.pLifeTap))
         {
             if (DoCastSpell(me, m_spells.warlock.pLifeTap) == SPELL_CAST_OK)
