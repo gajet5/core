@@ -791,6 +791,8 @@ void Pet::LooseHappiness()
     Player* pOwner = (Player*)GetOwner();
     if (pOwner->IsBot())
     {
+        if (curValue == 1050000)
+            return;
         ModifyPower(POWER_HAPPINESS, addvalue);
     }
     else
