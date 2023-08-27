@@ -2362,6 +2362,10 @@ bool Pet::IsPermanentPetFor(Player* owner) const
             // i.e. does not unsummon at mounting, gets dismissed at teleport etc.
             case CLASS_WARLOCK:
                 return GetCreatureInfo()->type == CREATURE_TYPE_DEMON;
+            case CLASS_MAGE:
+                return GetCreatureInfo()->type == CREATURE_TYPE_ELEMENTAL;
+            case CLASS_PRIEST:
+                return GetCreatureInfo()->type == CREATURE_TYPE_HUMANOID;
             default:
                 return false;
         }
