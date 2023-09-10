@@ -2381,6 +2381,8 @@ bool Pet::IsPermanentPetFor(Player* owner) const
                 return GetCreatureInfo()->type == CREATURE_TYPE_ELEMENTAL;
             case CLASS_PRIEST:
                 return GetCreatureInfo()->type == CREATURE_TYPE_HUMANOID;
+            case CLASS_DRUID:
+                return GetCreatureInfo()->type == CREATURE_TYPE_BEAST;
             default:
                 return false;
         }
