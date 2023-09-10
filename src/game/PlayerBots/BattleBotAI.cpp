@@ -3245,19 +3245,33 @@ void BattleBotAI::UpdateOutOfCombatAI_Druid()
         }
     }
 
-    if (me->GetVictim())
+    if (Unit* pVictim = me->GetVictim())
     {
+        if (Pet* pPet = me->GetPet())
+        {
+            pPet->ToggleAutocast(34078, true);
+            pPet->ToggleAutocast(34080, true);
+            pPet->ToggleAutocast(34082, true);
+            if (!pPet->GetVictim())
+            {
+                pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                pPet->AI()->AttackStart(pVictim);
+            }
+        }
+
         if (m_spells.druid.pMoonkinForm &&
             CanTryToCastSpell(me, m_spells.druid.pMoonkinForm))
         {
             if (DoCastSpell(me, m_spells.druid.pMoonkinForm) == SPELL_CAST_OK)
                 return;
         }
-
+        
         UpdateInCombatAI_Druid();
     }
     else
     {
+        SummonPetIfNeeded();
+
         if (m_spells.druid.pMoonkinForm &&
             me->GetShapeshiftForm() == FORM_MOONKIN)
             me->RemoveAurasDueToSpellByCancel(m_spells.druid.pMoonkinForm->Id);
@@ -3381,6 +3395,21 @@ void BattleBotAI::UpdateInCombatAI_Druid()
     
     if (Unit* pVictim = me->GetVictim())
     {
+        if (Pet* pPet = me->GetPet())
+        {
+            if (pPet->IsAlive())
+            {
+                pPet->ToggleAutocast(34078, true);
+                pPet->ToggleAutocast(34080, true);
+                pPet->ToggleAutocast(34082, true);
+                if (!pPet->GetVictim())
+                {
+                    pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                    pPet->AI()->AttackStart(pVictim);
+                }
+            }
+        }
+
         ShapeshiftForm const form = me->GetShapeshiftForm();
         if (m_spells.druid.pBarkskin &&
            (form == FORM_NONE || form == FORM_MOONKIN) &&

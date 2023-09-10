@@ -3470,12 +3470,49 @@ void PartyBotAI::UpdateOutOfCombatAI_Druid()
             return;
     }
 
-    if (me->GetVictim())
+    if (Unit* pVictim = me->GetVictim())
+    {
+        if (Pet* pPet = me->GetPet())
+        {
+            pPet->ToggleAutocast(34078, true);
+            pPet->ToggleAutocast(34080, true);
+            pPet->ToggleAutocast(34082, true);
+            if (!pPet->GetVictim())
+            {
+                pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                pPet->AI()->AttackStart(pVictim);
+            }
+        }
+
         UpdateInCombatAI_Druid();
+    }
+    else
+        SummonPetIfNeeded();
 }
 
 void PartyBotAI::UpdateInCombatAI_Druid()
 {
+    if (Unit* pFriend_pet = me->FindLowestHpFriendlyUnit(40.0f, 1, false, me))
+    {
+        if (Unit* pVictim_pet = pFriend_pet->GetVictim())
+        {
+            if (Pet* pPet = me->GetPet())
+            {
+                if (pPet->IsAlive())
+                {
+                    pPet->ToggleAutocast(34078, true);
+                    pPet->ToggleAutocast(34080, true);
+                    pPet->ToggleAutocast(34082, true);
+                    if (!pPet->GetVictim())
+                    {
+                        pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                        pPet->AI()->AttackStart(pVictim_pet);
+                    }
+                }
+            }
+        }
+    }
+
     ShapeshiftForm const form = me->GetShapeshiftForm();
 
     if (m_spells.druid.pBarkskin &&
