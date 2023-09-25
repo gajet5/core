@@ -1469,8 +1469,8 @@ bool Pet::InitStatsForLevel(uint32 petlevel, Unit* owner)
                 }
                 else if(owner->IsPlayer() && creatureId == 200012)
                 {
-                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(damageMod * (pInfo->dmgMin + warlock_ap / 14 + warlock_spell_power / 14 + warlock_healing_power / 14 + GetStat(STAT_INTELLECT) / 2) * (float)GetAttackTime(BASE_ATTACK) / 2000));
-                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(damageMod * (pInfo->dmgMax + warlock_ap / 14 + warlock_spell_power / 14 + warlock_healing_power / 14 + GetStat(STAT_INTELLECT) / 2) * (float)GetAttackTime(BASE_ATTACK) / 2000));
+                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(damageMod * (pInfo->dmgMin + warlock_ap / 14 + warlock_spell_power / 14 + warlock_healing_power / 14) * (float)GetAttackTime(BASE_ATTACK) / 2000));
+                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(damageMod * (pInfo->dmgMax + warlock_ap / 14 + warlock_spell_power / 14 + warlock_healing_power / 14) * (float)GetAttackTime(BASE_ATTACK) / 2000));
                 }
                 else
                 {
