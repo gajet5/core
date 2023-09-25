@@ -27,6 +27,7 @@ enum CombatBotSpells
     SPELL_SUMMON_WATER_ELEMENTAL = 34065,
     SPELL_SUMMON_ROGUE_KNIGHT = 34066,
     SPELL_SUMMON_SPIRIT_BEAR = 34077,
+    SPELL_SUMMON_Obsidian_Destroyer = 34084,
     SPELL_SUMMON_IMP = 688,
     SPELL_SUMMON_VOIDWALKER = 697,
     SPELL_SUMMON_FELHUNTER = 691,
@@ -2608,6 +2609,12 @@ void CombatBotBaseAI::SummonPetIfNeeded()
         if (me->GetPetGuid() || me->GetCharmGuid())
             return;
         me->CastSpell(me, SPELL_SUMMON_SPIRIT_BEAR, true);
+    }
+    else if (me->GetClass() == CLASS_SHAMAN)
+    {
+        if (me->GetPetGuid() || me->GetCharmGuid())
+            return;
+        me->CastSpell(me, SPELL_SUMMON_Obsidian_Destroyer, true);
     }
 }
 

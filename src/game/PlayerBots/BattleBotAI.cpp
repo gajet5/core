@@ -1191,8 +1191,20 @@ void BattleBotAI::UpdateOutOfCombatAI_Shaman()
             return;
     }
 
-    if (me->GetVictim())
+    if (Unit* pVictim = me->GetVictim())
     {
+        if (Pet* pPet = me->GetPet())
+        {
+            pPet->ToggleAutocast(34085, true);
+            pPet->ToggleAutocast(34089, true);
+            pPet->ToggleAutocast(34091, true);
+            if (!pPet->GetVictim())
+            {
+                pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                pPet->AI()->AttackStart(pVictim);
+            }
+        }
+
         if (SummonShamanTotems())
             return;
 
@@ -1200,6 +1212,8 @@ void BattleBotAI::UpdateOutOfCombatAI_Shaman()
     }
     else
     {
+        SummonPetIfNeeded();
+
         if (m_spells.shaman.pGhostWolf &&
            !me->IsMoving() && !me->IsMounted() &&
            (!GetMountSpellId() || me->HasAura(AURA_WARSONG_FLAG) || me->HasAura(AURA_SILVERWING_FLAG)) &&
@@ -1289,6 +1303,27 @@ void BattleBotAI::UpdateInCombatAI_Shaman()
         }
     }
 
+    if (Unit* pFriend_pet = me->FindLowestHpFriendlyUnit(40.0f, 1, false, me))
+    {
+        if (Unit* pVictim_pet = pFriend_pet->GetVictim())
+        {
+            if (Pet* pPet = me->GetPet())
+            {
+                if (pPet->IsAlive())
+                {
+                    pPet->ToggleAutocast(34085, true);
+                    pPet->ToggleAutocast(34089, true);
+                    pPet->ToggleAutocast(34091, true);
+                    if (!pPet->GetVictim())
+                    {
+                        pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                        pPet->AI()->AttackStart(pVictim_pet);
+                    }
+                }
+            }
+        }
+    }
+    
     if (SummonShamanTotems())
         return;
 
