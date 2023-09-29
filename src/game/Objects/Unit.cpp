@@ -2763,7 +2763,7 @@ float Unit::GetUnitCriticalChance(WeaponAttackType attackType, Unit const* pVict
         Player* pOwner = ::ToPlayer(GetOwner());
         crit = pOwner->GetSpellCritPercent(SPELL_SCHOOL_HOLY) * 0.5 + GetTotalAuraModifier(SPELL_AURA_MOD_CRIT_PERCENT);
     }
-    else if (IsPet() && GetOwnerGuid().IsPlayer() && (GetEntry() == 200011))
+    else if (IsPet() && GetOwnerGuid().IsPlayer() && (GetEntry() == 200011 || GetEntry() == 200013))
     {
         Player* pOwner = ::ToPlayer(GetOwner());
         crit = pOwner->GetSpellCritPercent(SPELL_SCHOOL_HOLY) * 0.5 + pOwner->GetFloatValue(PLAYER_CRIT_PERCENTAGE) * 0.5 + GetTotalAuraModifier(SPELL_AURA_MOD_CRIT_PERCENT);

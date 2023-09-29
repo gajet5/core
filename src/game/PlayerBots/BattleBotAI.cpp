@@ -1021,6 +1021,25 @@ void BattleBotAI::UpdateOutOfCombatAI_Paladin()
         m_isBuffing = false;
     }
 
+    if (Unit* pVictim = me->GetVictim())
+    {
+        if (Pet* pPet = me->GetPet())
+        {
+            pPet->ToggleAutocast(34096, true);
+            pPet->ToggleAutocast(34097, true);
+            pPet->ToggleAutocast(34098, true);
+            if (!pPet->GetVictim())
+            {
+                pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                pPet->AI()->AttackStart(pVictim);
+            }
+        }
+
+        UpdateInCombatAI_Paladin();
+    }
+    else
+        SummonPetIfNeeded();
+
     FindAndHealInjuredAlly();
 }
 
@@ -1108,6 +1127,27 @@ void BattleBotAI::UpdateInCombatAI_Paladin()
         }
     }
 
+    if (Unit* pFriend_pet = me->FindLowestHpFriendlyUnit(40.0f, 1, false, me))
+    {
+        if (Unit* pVictim_pet = pFriend_pet->GetVictim())
+        {
+            if (Pet* pPet = me->GetPet())
+            {
+                if (pPet->IsAlive())
+                {
+                    pPet->ToggleAutocast(34096, true);
+                    pPet->ToggleAutocast(34097, true);
+                    pPet->ToggleAutocast(34098, true);
+                    if (!pPet->GetVictim())
+                    {
+                        pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                        pPet->AI()->AttackStart(pVictim_pet);
+                    }
+                }
+            }
+        }
+    }
+    
     if (Unit* pFriend = me->FindLowestHpFriendlyUnit(30.0f, 70, true, me))
     {
         if (m_spells.paladin.pQuZhu &&
