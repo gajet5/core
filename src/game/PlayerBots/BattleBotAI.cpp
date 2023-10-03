@@ -3018,14 +3018,47 @@ void BattleBotAI::UpdateOutOfCombatAI_Rogue()
             return;
     }
 
-    if (me->GetVictim())
+    if (Unit* pVictim = me->GetVictim())
+    {
+        if (Pet* pPet = me->GetPet())
+        {
+            pPet->ToggleAutocast(34105, true);
+            pPet->ToggleAutocast(34106, true);
+            pPet->ToggleAutocast(34108, true);
+            pPet->ToggleAutocast(34109, true);
+            if (!pPet->GetVictim())
+            {
+                pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                pPet->AI()->AttackStart(pVictim);
+            }
+        }
+
         UpdateInCombatAI_Rogue();
+    }
+    else
+        SummonPetIfNeeded();
 }
 
 void BattleBotAI::UpdateInCombatAI_Rogue()
 {
     if (Unit* pVictim = me->GetVictim())
     {
+        if (Pet* pPet = me->GetPet())
+        {
+            if (pPet->IsAlive())
+            {
+                pPet->ToggleAutocast(34105, true);
+                pPet->ToggleAutocast(34106, true);
+                pPet->ToggleAutocast(34108, true);
+                pPet->ToggleAutocast(34109, true);
+                if (!pPet->GetVictim())
+                {
+                    pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                    pPet->AI()->AttackStart(pVictim);
+                }
+            }
+        }
+
         if (me->HasAuraType(SPELL_AURA_MOD_STEALTH))
         {
             if (m_spells.rogue.pPremeditation &&
