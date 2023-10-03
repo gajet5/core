@@ -3023,7 +3023,7 @@ void BattleBotAI::UpdateOutOfCombatAI_Rogue()
         if (Pet* pPet = me->GetPet())
         {
             pPet->ToggleAutocast(34105, true);
-            pPet->ToggleAutocast(34106, true);
+            pPet->ToggleAutocast(34113, true);
             pPet->ToggleAutocast(34108, true);
             pPet->ToggleAutocast(34109, true);
             if (!pPet->GetVictim())
@@ -3048,7 +3048,7 @@ void BattleBotAI::UpdateInCombatAI_Rogue()
             if (pPet->IsAlive())
             {
                 pPet->ToggleAutocast(34105, true);
-                pPet->ToggleAutocast(34106, true);
+                pPet->ToggleAutocast(34113, true);
                 pPet->ToggleAutocast(34108, true);
                 pPet->ToggleAutocast(34109, true);
                 if (!pPet->GetVictim())

@@ -347,9 +347,6 @@ enum ClassFlag
     CF_SHAMAN_WINDFURY_TOTEM                = 33,   // CM1 00000002
     CF_SHAMAN_FLAMETONGUE_TOTEM             = 34,   // CM1 00000004
     CF_SHAMAN_CURES                         = 35,   // CM1 00000008 Cure Poison & Cure Disease
-
-    // -- Deathknight (15)
-    CF_DEATHKNIGHT_CLINKZ_SEARING_ARROW     = 0,    // CM0 00000001
 };
 
 #endif // _SPELL_CLASS_MASK_H
