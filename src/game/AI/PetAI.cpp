@@ -46,7 +46,8 @@ PetAI::PetAI(Creature* c) : CreatureAI(c), m_updateAlliesTimer(0)
     // Mage Water Elemental has no melee attack
     // Shaman Obsidian Destroyer has no melee attack
     // Rogue Bone Clinkz has no melee attack
-    m_bMeleeAttack = (c->GetEntry() != 416 && c->GetEntry() != 200009 && c->GetEntry() != 200012 && c->GetEntry() != 200014);
+    // Warrior Bane has no melee attack
+    m_bMeleeAttack = (c->GetEntry() != 416 && c->GetEntry() != 200009 && c->GetEntry() != 200012 && c->GetEntry() != 200014 && c->GetEntry() != 200015);
 }
 
 bool PetAI::_needToStop() const

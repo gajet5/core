@@ -30,6 +30,7 @@ enum CombatBotSpells
     SPELL_SUMMON_OBSIDIAN_DESTROYER = 34084,
     SPELL_SUMMON_GOBLIN_SHREDDER = 34095,
     SPELL_SUMMON_BONE_CLINCKZ = 34102,
+    SPELL_SUMMON_BANE = 34114,
 
     SPELL_SUMMON_IMP = 688,
     SPELL_SUMMON_VOIDWALKER = 697,
@@ -2630,6 +2631,12 @@ void CombatBotBaseAI::SummonPetIfNeeded()
         if (me->GetPetGuid() || me->GetCharmGuid())
             return;
         me->CastSpell(me, SPELL_SUMMON_BONE_CLINCKZ, true);
+    }
+    else if (me->GetClass() == CLASS_WARRIOR)
+    {
+        if (me->GetPetGuid() || me->GetCharmGuid())
+            return;
+        me->CastSpell(me, SPELL_SUMMON_BANE, true);
     }
 }
 

@@ -1479,8 +1479,13 @@ bool Pet::InitStatsForLevel(uint32 petlevel, Unit* owner)
                 }
                 else if(owner->IsPlayer() && creatureId == 200014)
                 {
-                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(damageMod * (pInfo->dmgMin + warlock_ap / 7) * (float)GetAttackTime(BASE_ATTACK) / 2000));
-                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(damageMod * (pInfo->dmgMax + warlock_ap / 7) * (float)GetAttackTime(BASE_ATTACK) / 2000));
+                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(damageMod * (pInfo->dmgMin + warlock_ap / 10) * (float)GetAttackTime(BASE_ATTACK) / 2000));
+                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(damageMod * (pInfo->dmgMax + warlock_ap / 10) * (float)GetAttackTime(BASE_ATTACK) / 2000));
+                }
+                else if(owner->IsPlayer() && creatureId == 200015)
+                {
+                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(damageMod * (pInfo->dmgMin + warlock_ap / 10) * (float)GetAttackTime(BASE_ATTACK) / 2000));
+                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(damageMod * (pInfo->dmgMax + warlock_ap / 10) * (float)GetAttackTime(BASE_ATTACK) / 2000));
                 }
                 else
                 {
@@ -1536,6 +1541,10 @@ bool Pet::InitStatsForLevel(uint32 petlevel, Unit* owner)
                 else if(owner->IsPlayer() && creatureId == 200014)
                 {
                     SetCreateResistance(SPELL_SCHOOL_NORMAL, int32(pInfo->armor + warlock_armor * 0.75));
+                }
+                else if(owner->IsPlayer() && creatureId == 200015)
+                {
+                    SetCreateResistance(SPELL_SCHOOL_NORMAL, int32(pInfo->armor + warlock_armor * 0.5));
                 }
                 else
                 {
@@ -1595,6 +1604,11 @@ bool Pet::InitStatsForLevel(uint32 petlevel, Unit* owner)
                 {
                     SetCreateHealth((pInfo->health + warlock_max_hp * 0.75) * healthMod);
                     SetCreateMana(pInfo->mana + warlock_max_hp * 0.25);
+                }
+                else if(owner->IsPlayer() && creatureId == 200015)
+                {
+                    SetCreateHealth((pInfo->health + warlock_max_hp * 0.5) * healthMod);
+                    SetCreateMana(pInfo->mana + warlock_max_hp * 0.5);
                 }
                 else
                 {
@@ -2430,6 +2444,8 @@ bool Pet::IsPermanentPetFor(Player* owner) const
             case CLASS_PALADIN:
                 return GetCreatureInfo()->type == CREATURE_TYPE_MECHANICAL;
             case CLASS_ROGUE:
+                return GetCreatureInfo()->type == CREATURE_TYPE_UNDEAD;
+            case CLASS_WARRIOR:
                 return GetCreatureInfo()->type == CREATURE_TYPE_UNDEAD;
             default:
                 return false;

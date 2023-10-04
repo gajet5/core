@@ -2749,19 +2749,52 @@ void BattleBotAI::UpdateOutOfCombatAI_Warrior()
 
     if (Unit* pVictim = me->GetVictim())
     {
+        if (Pet* pPet = me->GetPet())
+        {
+            pPet->ToggleAutocast(34115, true);
+            pPet->ToggleAutocast(34118, true);
+            pPet->ToggleAutocast(34119, true);
+            pPet->ToggleAutocast(34120, true);
+            if (!pPet->GetVictim())
+            {
+                pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                pPet->AI()->AttackStart(pVictim);
+            }
+        }
+
         if (m_spells.warrior.pCharge &&
             CanTryToCastSpell(pVictim, m_spells.warrior.pCharge))
         {
             if (DoCastSpell(pVictim, m_spells.warrior.pCharge) == SPELL_CAST_OK)
                 return;
         }
+
+        UpdateInCombatAI_Warrior();
     }
+    else
+        SummonPetIfNeeded();
 }
 
 void BattleBotAI::UpdateInCombatAI_Warrior()
 {
     if (Unit* pVictim = me->GetVictim())
     {
+        if (Pet* pPet = me->GetPet())
+        {
+            if (pPet->IsAlive())
+            {
+                pPet->ToggleAutocast(34115, true);
+                pPet->ToggleAutocast(34118, true);
+                pPet->ToggleAutocast(34119, true);
+                pPet->ToggleAutocast(34120, true);
+                if (!pPet->GetVictim())
+                {
+                    pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                    pPet->AI()->AttackStart(pVictim);
+                }
+            }
+        }
+
         if (pVictim->IsNonMeleeSpellCasted(false, false, true))
         {
             if (m_spells.warrior.pPummel &&
