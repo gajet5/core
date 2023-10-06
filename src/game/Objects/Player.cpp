@@ -18320,9 +18320,7 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc 
     // reset extraAttacks counter
     ResetExtraAttacks();
 
-    if (GetPet())
-        RemovePet(PET_SAVE_REAGENTS);
-
+    // instant flight do not remove pet
     if(HasItemCount(26000, 1))
     {
         TaxiNodesEntry const* lastnode = sObjectMgr.FindTaxiNodesEntry(nodes[nodes.size() - 1]);
@@ -18331,6 +18329,8 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc 
 		return false;
     }
     else{
+        if (GetPet())
+            RemovePet(PET_SAVE_REAGENTS);
         WorldPacket data(SMSG_ACTIVATETAXIREPLY, 4);
         data << uint32(ERR_TAXIOK);
         GetSession()->SendPacket(&data);
