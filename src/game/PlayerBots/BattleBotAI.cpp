@@ -1236,6 +1236,7 @@ void BattleBotAI::UpdateOutOfCombatAI_Shaman()
         if (Pet* pPet = me->GetPet())
         {
             pPet->ToggleAutocast(34085, true);
+            pPet->ToggleAutocast(34086, true);
             pPet->ToggleAutocast(34089, true);
             pPet->ToggleAutocast(34091, true);
             if (!pPet->GetVictim())
@@ -1270,6 +1271,28 @@ void BattleBotAI::UpdateInCombatAI_Shaman()
     if (m_spells.shaman.pGhostWolf &&
         me->GetShapeshiftForm() == FORM_GHOSTWOLF)
         me->RemoveAurasDueToSpellByCancel(m_spells.shaman.pGhostWolf->Id);
+
+    if (Unit* pFriend_pet = me->FindLowestHpFriendlyUnit(40.0f, 1, false, me))
+    {
+        if (Unit* pVictim_pet = pFriend_pet->GetVictim())
+        {
+            if (Pet* pPet = me->GetPet())
+            {
+                if (pPet->IsAlive())
+                {
+                    pPet->ToggleAutocast(34085, true);
+                    pPet->ToggleAutocast(34086, true);
+                    pPet->ToggleAutocast(34089, true);
+                    pPet->ToggleAutocast(34091, true);
+                    if (!pPet->GetVictim())
+                    {
+                        pPet->GetCharmInfo()->SetIsCommandAttack(true);
+                        pPet->AI()->AttackStart(pVictim_pet);
+                    }
+                }
+            }
+        }
+    }
 
     if (Unit* pVictim = me->GetVictim())
     {
@@ -1343,27 +1366,6 @@ void BattleBotAI::UpdateInCombatAI_Shaman()
         }
     }
 
-    if (Unit* pFriend_pet = me->FindLowestHpFriendlyUnit(40.0f, 1, false, me))
-    {
-        if (Unit* pVictim_pet = pFriend_pet->GetVictim())
-        {
-            if (Pet* pPet = me->GetPet())
-            {
-                if (pPet->IsAlive())
-                {
-                    pPet->ToggleAutocast(34085, true);
-                    pPet->ToggleAutocast(34089, true);
-                    pPet->ToggleAutocast(34091, true);
-                    if (!pPet->GetVictim())
-                    {
-                        pPet->GetCharmInfo()->SetIsCommandAttack(true);
-                        pPet->AI()->AttackStart(pVictim_pet);
-                    }
-                }
-            }
-        }
-    }
-    
     if (SummonShamanTotems())
         return;
 
