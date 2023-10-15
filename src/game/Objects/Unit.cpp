@@ -2761,22 +2761,22 @@ float Unit::GetUnitCriticalChance(WeaponAttackType attackType, Unit const* pVict
     else if (IsPet() && GetOwnerGuid().IsPlayer() && (GetEntry() == 200010 || GetEntry() == 1860 || GetEntry() == 1863 || GetEntry() == 417))
     {
         Player* pOwner = ::ToPlayer(GetOwner());
-        crit = pOwner->GetSpellCritPercent(SPELL_SCHOOL_HOLY) * 0.5 + GetTotalAuraModifier(SPELL_AURA_MOD_CRIT_PERCENT);
+        crit = pOwner->GetSpellCritPercent(SPELL_SCHOOL_HOLY) * 0.35 + GetTotalAuraModifier(SPELL_AURA_MOD_CRIT_PERCENT);
     }
     else if (IsPet() && GetOwnerGuid().IsPlayer() && (GetEntry() == 200011 || GetEntry() == 200013))
     {
         Player* pOwner = ::ToPlayer(GetOwner());
-        crit = pOwner->GetSpellCritPercent(SPELL_SCHOOL_HOLY) * 0.5 + pOwner->GetFloatValue(PLAYER_CRIT_PERCENTAGE) * 0.5 + GetTotalAuraModifier(SPELL_AURA_MOD_CRIT_PERCENT);
+        crit = pOwner->GetSpellCritPercent(SPELL_SCHOOL_HOLY) * 0.35 + pOwner->GetFloatValue(PLAYER_CRIT_PERCENTAGE) * 0.35 + GetTotalAuraModifier(SPELL_AURA_MOD_CRIT_PERCENT);
     }
     else if (IsPet() && GetOwnerGuid().IsPlayer() && (GetEntry() == 200014 || GetEntry() == 200015))
     {
         Player* pOwner = ::ToPlayer(GetOwner());
-        crit = pOwner->GetFloatValue(PLAYER_CRIT_PERCENTAGE) * 0.5 + GetTotalAuraModifier(SPELL_AURA_MOD_CRIT_PERCENT);
+        crit = pOwner->GetFloatValue(PLAYER_CRIT_PERCENTAGE) * 0.35 + GetTotalAuraModifier(SPELL_AURA_MOD_CRIT_PERCENT);
     }
     else if (IsPet() && GetOwnerGuid().IsPlayer() && (ToPet()->getPetType() == HUNTER_PET))
     {
         Player* pOwner = ::ToPlayer(GetOwner());
-        crit = pOwner->GetFloatValue(PLAYER_CRIT_PERCENTAGE) * 0.5 + GetTotalAuraModifier(SPELL_AURA_MOD_CRIT_PERCENT);
+        crit = pOwner->GetFloatValue(PLAYER_CRIT_PERCENTAGE) * 0.35 + GetTotalAuraModifier(SPELL_AURA_MOD_CRIT_PERCENT);
     }
     else
     {
@@ -5348,7 +5348,7 @@ bool Unit::IsSpellCrit(Unit const* pVictim, SpellEntry const* spellProto, SpellS
                 else if (IsPet() && GetOwnerGuid().IsPlayer() && (spellProto->Id == 34060 || spellProto->Id == 34061 || spellProto->Id == 3110 || spellProto->Id == 7799 || spellProto->Id == 7800 || spellProto->Id == 7801 || spellProto->Id == 7802 || spellProto->Id == 11762 || spellProto->Id == 11763 || spellProto->Id == 7814 || spellProto->Id == 7815 || spellProto->Id == 7816 || spellProto->Id == 11778 || spellProto->Id == 11779 || spellProto->Id == 11780 || spellProto->Id == 34085 || spellProto->Id == 34091))
                 {
                     Player* pOwner = ::ToPlayer(GetOwner());
-                    crit_chance = pOwner->GetSpellCritPercent(GetFirstSchoolInMask(schoolMask)) * 0.5 + GetTotalAuraModifierByMiscMask(SPELL_AURA_MOD_SPELL_CRIT_CHANCE_SCHOOL, schoolMask);
+                    crit_chance = pOwner->GetSpellCritPercent(GetFirstSchoolInMask(schoolMask)) * 0.35 + GetTotalAuraModifierByMiscMask(SPELL_AURA_MOD_SPELL_CRIT_CHANCE_SCHOOL, schoolMask);
                 }
                 else
                 {
