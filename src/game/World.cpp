@@ -122,7 +122,8 @@ World::World():
     m_startTime(m_gameTime),
     m_wowPatch(WOW_PATCH_102),
     m_defaultDbcLocale(LOCALE_enUS),
-    m_timeRate(1.0f)
+    m_timeRate(1.0f),
+    m_canProcessAsyncPackets(false)
 {
     m_ShutdownMask = 0;
     m_ShutdownTimer = 0;
@@ -181,6 +182,13 @@ World::~World()
         m_lfgQueueThread.reset(nullptr);
     }
 
+    if (m_asyncPacketsThread)
+    {
+        if (m_asyncPacketsThread->joinable())
+            m_asyncPacketsThread->join();
+        m_asyncPacketsThread.reset(nullptr);
+    }
+
     //TODO free addSessQueue
 }
 
@@ -195,6 +203,9 @@ void World::Shutdown()
 
     if (m_lfgQueueThread && m_lfgQueueThread->joinable())
         m_lfgQueueThread->join();
+
+    if (m_asyncPacketsThread && m_asyncPacketsThread->joinable())
+        m_asyncPacketsThread->join();
 
     sAnticheatMgr->StopWardenUpdateThread();
 }
@@ -1858,6 +1869,7 @@ void World::SetInitialWorldSettings()
                                               std::chrono::milliseconds(getConfig(CONFIG_UINT32_PACKET_BCAST_FREQUENCY)));
 
     m_charDbWorkerThread.reset(new std::thread(&CharactersDatabaseWorkerThread));
+    m_asyncPacketsThread.reset(new std::thread(&World::ProcessAsyncPackets, this));
 
     sLog.Out(LOG_BASIC, LOG_LVL_MINIMAL, "");
     sLog.Out(LOG_BASIC, LOG_LVL_MINIMAL, "==========================================================");
@@ -1916,6 +1928,30 @@ void World::DetectDBCLang()
     sLog.Out(LOG_BASIC, LOG_LVL_MINIMAL, "");
 }
 
+// Only processes packets while session update, the messager, and cli commands processing are NOT running
+void World::ProcessAsyncPackets()
+{
+    while (!sWorld.IsStopped())
+    {
+        do
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        } while (!m_canProcessAsyncPackets);
+
+        for (auto const& itr : m_sessions)
+        {
+            WorldSession* pSession = itr.second;
+
+            MapSessionFilter updater(pSession);
+            updater.SetProcessType(PACKET_PROCESS_ASYNC);
+            pSession->ProcessPackets(updater);
+
+            if (!m_canProcessAsyncPackets)
+                break;
+        }
+    }
+}
+
 // Update the World !
 void World::Update(uint32 diff)
 {
@@ -1935,8 +1971,6 @@ void World::Update(uint32 diff)
     // Update the game time and check for shutdown time
     _UpdateGameTime();
 
-    GetMessager().Execute(this);
-
     // Update mass mailer tasks if any
     sMassMailMgr.Update();
 
@@ -1950,12 +1984,18 @@ void World::Update(uint32 diff)
         sAuctionMgr.Update();
     }
 
+    m_canProcessAsyncPackets = false;
+
+    GetMessager().Execute(this);
+
     // <li> Handle session updates
     uint32 updateSessionsTime = WorldTimer::getMSTime();
     UpdateSessions(diff);
     updateSessionsTime = WorldTimer::getMSTimeDiffToNow(updateSessionsTime);
     if (getConfig(CONFIG_UINT32_PERFLOG_SLOW_SESSIONS_UPDATE) && updateSessionsTime > getConfig(CONFIG_UINT32_PERFLOG_SLOW_SESSIONS_UPDATE))
         sLog.Out(LOG_PERFORMANCE, LOG_LVL_MINIMAL, "Update sessions: %ums", updateSessionsTime);
+
+    m_canProcessAsyncPackets = true;
 
     // <li> Update uptime table
     if (m_timers[WUPDATE_UPTIME].Passed())
@@ -2058,15 +2098,19 @@ void World::Update(uint32 diff)
     else
         m_MaintenanceTimeChecker -= diff;
 
-    //Update PlayerBotMgr
+    // Update PlayerBotMgr
     sPlayerBotMgr.Update(diff);
     // Update AutoBroadcast
     sAutoBroadCastMgr.Update(diff);
-    // Update liste des ban si besoin
+    // Update ban list if necessary
     sAccountMgr.Update(diff);
+
+    m_canProcessAsyncPackets = false;
 
     // And last, but not least handle the issued cli commands
     ProcessCliCommands();
+
+    m_canProcessAsyncPackets = true;
 
     //cleanup unused GridMap objects as well as VMaps
     if (getConfig(CONFIG_BOOL_CLEANUP_TERRAIN))
