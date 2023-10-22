@@ -4539,6 +4539,7 @@ float Aura::CalculateDotDamage() const
     {
         case SPELLFAMILY_DRUID:
         {
+#if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_11_2
             // Rip
             if (spellProto->IsFitToFamilyMask<CF_DRUID_RIP_BITE>())
             {
@@ -4551,6 +4552,7 @@ float Aura::CalculateDotDamage() const
                     damage += caster->GetTotalAttackPowerValue(BASE_ATTACK) * cp / 100;
                 }
             }
+#endif
             break;
         }
         case SPELLFAMILY_ROGUE:
