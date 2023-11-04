@@ -696,10 +696,6 @@ void Spell::FillTargetMap()
 
 SpellCastResult Spell::CheckScriptTargeting(SpellEffectIndex effIndex, uint32 chainTargets, float radius, uint32 targetMode, UnitList& tempUnitList)
 {
-    //shaman - Sapta Sight
-    if ((m_spellInfo->Id == 8202) || (m_spellInfo->Id == 8898) || (m_spellInfo->Id == 8900) || (m_spellInfo->Id == 9735))
-        return SPELL_CAST_OK;
-
     SpellScriptTargetBounds bounds = sSpellMgr.GetSpellScriptTargetBounds(m_spellInfo->Id);
 
     if (bounds.first == bounds.second)
