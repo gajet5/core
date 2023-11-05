@@ -5992,10 +5992,16 @@ void Aura::PeriodicTick(SpellEntry const* sProto, AuraType auraType, uint32 data
             if (!pCaster)
                 return;
 
-            if (spellProto->Effect[GetEffIndex()] == SPELL_EFFECT_PERSISTENT_AREA_AURA &&
-                pCaster->SpellHitResult(target, spellProto, GetEffIndex(), false) != SPELL_MISS_NONE)
-                return;
-
+            if (spellProto->Effect[GetEffIndex()] == SPELL_EFFECT_PERSISTENT_AREA_AURA)
+            {
+                SpellMissInfo result = pCaster->SpellHitResult(target, spellProto, GetEffIndex(), false);
+                if (result != SPELL_MISS_NONE)
+                {
+                    pCaster->SendSpellMiss(target, GetId(), result);
+                    return;
+                }
+            }
+            
             // Check for immune (not use charges)
             if (!spellProto->HasAttribute(SPELL_ATTR_NO_IMMUNITIES)) // confirmed Impaling spine goes through immunity
             {
@@ -6100,9 +6106,15 @@ void Aura::PeriodicTick(SpellEntry const* sProto, AuraType auraType, uint32 data
             if (!pCaster->IsInWorld() || !pCaster->IsAlive())
                 return;
 
-            if (spellProto->Effect[GetEffIndex()] == SPELL_EFFECT_PERSISTENT_AREA_AURA &&
-                    pCaster->SpellHitResult(target, spellProto, GetEffIndex(), false) != SPELL_MISS_NONE)
-                return;
+            if (spellProto->Effect[GetEffIndex()] == SPELL_EFFECT_PERSISTENT_AREA_AURA)
+            {
+                SpellMissInfo result = pCaster->SpellHitResult(target, spellProto, GetEffIndex(), false);
+                if (result != SPELL_MISS_NONE)
+                {
+                    pCaster->SendSpellMiss(target, GetId(), result);
+                    return;
+                }
+            }       
 
             // Check for immune
             if (!spellProto->HasAttribute(SPELL_ATTR_NO_IMMUNITIES))
@@ -6289,9 +6301,15 @@ void Aura::PeriodicTick(SpellEntry const* sProto, AuraType auraType, uint32 data
             if (!pCaster->IsAlive())
                 return;
 
-            if (GetSpellProto()->Effect[GetEffIndex()] == SPELL_EFFECT_PERSISTENT_AREA_AURA &&
-                    pCaster->SpellHitResult(target, spellProto, GetEffIndex(), false) != SPELL_MISS_NONE)
-                return;
+            if (spellProto->Effect[GetEffIndex()] == SPELL_EFFECT_PERSISTENT_AREA_AURA)
+            {
+                SpellMissInfo result = pCaster->SpellHitResult(target, spellProto, GetEffIndex(), false);
+                if (result != SPELL_MISS_NONE)
+                {
+                    pCaster->SendSpellMiss(target, GetId(), result);
+                    return;
+                }
+            }
 
             // Check for immune (not use charges)
             if (!spellProto->HasAttribute(SPELL_ATTR_NO_IMMUNITIES)) // confirmed Impaling spine goes through immunity
