@@ -1875,7 +1875,6 @@ void CombatBotBaseAI::AddAllSpellReagents()
     }
 }
 
-
 bool CombatBotBaseAI::AreOthersOnSameTarget(ObjectGuid guid, bool checkMelee, bool checkSpells) const
 {
     Group* pGroup = me->GetGroup();
@@ -2014,7 +2013,7 @@ bool CombatBotBaseAI::HealInjuredTargetDirect(Unit* pTarget)
 bool CombatBotBaseAI::IsValidHealTarget(Unit const* pTarget, float healthPercent) const
 {
     return (pTarget->GetHealthPercent() < healthPercent) &&
-            pTarget->IsAlive() &&
+            me->IsValidHelpfulTarget(pTarget) &&
             me->IsWithinLOSInMap(pTarget) &&
             me->IsWithinDist(pTarget, 30.0f);
 }
@@ -2023,6 +2022,9 @@ Unit* CombatBotBaseAI::SelectHealTarget(float selfHealPercent, float groupHealPe
 {
     if (me->GetHealthPercent() < selfHealPercent)
         return me;
+
+    if (IsInDuel())
+        return nullptr;
 
     Unit* pTarget = nullptr;
     float healthPercent = 100.0f;
@@ -2067,6 +2069,9 @@ Unit* CombatBotBaseAI::SelectPeriodicHealTarget(float selfHealPercent, float gro
        !me->HasAuraType(SPELL_AURA_PERIODIC_HEAL))
         return me;
 
+    if (IsInDuel())
+        return nullptr;
+
     if (Group* pGroup = me->GetGroup())
     {
         for (GroupReference* itr = pGroup->GetFirstMember(); itr != nullptr; itr = itr->next())
@@ -2093,30 +2098,33 @@ bool CombatBotBaseAI::FindAndPreHealTarget()
     Unit* pTarget = me;
     int32 maxIncomingDamage = GetIncomingdamage(me);
 
-    if (Group* pGroup = me->GetGroup())
+    if (!IsInDuel())
     {
-        for (GroupReference* itr = pGroup->GetFirstMember(); itr != nullptr; itr = itr->next())
+        if (Group* pGroup = me->GetGroup())
         {
-            if (Unit* pMember = itr->getSource())
+            for (GroupReference* itr = pGroup->GetFirstMember(); itr != nullptr; itr = itr->next())
             {
-                // We already checked self.
-                if (pMember == me)
-                    continue;
-
-                // Avoid all healers picking same target.
-                if (pTarget && !IsTankClass(pMember->GetClass()) && AreOthersOnSameTarget(pMember->GetObjectGuid(), false, true))
-                    continue;
-
-                int32 incomingDamage = GetIncomingdamage(pMember);
-                if (!incomingDamage)
-                    continue;
-
-                // Check if we should heal party member.
-                if (incomingDamage > maxIncomingDamage &&
-                    IsValidHealTarget(pMember))
+                if (Unit* pMember = itr->getSource())
                 {
-                    maxIncomingDamage = incomingDamage;
-                    pTarget = pMember;
+                    // We already checked self.
+                    if (pMember == me)
+                        continue;
+
+                    // Avoid all healers picking same target.
+                    if (pTarget && !IsTankClass(pMember->GetClass()) && AreOthersOnSameTarget(pMember->GetObjectGuid(), false, true))
+                        continue;
+
+                    int32 incomingDamage = GetIncomingdamage(pMember);
+                    if (!incomingDamage)
+                        continue;
+
+                    // Check if we should heal party member.
+                    if (incomingDamage > maxIncomingDamage &&
+                        IsValidHealTarget(pMember))
+                    {
+                        maxIncomingDamage = incomingDamage;
+                        pTarget = pMember;
+                    }
                 }
             }
         }
@@ -2263,7 +2271,7 @@ Player* CombatBotBaseAI::SelectBuffTarget(SpellEntry const* pSpellEntry) const
         {
             if (Player* pMember = itr->getSource())
             {
-                if (pMember->IsAlive() &&
+                if (me->IsValidHelpfulTarget(pMember) &&
                    !pMember->IsGameMaster() &&
                     IsValidBuffTarget(pMember, pSpellEntry) &&
                     me->IsWithinLOSInMap(pMember) &&
@@ -2285,7 +2293,7 @@ Player* CombatBotBaseAI::SelectDispelTarget(SpellEntry const* pSpellEntry) const
         {
             if (Player* pMember = itr->getSource())
             {
-                if (pMember->IsAlive() &&
+                if (me->IsValidHelpfulTarget(pMember) &&
                    !pMember->IsGameMaster() &&
                     IsValidDispelTarget(pMember, pSpellEntry) &&
                     me->IsWithinLOSInMap(pMember) &&
@@ -3113,6 +3121,24 @@ bool CombatBotBaseAI::IsWearingShield(Player* pPlayer) const
         return true;
 
     return false;
+}
+
+bool CombatBotBaseAI::IsInDuel() const
+{
+    return me->duel && me->duel->startTime != 0;
+}
+
+CombatBotRoles CombatBotBaseAI::GetRole() const
+{
+    if (m_role == ROLE_HEALER && IsInDuel())
+    {
+        if (IsMeleeDamageClass(me->GetClass()))
+            return ROLE_MELEE_DPS;
+        else
+            return ROLE_RANGE_DPS;
+    }
+
+    return m_role;
 }
 
 void CombatBotBaseAI::SendBattlefieldPortPacket()

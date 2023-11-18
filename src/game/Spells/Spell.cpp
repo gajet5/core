@@ -1155,7 +1155,7 @@ void Spell::AddUnitTarget(Unit* pTarget, SpellEffectIndex effIndex)
 #endif
         {
             if (m_casterUnit && !m_spellInfo->HasAttribute(SPELL_ATTR_EX3_SUPPRESS_TARGET_PROCS))
-                m_casterUnit->ProcDamageAndSpell(ProcSystemArguments(pTarget, PROC_FLAG_NONE, PROC_FLAG_TAKE_HARMFUL_SPELL, PROC_EX_REFLECT, 1, BASE_ATTACK, m_spellInfo, this));
+                m_casterUnit->ProcDamageAndSpell(ProcSystemArguments(pTarget, PROC_FLAG_NONE, PROC_FLAG_TAKE_HARMFUL_SPELL, PROC_EX_REFLECT, 1, 1, BASE_ATTACK, m_spellInfo, this));
             targetInfo.reflectResult = SPELL_MISS_IMMUNE;
         }
         else
@@ -1541,6 +1541,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
                 m_spellInfo->HasAttribute(SPELL_ATTR_EX3_SUPPRESS_TARGET_PROCS) ? PROC_FLAG_NONE : procVictim,
                 procEx,
                 addhealth,
+                addhealth,
                 m_attackType,
                 spellInfo,
                 this));
@@ -1586,6 +1587,8 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
             pCaster->CalculateSpellDamage(&damageInfo, m_damage, m_spellInfo, damageEffectIndex, m_attackType, this, target->isCrit);
         }
 
+        uint32 const originalDamage = damageInfo.damage;
+
         unitTarget->CalculateAbsorbResistBlock(pCaster, &damageInfo, m_spellInfo, BASE_ATTACK, this);
         m_absorbed = damageInfo.absorb;
 
@@ -1612,6 +1615,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
                 m_spellInfo->HasAttribute(SPELL_ATTR_EX3_SUPPRESS_TARGET_PROCS) ? PROC_FLAG_NONE : procVictim,
                 procEx,
                 damageInfo.damage,
+                originalDamage,
                 m_attackType,
                 m_spellInfo,
                 this));
@@ -1724,6 +1728,7 @@ void Spell::DoAllEffectOnTarget(TargetInfo *target)
            !m_spellInfo->HasAttribute(SPELL_ATTR_EX3_SUPPRESS_CASTER_PROCS) ? procAttacker : PROC_FLAG_NONE,
             m_spellInfo->HasAttribute(SPELL_ATTR_EX3_SUPPRESS_TARGET_PROCS) ? PROC_FLAG_NONE : procVictim,
             procEx,
+            dmg,
             dmg,
             m_attackType,
             m_spellInfo,
@@ -4084,11 +4089,11 @@ void Spell::cast(bool skipCheck)
         }
 
         // This will trigger only auras with PROC_EX_CAST_END.
-        m_casterUnit->ProcDamageAndSpell(ProcSystemArguments(pTarget, m_procAttacker, PROC_FLAG_NONE, procEx, 1, m_attackType, m_spellInfo, this));
+        m_casterUnit->ProcDamageAndSpell(ProcSystemArguments(pTarget, m_procAttacker, PROC_FLAG_NONE, procEx, 1, 1, m_attackType, m_spellInfo, this));
 
         // Trigger procs for spells with no unit targets at cast time.
         if (m_UniqueTargetInfo.empty())
-            m_casterUnit->ProcDamageAndSpell(ProcSystemArguments(nullptr, m_procAttacker, PROC_FLAG_NONE, PROC_EX_NORMAL_HIT, 1, m_attackType, m_spellInfo, this));
+            m_casterUnit->ProcDamageAndSpell(ProcSystemArguments(nullptr, m_procAttacker, PROC_FLAG_NONE, PROC_EX_NORMAL_HIT, 1, 1, m_attackType, m_spellInfo, this));
     }
 
     // Okay, everything is prepared. Now we need to distinguish between immediate and evented delayed spells
@@ -6098,19 +6103,6 @@ SpellCastResult Spell::CheckCast(bool strict)
         if (goTarget->GetGOInfo()->CannotBeUsedUnderImmunity() && m_casterUnit && m_casterUnit->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE))
             return SPELL_FAILED_DAMAGE_IMMUNE;
 #endif
-
-        // Require LOS to loot chests
-        // For example, check LoS when opening a gobj (spell 6477).
-        // Prevents abuse with object id 165554 for example.
-        if (goTarget->GetGoType() == GAMEOBJECT_TYPE_CHEST)
-        {
-            if (!m_IsTriggeredSpell && !(m_spellInfo->AttributesEx2 & SPELL_ATTR_EX2_IGNORE_LINE_OF_SIGHT)
-              && !goTarget->GetGOInfo()->chest.minSuccessOpens                // don't check for gathering nodes, too many are halfway in walls
-              && !goTarget->HasFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND)  // don't check for quest items
-              && !(goTarget->GetEntry() == 160845)                            // exemption for Dark Coffer
-              && !m_caster->IsWithinLOSInMap(goTarget, false))
-                return SPELL_FAILED_LINE_OF_SIGHT;
-        }
     }
     else if (m_targets.IsEmpty())
     {

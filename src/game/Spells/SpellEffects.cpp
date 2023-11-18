@@ -2899,7 +2899,10 @@ void Spell::EffectOpenLock(SpellEffectIndex effIdx)
 
     // mark item as unlocked
     if (itemTarget)
+    {
         itemTarget->SetFlag(ITEM_FIELD_FLAGS, ITEM_DYNFLAG_UNLOCKED);
+        itemTarget->SetState(ITEM_CHANGED);
+    }
 
     SendLoot(guid, LOOT_SKINNING, LockType(m_spellInfo->EffectMiscValue[effIdx]));
 
@@ -4211,7 +4214,7 @@ void Spell::EffectWeaponDmg(SpellEffectIndex effIdx)
         }
 
         m_casterUnit->SendAttackStateUpdate(&damageInfo);
-        m_casterUnit->ProcDamageAndSpell(ProcSystemArguments(damageInfo.target, damageInfo.procAttacker, damageInfo.procVictim, damageInfo.procEx, damageInfo.totalDamage, damageInfo.attackType));
+        m_casterUnit->ProcDamageAndSpell(ProcSystemArguments(damageInfo.target, damageInfo.procAttacker, damageInfo.procVictim, damageInfo.procEx, damageInfo.totalDamage, damageInfo.totalDamage + damageInfo.totalAbsorb + damageInfo.totalResist, damageInfo.attackType));
         m_casterUnit->DealMeleeDamage(&damageInfo, true);
 
         // if damage unitTarget call AI reaction
@@ -4708,6 +4711,9 @@ void Spell::EffectScriptEffect(SpellEffectIndex effIdx)
                 }
                 case 24590:                                 // Brittle Armor - need remove one 24575 Brittle Armor aura
                     unitTarget->RemoveAuraHolderFromStack(24575);
+                    return;
+                case 24660:                                 // Zandalarian Hero Charm - Unstable Power
+                    unitTarget->RemoveAuraHolderFromStack(24659);
                     return;
                 case 24693:                                 // Hakkar Power Down - cast by priests on death
                 {
