@@ -767,17 +767,11 @@ SpellAuraProcResult Unit::HandleDummyAuraProc(Unit* pVictim, uint32 amount, uint
                 // Azzinoth's Aura
                 case 34124:
                 {
-                    if (!pVictim || !pVictim->IsAlive())
-                        return SPELL_AURA_PROC_FAILED;
-
-                    // pVictim is caster of aura
-                    if (triggeredByAura->GetCasterGuid() != pVictim->GetObjectGuid())
-                        return SPELL_AURA_PROC_FAILED;
-
                     // heal amount
                     basepoints[0] = dither(triggerAmount * amount / 100);
-                    pVictim->CastCustomSpell(pVictim, 34125, basepoints[0], {}, {}, true, castItem, triggeredByAura);
-                    return SPELL_AURA_PROC_OK;                                // no hidden cooldown
+                    target = this;
+                    triggered_spell_id = 34125;
+                    break;                               // no hidden cooldown
                 }
                 // Obsidian Armor (Justice Bearer`s Pauldrons shoulder)
                 case 27539:
