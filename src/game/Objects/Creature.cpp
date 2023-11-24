@@ -360,31 +360,34 @@ bool Creature::InitEntry(uint32 entry, GameEventCreatureData const* eventData /*
 #else
     SetInt32Value(UNIT_MOD_CAST_SPEED, 0);
 #endif
+
     // update speed for the new CreatureInfo base speed mods
     UpdateSpeed(MOVE_WALK, false);
     UpdateSpeed(MOVE_RUN,  false);
     SetFly(CanFly());
-
     m_defaultMovementType = MovementGeneratorType(m_creatureData ? m_creatureData->movement_type : cinfo->movement_type);
 
     // Apply Poison & Disease immunities for Elemental and Mechanical type creatures
-    if (GetCreatureInfo()->type == CREATURE_TYPE_ELEMENTAL ||
-        GetCreatureInfo()->type == CREATURE_TYPE_MECHANICAL)
+    switch (GetCreatureInfo()->type)
     {
-        ApplySpellImmune(0, IMMUNITY_DISPEL, DISPEL_DISEASE, true);
-        ApplySpellImmune(0, IMMUNITY_DISPEL, DISPEL_POISON, true);
-    }
-
-    if (GetCreatureInfo()->type == CREATURE_TYPE_MECHANICAL)
-    {
-        //creature 200013 heal
-        if(entry!=200013)
+        case CREATURE_TYPE_MECHANICAL:
         {
-            ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_HEAL, true);
-            ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_HEAL_MAX_HEALTH, true);
-            ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_PERIODIC_HEAL, true);
+            //creature 200013 heal
+            if(entry!=200013)
+            {
+                ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_HEAL, true);
+                ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_HEAL_MAX_HEALTH, true);
+                ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_PERIODIC_HEAL, true);
+            }
+            ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_PERIODIC_LEECH, true);
+            // no break
         }
-        ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_PERIODIC_LEECH, true);
+        case CREATURE_TYPE_ELEMENTAL:
+        {
+            ApplySpellImmune(0, IMMUNITY_DISPEL, DISPEL_DISEASE, true);
+            ApplySpellImmune(0, IMMUNITY_DISPEL, DISPEL_POISON, true);
+            break;
+        }
     }
 
     if (HasImmunityFlag(CREATURE_IMMUNITY_TAUNT))
@@ -402,6 +405,21 @@ bool Creature::InitEntry(uint32 entry, GameEventCreatureData const* eventData /*
     if (HasImmunityFlag(CREATURE_IMMUNITY_MOD_CAST_SPEED))
     {
         ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_CASTING_SPEED_NOT_STACK, true);
+    }
+
+    if (HasImmunityFlag(CREATURE_IMMUNITY_DISEASE))
+    {
+        ApplySpellImmune(0, IMMUNITY_DISPEL, DISPEL_DISEASE, true);
+    }
+
+    if (HasImmunityFlag(CREATURE_IMMUNITY_POISON))
+    {
+        ApplySpellImmune(0, IMMUNITY_DISPEL, DISPEL_POISON, true);
+    }
+
+    if (HasImmunityFlag(CREATURE_IMMUNITY_CURSE))
+    {
+        ApplySpellImmune(0, IMMUNITY_DISPEL, DISPEL_CURSE, true);
     }
 
     return true;
