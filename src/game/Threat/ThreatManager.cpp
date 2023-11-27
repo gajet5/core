@@ -399,6 +399,47 @@ void ThreatManager::addThreat(Unit* pVictim, float threat, bool crit, SpellSchoo
     if (!pVictim->IsAlive() || !getOwner()->IsAlive())
         return;
 
+    // mod spell no threat
+    if (pThreatSpell && (pThreatSpell->Id == 34002 ||
+                         pThreatSpell->Id == 34012 ||
+                         pThreatSpell->Id == 34013 ||
+                         pThreatSpell->Id == 34014 ||
+                         pThreatSpell->Id == 34015 ||
+                         pThreatSpell->Id == 34017 ||
+                         pThreatSpell->Id == 34020 ||
+                         pThreatSpell->Id == 34021 ||
+                         pThreatSpell->Id == 34022 ||
+                         pThreatSpell->Id == 34023 ||
+                         pThreatSpell->Id == 34024 ||
+                         pThreatSpell->Id == 34025 ||
+                         pThreatSpell->Id == 34026 ||
+                         pThreatSpell->Id == 34028 ||
+                         pThreatSpell->Id == 34037 ||
+                         pThreatSpell->Id == 34038 ||
+                         pThreatSpell->Id == 34039 ||
+                         pThreatSpell->Id == 34040 ||
+                         pThreatSpell->Id == 34041 ||
+                         pThreatSpell->Id == 34042 ||
+                         pThreatSpell->Id == 34048 ||
+                         pThreatSpell->Id == 34049 ||
+                         pThreatSpell->Id == 34060 ||
+                         pThreatSpell->Id == 34061 ||
+                         pThreatSpell->Id == 34062 ||
+                         pThreatSpell->Id == 34064 ||
+                         pThreatSpell->Id == 34068 ||
+                         pThreatSpell->Id == 34069 ||
+                         pThreatSpell->Id == 34090 ||
+                         pThreatSpell->Id == 34099 ||
+                         pThreatSpell->Id == 34105 ||
+                         pThreatSpell->Id == 34107 ||
+                         pThreatSpell->Id == 34111 ||
+                         pThreatSpell->Id == 34112 ||
+                         pThreatSpell->Id == 34116 ||
+                         pThreatSpell->Id == 34117 ||
+                         pThreatSpell->Id == 34123 ||
+                         pThreatSpell->Id == 34125))
+        return;
+    
     MANGOS_ASSERT(getOwner()->GetTypeId() == TYPEID_UNIT);
 
     // don't add assist threat to targets under hard CC
