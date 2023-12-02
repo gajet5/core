@@ -1041,7 +1041,8 @@ bool QuestRewarded_npc_knot_thimblejack(Player* pPlayer, Creature* pCreature, Qu
         {
             if (pCreature)
             {
-                if (GameObject* pGo = pCreature->FindNearestGameObject(GO_KNOTS_BALL_AND_CHAIN, 20.0f))
+                GameObject* pGo = nullptr;
+                if (pGo = pCreature->FindNearestGameObject(GO_KNOTS_BALL_AND_CHAIN, 20.0f))
                     pGo->Delete();
                 if (pGo = pCreature->FindNearestGameObject(GO_KNOTS_CACHE, 20.0f))
                     pGo->SetVisible(true);
