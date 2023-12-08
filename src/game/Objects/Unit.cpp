@@ -905,7 +905,10 @@ void Unit::Kill(Unit* pVictim, SpellEntry const* spellProto, bool durabilityLoss
                 pPlayerTap = recipient;
             else if (ObjectGuid recipient = pCreatureVictim->GetLootRecipientGuid())
                 if (recipient.IsPet())
-                    pPlayerTap = nullptr;
+                {
+                    pPlayerTap = _GetPet(recipient)->GetOwner()->ToPlayer();
+                    pCreatureVictim->SetLootRecipient(_GetPet(recipient)->GetOwner());
+                }
             // Set correct pGroupTap if player entered a group
             if (pPlayerTap && !pGroupTap)
                 pGroupTap = pPlayerTap->GetGroup();
