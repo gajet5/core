@@ -537,8 +537,7 @@ class Creature : public Unit
 
         bool IsLootAllowedDueToDamageOrigin() const
         {
-            //return 65 * m_playerDamageTaken > 35 * m_nonPlayerDamageTaken;
-            return true;
+            return 65 * m_playerDamageTaken > 35 * m_nonPlayerDamageTaken;
         }
 
         float GetXPModifierDueToDamageOrigin() const
@@ -546,8 +545,7 @@ class Creature : public Unit
             // If players dealt less than 35% of the damage, no XP and no loot - or both=0
             if (!IsLootAllowedDueToDamageOrigin())
                 return 0.0f;
-            //return float(m_playerDamageTaken) / (m_playerDamageTaken + m_nonPlayerDamageTaken);
-            return 1.0f;
+            return float(m_playerDamageTaken) / (m_playerDamageTaken + m_nonPlayerDamageTaken);
         }
 
         bool HasWeapon() const;
