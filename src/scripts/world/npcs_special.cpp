@@ -1315,7 +1315,7 @@ struct npc_pats_firework_guyAI : ScriptedAI
                     pSummoner->KilledMonster(cInfo, ObjectGuid());
         }
 
-        if (GetClosestGameObjectWithEntry(m_creature, GO_OMEN_CLUSTER_LAUNCHER, INTERACTION_DISTANCE))
+        if (GetClosestGameObjectWithEntry(m_creature, GO_OMEN_CLUSTER_LAUNCHER, 30.0f))
             boss_omenAI::OnFireworkLaunch(m_creature);
 
         m_bDone = true;
