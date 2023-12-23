@@ -929,8 +929,8 @@ void Unit::Kill(Unit* pVictim, SpellEntry const* spellProto, bool durabilityLoss
             {
                 if (recipient.IsPet() && IsPlayer() && static_cast<Player const*>(this)->IsControlledByOwnClient() && !static_cast<Player const*>(this)->IsBot())
                 {
-                    pPlayerTap = static_cast<Player const*>(this);
-                    pCreatureVictim->SetLootRecipient(static_cast<Unit const*>(this));
+                    pPlayerTap = static_cast<Player*>(this);
+                    pCreatureVictim->SetLootRecipient(static_cast<Unit*>(this));
                 }
             }
             // Set correct pGroupTap if player entered a group
