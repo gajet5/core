@@ -930,7 +930,7 @@ void Unit::Kill(Unit* pVictim, SpellEntry const* spellProto, bool durabilityLoss
                 if (recipient.IsPet() && IsPlayer() && static_cast<Player const*>(this)->IsControlledByOwnClient() && !static_cast<Player const*>(this)->IsBot())
                 {
                     //pPlayerTap = _GetPet(recipient)->GetOwner()->ToPlayer();
-                    pPlayerTap = static_cast<Player const*>(this)；
+                    pPlayerTap = static_cast<Player const*>(this);
                     //pCreatureVictim->SetLootRecipient(_GetPet(recipient)->GetOwner());
                     pCreatureVictim->SetLootRecipient(static_cast<Unit const*>(this));
                 }
