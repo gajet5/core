@@ -47,10 +47,7 @@ enum
     SPELL_MALGEN_LONGSPEAR_PET          = 19561,
     SPELL_MALGEN_LONGSPEAR_SHOOT        = 6660,
 
-    NPC_MALGEN_LONGSPEAR_PET_GNASHJAW   = 16095,
-    NPC_THELDREN_KILL_CREDIT            = 16166,
-
-    QUEST_THE_CHALLENGE                 = 9015
+    NPC_MALGEN_LONGSPEAR_PET_GNASHJAW   = 16095
 };
 
 struct npc_theldrenAI : public ScriptedAI
@@ -69,19 +66,6 @@ struct npc_theldrenAI : public ScriptedAI
         m_uiInterceptTimer = 10000;
         m_uiMortalStrikeTimer = 10000;
         m_uiFearTimer = 30000;
-    }
-
-    void JustDied(Unit* pWho) override
-    {
-        std::list<Player*> players;
-        GetPlayersWithinRange(players, 100.0f);
-        for (const auto& it : players)
-        {
-            if(it->GetQuestStatus(QUEST_THE_CHALLENGE) == QUEST_STATUS_INCOMPLETE)
-            {
-                it->KilledMonsterCredit(NPC_THELDREN_KILL_CREDIT);
-            }
-        }
     }
 
     void UpdateAI(uint32 const diff) override
