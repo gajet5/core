@@ -1417,6 +1417,7 @@ bool Pet::InitStatsForLevel(uint32 petlevel, Unit* owner)
         {
             uint64 warlock_ap = owner->GetTotalAttackPowerValue(BASE_ATTACK);
             uint64 warlock_spell_power = owner->IsPlayer() ? owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_HOLY) : 0;
+            uint64 warlock_spell_power_shadow = owner->IsPlayer() ? owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_MASK_SHADOW) : 0;
             uint64 warlock_healing_power = owner->IsPlayer() ? owner->GetTotalAuraModifier(SPELL_AURA_MOD_HEALING_DONE) : 0;
             uint64 warlock_max_hp = owner->IsPlayer() ? owner->GetMaxHealth() : 0;
             uint64 warlock_max_mp = owner->IsPlayer() ? owner->GetMaxPower(POWER_MANA) : 0;
@@ -1455,8 +1456,8 @@ bool Pet::InitStatsForLevel(uint32 petlevel, Unit* owner)
                 }
                 else if(owner->IsPlayer() && creatureId == 200010)
                 {
-                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(damageMod * (pInfo->dmgMin + warlock_spell_power / 14 + warlock_healing_power / 28) * (float)GetAttackTime(BASE_ATTACK) / 2000));
-                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(damageMod * (pInfo->dmgMax + warlock_spell_power / 14 + warlock_healing_power / 28) * (float)GetAttackTime(BASE_ATTACK) / 2000));
+                    SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, float(damageMod * (pInfo->dmgMin + warlock_spell_power_shadow / 14 + warlock_healing_power / 28) * (float)GetAttackTime(BASE_ATTACK) / 2000));
+                    SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, float(damageMod * (pInfo->dmgMax + warlock_spell_power_shadow / 14 + warlock_healing_power / 28) * (float)GetAttackTime(BASE_ATTACK) / 2000));
                 }
                 else if(owner->IsPlayer() && creatureId == 200011)
                 {
