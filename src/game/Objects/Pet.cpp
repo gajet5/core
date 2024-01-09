@@ -1417,7 +1417,7 @@ bool Pet::InitStatsForLevel(uint32 petlevel, Unit* owner)
         {
             uint64 warlock_ap = owner->GetTotalAttackPowerValue(BASE_ATTACK);
             uint64 warlock_spell_power = owner->IsPlayer() ? owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_HOLY) : 0;
-            uint64 warlock_spell_power_shadow = owner->IsPlayer() ? owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_MASK_SHADOW) : 0;
+            uint64 warlock_spell_power_shadow = owner->IsPlayer() ? owner->GetUInt32Value(PLAYER_FIELD_MOD_DAMAGE_DONE_POS + SPELL_SCHOOL_SHADOW) : 0;
             uint64 warlock_healing_power = owner->IsPlayer() ? owner->GetTotalAuraModifier(SPELL_AURA_MOD_HEALING_DONE) : 0;
             uint64 warlock_max_hp = owner->IsPlayer() ? owner->GetMaxHealth() : 0;
             uint64 warlock_max_mp = owner->IsPlayer() ? owner->GetMaxPower(POWER_MANA) : 0;
