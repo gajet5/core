@@ -1682,10 +1682,14 @@ struct cthunAI : public ScriptedAI
 
         if (nextStomachEnterGrabTimer < diff) {
             if (Player* target = SelectRandomAliveNotStomach(m_pInstance)) {
-                target->InterruptNonMeleeSpells(false);
-                target->CastSpell(target, SPELL_MOUTH_TENTACLE, true, nullptr, nullptr, m_creature->GetObjectGuid());
-                stomachEnterPortTimer = STOMACH_GRAB_DURATION;
-                StomachEnterTargetGUID = target->GetObjectGuid();
+                //partybot do not enter stomach
+                if(target->IsPlayer() && static_cast<Player const*>(target)->IsControlledByOwnClient() && !static_cast<Player const*>(target)->IsBot())
+                {
+                    target->InterruptNonMeleeSpells(false);
+                    target->CastSpell(target, SPELL_MOUTH_TENTACLE, true, nullptr, nullptr, m_creature->GetObjectGuid());
+                    stomachEnterPortTimer = STOMACH_GRAB_DURATION;
+                    StomachEnterTargetGUID = target->GetObjectGuid();
+                }
             }
             nextStomachEnterGrabTimer = STOMACH_GRAB_COOLDOWN;
         }
