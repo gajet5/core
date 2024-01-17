@@ -255,6 +255,38 @@ static Player* SelectRandomAliveNotStomach(instance_temple_of_ahnqiraj* instance
     return (*j);
 }
 
+static Player* SelectRandomAliveNotStomachNotBot(instance_temple_of_ahnqiraj* instance)
+{
+    if (!instance) return nullptr;
+    std::list<Player*> temp;
+    std::list<Player*>::iterator j;
+    Map::PlayerList const& PlayerList = instance->GetMap()->GetPlayers();
+
+    if (!PlayerList.isEmpty())
+    {
+        for (const auto& itr : PlayerList)
+        {
+            if (Player* player = itr.getSource())
+            {
+                if (!player->IsDead() && !player->IsGameMaster() && player->IsInCombat() && !instance->PlayerInStomach(player) && player->IsPlayer() && static_cast<Player const*>(player)->IsControlledByOwnClient() && !static_cast<Player const*>(player)->IsBot()) {
+                    temp.push_back(player);
+                }
+            }
+        }
+    }
+
+    if (temp.empty())
+        return nullptr;
+
+    j = temp.begin();
+
+    if (temp.size() > 1) {
+        advance(j, urand(0, temp.size() - 1));
+    }
+
+    return (*j);
+}
+
 // Helper functions for SpellTimer users
 static Unit* selectSelfFunc(Creature* c) {
     return c;
@@ -1681,15 +1713,11 @@ struct cthunAI : public ScriptedAI
         }
 
         if (nextStomachEnterGrabTimer < diff) {
-            if (Player* target = SelectRandomAliveNotStomach(m_pInstance)) {
-                //partybot do not enter stomach
-                if(target->IsPlayer() && static_cast<Player const*>(target)->IsControlledByOwnClient() && !static_cast<Player const*>(target)->IsBot())
-                {
-                    target->InterruptNonMeleeSpells(false);
-                    target->CastSpell(target, SPELL_MOUTH_TENTACLE, true, nullptr, nullptr, m_creature->GetObjectGuid());
-                    stomachEnterPortTimer = STOMACH_GRAB_DURATION;
-                    StomachEnterTargetGUID = target->GetObjectGuid();
-                }
+            if (Player* target = SelectRandomAliveNotStomachNotBot(m_pInstance)) {
+                target->InterruptNonMeleeSpells(false);
+                target->CastSpell(target, SPELL_MOUTH_TENTACLE, true, nullptr, nullptr, m_creature->GetObjectGuid());
+                stomachEnterPortTimer = STOMACH_GRAB_DURATION;
+                StomachEnterTargetGUID = target->GetObjectGuid();
             }
             nextStomachEnterGrabTimer = STOMACH_GRAB_COOLDOWN;
         }
