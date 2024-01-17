@@ -778,7 +778,8 @@ void PartyBotAI::UpdateAI(uint32 const diff)
         }
 
         // Teleport to leader if too far away.
-        if (!me->IsWithinDistInMap(pLeader, 100.0f) && !IsInDuel())
+        // C'Thun room do not teleport
+        if (!me->IsWithinDistInMap(pLeader, 100.0f) && !IsInDuel() && !((me->GetZoneId() == 3428) && (pLeader->GetZoneId() == 3428) && (me->GetPositionZ() - pLeader->GetPositionZ() > 150)))
         {
             if (!me->IsStopped())
                 me->StopMoving();
