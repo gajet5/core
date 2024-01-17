@@ -2951,6 +2951,16 @@ PartyBot.RandomGearLevelDifference = 10
 BattleBot.AutoEquip = 1
 BattleBot.AutoJoin = 0
 
+WarriorBotSummonPet = 1
+PaladinBotSummonPet = 1
+HunterBotSummonPet  = 1
+RogueBotSummonPet   = 1
+PriestBotSummonPet  = 1
+ShamanBotSummonPet  = 1
+MageBotSummonPet    = 1
+WarlockBotSummonPet = 1
+DruidBotSummonPet   = 1
+
 ###################################################################################################################
 #    Database-based chat
 ###################################################################################################################

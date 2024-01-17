@@ -2308,7 +2308,7 @@ Player* CombatBotBaseAI::SelectDispelTarget(SpellEntry const* pSpellEntry) const
 
 void CombatBotBaseAI::SummonPetIfNeeded()
 {
-    if (me->GetClass() == CLASS_HUNTER)
+    if (me->GetClass() == CLASS_HUNTER && sWorld.getConfig(CONFIG_HUNTER_BOT_SUMMON_PET) == 1)
     {
         if (me->GetCharmGuid())
             return;
@@ -2340,7 +2340,7 @@ void CombatBotBaseAI::SummonPetIfNeeded()
             me->CastSpell(pCreature, SPELL_TAME_BEAST, true);
         }
     }
-    else if (me->GetClass() == CLASS_WARLOCK)
+    else if (me->GetClass() == CLASS_WARLOCK && sWorld.getConfig(CONFIG_WARLOCK_BOT_SUMMON_PET) == 1)
     {
         if (me->GetPetGuid() || me->GetCharmGuid())
             return;
@@ -2357,43 +2357,43 @@ void CombatBotBaseAI::SummonPetIfNeeded()
         if (!vSummons.empty())
             me->CastSpell(me, SelectRandomContainerElement(vSummons), true);
     }
-    else if (me->GetClass() == CLASS_MAGE)
+    else if (me->GetClass() == CLASS_MAGE && sWorld.getConfig(CONFIG_MAGE_BOT_SUMMON_PET) == 1)
     {
         if (me->GetPetGuid() || me->GetCharmGuid())
             return;
         me->CastSpell(me, SPELL_SUMMON_WATER_ELEMENTAL, true);
     }
-    else if (me->GetClass() == CLASS_PRIEST)
+    else if (me->GetClass() == CLASS_PRIEST && sWorld.getConfig(CONFIG_PRIEST_BOT_SUMMON_PET) == 1)
     {
         if (me->GetPetGuid() || me->GetCharmGuid())
             return;
         me->CastSpell(me, SPELL_SUMMON_ROGUE_KNIGHT, true);
     }
-    else if (me->GetClass() == CLASS_DRUID)
+    else if (me->GetClass() == CLASS_DRUID && sWorld.getConfig(CONFIG_DRUID_BOT_SUMMON_PET) == 1)
     {
         if (me->GetPetGuid() || me->GetCharmGuid())
             return;
         me->CastSpell(me, SPELL_SUMMON_SPIRIT_BEAR, true);
     }
-    else if (me->GetClass() == CLASS_SHAMAN)
+    else if (me->GetClass() == CLASS_SHAMAN && sWorld.getConfig(CONFIG_SHAMAN_BOT_SUMMON_PET) == 1)
     {
         if (me->GetPetGuid() || me->GetCharmGuid())
             return;
         me->CastSpell(me, SPELL_SUMMON_OBSIDIAN_DESTROYER, true);
     }
-    else if (me->GetClass() == CLASS_PALADIN)
+    else if (me->GetClass() == CLASS_PALADIN && sWorld.getConfig(CONFIG_PALADIN_BOT_SUMMON_PET) == 1)
     {
         if (me->GetPetGuid() || me->GetCharmGuid())
             return;
         me->CastSpell(me, SPELL_SUMMON_GOBLIN_SHREDDER, true);
     }
-    else if (me->GetClass() == CLASS_ROGUE)
+    else if (me->GetClass() == CLASS_ROGUE && sWorld.getConfig(CONFIG_ROGUE_BOT_SUMMON_PET) == 1)
     {
         if (me->GetPetGuid() || me->GetCharmGuid())
             return;
         me->CastSpell(me, SPELL_SUMMON_BONE_CLINCKZ, true);
     }
-    else if (me->GetClass() == CLASS_WARRIOR)
+    else if (me->GetClass() == CLASS_WARRIOR && sWorld.getConfig(CONFIG_WARRIOR_BOT_SUMMON_PET) == 1)
     {
         if (me->GetPetGuid() || me->GetCharmGuid())
             return;

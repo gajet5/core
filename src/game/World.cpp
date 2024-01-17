@@ -605,6 +605,17 @@ void World::LoadConfigSettings(bool reload)
     //Dual Talent Specialization
     setConfig(CONFIG_SWAP_SPEC_INTERVAL,    "SwapSpecInterval", 900);
 
+    //Bot Summon Pet
+    setConfig(CONFIG_WARRIOR_BOT_SUMMON_PET,    "WarriorBotSummonPet",  1);
+    setConfig(CONFIG_PALADIN_BOT_SUMMON_PET,    "PaladinBotSummonPet",  1);
+    setConfig(CONFIG_HUNTER_BOT_SUMMON_PET,     "HunterBotSummonPet",   1);
+    setConfig(CONFIG_ROGUE_BOT_SUMMON_PET,      "RogueBotSummonPet",    1);
+    setConfig(CONFIG_PRIEST_BOT_SUMMON_PET,     "PriestBotSummonPet",   1);
+    setConfig(CONFIG_SHAMAN_BOT_SUMMON_PET,     "ShamanBotSummonPet",   1);
+    setConfig(CONFIG_MAGE_BOT_SUMMON_PET,       "MageBotSummonPet",     1);
+    setConfig(CONFIG_WARLOCK_BOT_SUMMON_PET,    "WarlockBotSummonPet",  1);
+    setConfig(CONFIG_DRUID_BOT_SUMMON_PET,      "DruidBotSummonPet",    1);
+
     setConfig(CONFIG_UINT32_STRICT_PLAYER_NAMES,  "StrictPlayerNames",  0);
     setConfig(CONFIG_UINT32_STRICT_CHARTER_NAMES, "StrictCharterNames", 0);
     setConfig(CONFIG_UINT32_STRICT_PET_NAMES,     "StrictPetNames",     0);
