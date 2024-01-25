@@ -1425,6 +1425,21 @@ bool ChatHandler::HandlePartyBotComeToMeCommand(char* args)
 
     if (pTarget && pTarget != pPlayer)
     {
+        // Only the owner can call to him.
+        if (PartyBotAI* pAI = dynamic_cast<PartyBotAI*>(pTarget->AI())) 
+        {
+            if (pAI->m_personalControls)
+            {
+                Player* pLeader = pAI->GetPartyLeader();
+
+                if (pPlayer != pLeader)
+                {
+                    PSendSysMessage("%s is not your bot or it cannot move.", pTarget->GetName());
+                    return ok;
+                }
+            }            
+        }
+
         if (ok = HandlePartyBotComeToMeHelper(pTarget, pPlayer))
             PSendSysMessage("%s is coming to your position.", pTarget->GetName());
         else
@@ -1439,7 +1454,23 @@ bool ChatHandler::HandlePartyBotComeToMeCommand(char* args)
             if (Player* pMember = itr->getSource())
             {
                 if (pMember == pPlayer)
+                {
                     continue;
+                }
+
+                // Only the owner can call to him.
+                if (PartyBotAI* pAI = dynamic_cast<PartyBotAI*>(pMember->AI()))
+                {
+                    if (pAI->m_personalControls)
+                    {
+                        Player* pLeader = pAI->GetPartyLeader();
+
+                        if (pPlayer != pLeader)
+                        {
+                            continue;
+                        }
+                    }                    
+                }
 
                 ok = HandlePartyBotComeToMeHelper(pMember, pPlayer) || ok;
             }
@@ -1454,6 +1485,60 @@ bool ChatHandler::HandlePartyBotComeToMeCommand(char* args)
 
     SendSysMessage("You are not in a group.");
     SetSentErrorMessage(true);
+    return false;
+}
+
+bool ChatHandler::HandlePartyBotControls(char* args)
+{
+    if (!*args)
+    {
+        SendSysMessage("Incorrect syntax. Expected self or all.");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    std::string controlType = args;
+    bool personalControls = false;
+
+    if (controlType == "self")
+    {
+        personalControls = true;
+    }
+
+    Player* pPlayer = GetSession()->GetPlayer();
+    bool status = false;
+
+    if (Group* pGroup = pPlayer->GetGroup())
+    {
+        for (GroupReference* itr = pGroup->GetFirstMember(); itr != nullptr; itr = itr->next())
+        {
+            if (Player* pMember = itr->getSource())
+            {
+                if (!pMember->AI()) {
+                    continue;
+                }
+
+                if (PartyBotAI* pAI = dynamic_cast<PartyBotAI*>(pMember->AI()))
+                {
+                    pAI->m_personalControls = personalControls;
+                    status = true;
+                }
+            }
+        }
+
+        if (status)
+        {
+            if (personalControls)
+                SendSysMessage("All party bots are controlled by the creators.");
+            else
+                SendSysMessage("All party bots are controlled by everyone.");
+        }            
+        else
+            SendSysMessage("There are no party bots in the group or they cannot move.");
+        return status;
+    }
+
+    SendSysMessage("You are not in a group.");
     return false;
 }
 
