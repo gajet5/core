@@ -929,11 +929,11 @@ void PartyBotAI::UpdateInCombatAI()
 {
     if (!IsInDuel())
     {
+        Player* pLeader = GetPartyLeader();
+        Unit* pVictim = me->GetVictim();
+
         if (m_role == ROLE_TANK)
         {
-            Player* pLeader = GetPartyLeader();
-            Unit* pVictim = me->GetVictim();
-
             // Attack marked if exist
             if (m_marksToFocus.size() != 0)
             {
@@ -965,7 +965,20 @@ void PartyBotAI::UpdateInCombatAI()
                 }
             }
         }
-        else if (CrowdControlMarkedTargets())
+
+        // Swap DPS to marked target or party leader's target
+        if (m_role == ROLE_MELEE_DPS || m_role == ROLE_RANGE_DPS)
+        {
+            Unit* newVictim = SelectAttackTarget(pLeader);
+
+            if (newVictim && (newVictim != pVictim))
+            {
+                AttackStart(newVictim);
+                return;
+            }
+        }
+        
+        if (CrowdControlMarkedTargets())
             return;
     }
 
