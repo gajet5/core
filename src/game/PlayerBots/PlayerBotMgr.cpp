@@ -1493,7 +1493,6 @@ bool ChatHandler::HandlePartyBotControls(char* args)
     if (!*args)
     {
         SendSysMessage("Incorrect syntax. Expected self or all.");
-        SetSentErrorMessage(true);
         return false;
     }
 
@@ -1503,6 +1502,15 @@ bool ChatHandler::HandlePartyBotControls(char* args)
     if (controlType == "self")
     {
         personalControls = true;
+    }
+    else if (controlType == "all")
+    {
+        //Do nothing
+    }
+    else
+    {
+        SendSysMessage("Incorrect syntax. Expected self or all.");
+        return false;
     }
 
     Player* pPlayer = GetSession()->GetPlayer();
