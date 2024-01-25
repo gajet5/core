@@ -1454,9 +1454,7 @@ bool ChatHandler::HandlePartyBotComeToMeCommand(char* args)
             if (Player* pMember = itr->getSource())
             {
                 if (pMember == pPlayer)
-                {
                     continue;
-                }
 
                 // Only the owner can call to him.
                 if (PartyBotAI* pAI = dynamic_cast<PartyBotAI*>(pMember->AI()))
