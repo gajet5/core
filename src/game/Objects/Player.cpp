@@ -7407,6 +7407,10 @@ void Player::_ApplyItemMods(Item* item, uint8 slot, bool apply)
             _ApplyAmmoBonuses();
     }
 
+    // Some bonus parry talents are weapon specific in early patches.
+    if (slot == EQUIPMENT_SLOT_MAINHAND)
+        UpdateParryPercentage();
+
     sLog.Out(LOG_BASIC, LOG_LVL_DEBUG, "_ApplyItemMods complete.");
 }
 
@@ -8400,9 +8404,6 @@ void Player::SendLoot(ObjectGuid guid, LootType loot_type, Player* pVictim)
                             case NEED_BEFORE_GREED:
                                 group->NeedBeforeGreed(creature, loot);
                                 break;
-                            case MASTER_LOOT:
-                                group->MasterLoot(creature, loot, this);
-                                break;
                             default:
                                 break;
                         }
@@ -8442,6 +8443,7 @@ void Player::SendLoot(ObjectGuid guid, LootType loot_type, Player* pVictim)
                             switch (group->GetLootMethod())
                             {
                                 case MASTER_LOOT:
+                                    group->MasterLoot(creature, loot, this);
                                     permission = MASTER_PERMISSION;
                                     break;
                                 case FREE_FOR_ALL:
@@ -9022,7 +9024,7 @@ Item* Player::GetWeaponForAttack(WeaponAttackType attackType, bool nonbroken, bo
     return item;
 }
 
-bool Player::HasWeaponForParry() const
+Item* Player::GetWeaponForParry() const
 {
     Item* pWeapon = GetWeaponForAttack(BASE_ATTACK, true, true);
 
@@ -9042,7 +9044,7 @@ bool Player::HasWeaponForParry() const
         pWeapon = nullptr;
 #endif
 
-    return pWeapon != nullptr;
+    return pWeapon;
 }
 
 uint32 Player::GetAttackBySlot(uint8 slot)
