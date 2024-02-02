@@ -10956,7 +10956,7 @@ void Unit::RestoreMovement()
         Unit* victim = GetCharmInfo() && GetCharmInfo()->IsAtStay() ? nullptr : GetVictim();
         if (victim)
             GetMotionMaster()->MoveChase(victim);
-        else
+        else if (GetMotionMaster()->GetCurrentMovementGeneratorType() != static_cast<Creature*>(this)->GetDefaultMovementType())
             GetMotionMaster()->Initialize();
     }
 }
