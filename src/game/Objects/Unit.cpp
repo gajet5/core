@@ -2206,126 +2206,130 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst(Unit const* pVictim, WeaponAttackT
     //DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: skill bonus of %d for attacker", skillBonus);
     //DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: rolled %d, miss %d, dodge %d, parry %d, block %d, crit %d", roll, miss_chance, dodge_chance, parry_chance, block_chance, crit_chance);
 
-    tmp = miss_chance;
-
-    if (tmp > 0 && roll < (sum += tmp))
+    //Shaman - Monkey King Bar
+    if(!(IsPlayer() && HasAura(34131)))
     {
-        DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: MISS");
-        return MELEE_HIT_MISS;
-    }
+        tmp = miss_chance;
 
-    // always crit against a sitting target (except 0 crit chance)
-    if (pVictim->IsPlayer() && (crit_chance > 0 || IsCreature()) && !pVictim->IsStandingUp())
-    {
-        DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: CRIT (sitting victim)");
-        return MELEE_HIT_CRIT;
-    }
-
-    bool from_behind = !pVictim->HasInArc(this);
-
-    if (from_behind)
-        DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: attack came from behind.");
-
-    // Dodge chance
-
-    // only players can't dodge if attacker is behind
-    if (!pVictim->IsPlayer() || !from_behind)
-    {
-        dodge_chance -= dodgeSkillBonus;
-
-        // Low level reduction
-        if (!pVictim->IsPlayer() && pVictim->GetLevel() < 10)
-            dodge_chance *= pVictim->GetLevel() / 10.0f;
-
-        if (dodge_chance > 0 &&                         // check if unit _can_ dodge
-            (roll < (sum += dodge_chance)))
+        if (tmp > 0 && roll < (sum += tmp))
         {
-            DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: DODGE <%d, %d)", sum - tmp, sum);
-            return MELEE_HIT_DODGE;
+            DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: MISS");
+            return MELEE_HIT_MISS;
         }
-    }
 
-    // parry chances
-    // check if attack comes from behind, nobody can parry or block if attacker is behind
-    if (!from_behind && (parry_chance > 0))
-    {
-        if (pVictim->IsPlayer() || !((Creature*)pVictim)->HasExtraFlag(CREATURE_FLAG_EXTRA_NO_PARRY))
+        // always crit against a sitting target (except 0 crit chance)
+        if (pVictim->IsPlayer() && (crit_chance > 0 || IsCreature()) && !pVictim->IsStandingUp())
         {
-            parry_chance -= parrySkillBonus;
+            DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: CRIT (sitting victim)");
+            return MELEE_HIT_CRIT;
+        }
+
+        bool from_behind = !pVictim->HasInArc(this);
+
+        if (from_behind)
+            DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: attack came from behind.");
+
+        // Dodge chance
+
+        // only players can't dodge if attacker is behind
+        if (!pVictim->IsPlayer() || !from_behind)
+        {
+            dodge_chance -= dodgeSkillBonus;
 
             // Low level reduction
             if (!pVictim->IsPlayer() && pVictim->GetLevel() < 10)
-                parry_chance *= pVictim->GetLevel() / 10.0f;
+                dodge_chance *= pVictim->GetLevel() / 10.0f;
 
-            if (parry_chance > 0 &&                         // check if unit _can_ parry
-                    (roll < (sum += parry_chance)))
+            if (dodge_chance > 0 &&                         // check if unit _can_ dodge
+                (roll < (sum += dodge_chance)))
             {
-                DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: PARRY <%d, %d)", sum - parry_chance, sum);
-                return MELEE_HIT_PARRY;
+                DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: DODGE <%d, %d)", sum - tmp, sum);
+                return MELEE_HIT_DODGE;
             }
         }
-    }
 
-    // Max 40% chance to score a glancing blow against mobs that are higher level (can do only players and pets and not with ranged weapon)
-    if (attType != RANGED_ATTACK && !SpellCasted &&
-            (IsPlayer() || ((Creature*)this)->IsPet()) &&
-            !pVictim->IsPlayer() && !((Creature*)pVictim)->IsPet() && !((Creature*)pVictim)->IsTotem())
-    {
-        // cap possible value (with bonuses > max skill)
-        int32 skill = attackerWeaponSkill;
-        int32 maxskill = attackerMaxSkillValueForLevel;
-        skill = (skill > maxskill) ? maxskill : skill;
-
-        // (Youfie) Le +skill avant BC ne permet pas de réduire la fréquence des glancing blows une fois qu'il est égal au niveau du joueur*5
-        if (attackerWeaponSkill > maxskill)
-            attackerWeaponSkill = maxskill;
-
-        // (Youfie) Chance de glance en Vanilla (inchangée par le +skill au delà de maxskill, cf. au dessus) :
-        tmp = (10 + ((victimDefenseSkill - attackerWeaponSkill) * 2)) * 100;
-        tmp = tmp > 4000 ? 4000 : tmp;
-        if (tmp < 0)
-            tmp = 0;
-        // sLog.Out(LOG_BASIC, LOG_LVL_MINIMAL, "tmp = %i, Skill = %i, Max Skill = %i", tmp, attackerWeaponSkill, attackerMaxSkillValueForLevel); //Pour tests & débug via la console
-
-        if (roll < (sum += tmp))
+        // parry chances
+        // check if attack comes from behind, nobody can parry or block if attacker is behind
+        if (!from_behind && (parry_chance > 0))
         {
-            DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: GLANCING <%d, %d)", sum - 4000, sum);
-            return MELEE_HIT_GLANCING;
-        }
-    }
-
-    // block chances
-    // check if attack comes from behind, nobody can parry or block if attacker is behind
-    if (!from_behind && (block_chance > 0))
-    {
-        if ((pVictim->IsPlayer() || !((Creature*)pVictim)->HasExtraFlag(CREATURE_FLAG_EXTRA_NO_BLOCK))
-          && !(IsCreature() && GetMeleeDamageSchoolMask() != SPELL_SCHOOL_MASK_NORMAL))  // can't block elemental melee attacks from mobs
-        {
-            block_chance -= blockSkillBonus;
-
-            // mobs cannot block more than 5% of attacks regardless of rating difference
-            if (!pVictim->IsPlayer() && (block_chance > 500))
-                block_chance = 500;
-
-            // Low level reduction
-            if (!pVictim->IsPlayer() && pVictim->GetLevel() < 10)
-                block_chance *= pVictim->GetLevel() / 10.0f;
-
-            if (block_chance > 0 &&                         // check if unit _can_ block
-                (roll < (sum += block_chance)))
+            if (pVictim->IsPlayer() || !((Creature*)pVictim)->HasExtraFlag(CREATURE_FLAG_EXTRA_NO_PARRY))
             {
-                // Critical chance
-                tmp = crit_chance;
-                if (IsPlayer() && SpellCasted && tmp > 0)
+                parry_chance -= parrySkillBonus;
+
+                // Low level reduction
+                if (!pVictim->IsPlayer() && pVictim->GetLevel() < 10)
+                    parry_chance *= pVictim->GetLevel() / 10.0f;
+
+                if (parry_chance > 0 &&                         // check if unit _can_ parry
+                        (roll < (sum += parry_chance)))
                 {
-                    if (roll_chance_i(tmp / 100))
-                    {
-                        sLog.Out(LOG_BASIC, LOG_LVL_DEBUG, "RollMeleeOutcomeAgainst: BLOCKED CRIT");
-                        return MELEE_HIT_BLOCK_CRIT;
-                    }
+                    DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: PARRY <%d, %d)", sum - parry_chance, sum);
+                    return MELEE_HIT_PARRY;
                 }
-                DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: BLOCK <%d, %d)", sum - tmp, sum);
-                return MELEE_HIT_BLOCK;
+            }
+        }
+
+        // Max 40% chance to score a glancing blow against mobs that are higher level (can do only players and pets and not with ranged weapon)
+        if (attType != RANGED_ATTACK && !SpellCasted &&
+                (IsPlayer() || ((Creature*)this)->IsPet()) &&
+                !pVictim->IsPlayer() && !((Creature*)pVictim)->IsPet() && !((Creature*)pVictim)->IsTotem())
+        {
+            // cap possible value (with bonuses > max skill)
+            int32 skill = attackerWeaponSkill;
+            int32 maxskill = attackerMaxSkillValueForLevel;
+            skill = (skill > maxskill) ? maxskill : skill;
+
+            // (Youfie) Le +skill avant BC ne permet pas de réduire la fréquence des glancing blows une fois qu'il est égal au niveau du joueur*5
+            if (attackerWeaponSkill > maxskill)
+                attackerWeaponSkill = maxskill;
+
+            // (Youfie) Chance de glance en Vanilla (inchangée par le +skill au delà de maxskill, cf. au dessus) :
+            tmp = (10 + ((victimDefenseSkill - attackerWeaponSkill) * 2)) * 100;
+            tmp = tmp > 4000 ? 4000 : tmp;
+            if (tmp < 0)
+                tmp = 0;
+            // sLog.Out(LOG_BASIC, LOG_LVL_MINIMAL, "tmp = %i, Skill = %i, Max Skill = %i", tmp, attackerWeaponSkill, attackerMaxSkillValueForLevel); //Pour tests & débug via la console
+
+            if (roll < (sum += tmp))
+            {
+                DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: GLANCING <%d, %d)", sum - 4000, sum);
+                return MELEE_HIT_GLANCING;
+            }
+        }
+
+        // block chances
+        // check if attack comes from behind, nobody can parry or block if attacker is behind
+        if (!from_behind && (block_chance > 0))
+        {
+            if ((pVictim->IsPlayer() || !((Creature*)pVictim)->HasExtraFlag(CREATURE_FLAG_EXTRA_NO_BLOCK))
+              && !(IsCreature() && GetMeleeDamageSchoolMask() != SPELL_SCHOOL_MASK_NORMAL))  // can't block elemental melee attacks from mobs
+            {
+                block_chance -= blockSkillBonus;
+
+                // mobs cannot block more than 5% of attacks regardless of rating difference
+                if (!pVictim->IsPlayer() && (block_chance > 500))
+                    block_chance = 500;
+
+                // Low level reduction
+                if (!pVictim->IsPlayer() && pVictim->GetLevel() < 10)
+                    block_chance *= pVictim->GetLevel() / 10.0f;
+
+                if (block_chance > 0 &&                         // check if unit _can_ block
+                    (roll < (sum += block_chance)))
+                {
+                    // Critical chance
+                    tmp = crit_chance;
+                    if (IsPlayer() && SpellCasted && tmp > 0)
+                    {
+                        if (roll_chance_i(tmp / 100))
+                        {
+                            sLog.Out(LOG_BASIC, LOG_LVL_DEBUG, "RollMeleeOutcomeAgainst: BLOCKED CRIT");
+                            return MELEE_HIT_BLOCK_CRIT;
+                        }
+                    }
+                    DEBUG_FILTER_LOG(LOG_FILTER_COMBAT, "RollMeleeOutcomeAgainst: BLOCK <%d, %d)", sum - tmp, sum);
+                    return MELEE_HIT_BLOCK;
+                }
             }
         }
     }
