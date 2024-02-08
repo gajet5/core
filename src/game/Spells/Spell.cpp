@@ -5568,6 +5568,10 @@ void Spell::TakeAmmo()
     if (!pCaster)
         return;
 
+    // Hurter - Butterfly : take no ammo
+    if (pCaster->HasAura(34132))
+        return;
+
     // Some ranged attacks dont take any ammo
     switch (m_spellInfo->Id)
     {
