@@ -1664,7 +1664,7 @@ void PartyBotAI::UpdateInCombatAI_Hunter()
             
             if (RunAwayFromTarget(pVictim))
             {
-                me->SetCasterChaseDistance(25.0f);
+                me->SetCasterChaseDistance(30.0f);
                 return;
             }
         }
