@@ -223,7 +223,8 @@ struct boss_nefarianAI : ScriptedAI
                         pPlayer->CastSpell(pPlayer, SPELL_PALADIN, true); // OK
                         break;
                     case CLASS_HUNTER:
-                        pPlayer->CastSpell(pPlayer, SPELL_HUNTER, true); // OK
+                        if (!pPlayer->IsBot())
+                            pPlayer->CastSpell(pPlayer, SPELL_HUNTER, true); // OK
                         break;
                     case CLASS_ROGUE:
                     {
