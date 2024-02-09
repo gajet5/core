@@ -1661,12 +1661,8 @@ void PartyBotAI::UpdateInCombatAI_Hunter()
             if (!me->IsStopped())
                 me->StopMoving();
             me->GetMotionMaster()->Clear();
-            
             if (RunAwayFromTarget(pVictim))
-            {
-                me->SetCasterChaseDistance(30.0f);
                 return;
-            }
         }
     }
 }
