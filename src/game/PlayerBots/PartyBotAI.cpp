@@ -1552,11 +1552,11 @@ void PartyBotAI::UpdateInCombatAI_Hunter()
             }
 
             me->SetCasterChaseDistance(25.0f);
-            if (RunAwayFromTarget(pVictim))
+            if (me->GetMotionMaster()->MoveDistance(pVictim, 25.0f))
                 return;
         }
 
-        if (GetAttackersInRangeCount(8.0f))
+        if (GetAttackersInRangeCount(10.0f))
         {
             Unit* pAttacker = *me->GetAttackers().begin();
 
@@ -1589,18 +1589,10 @@ void PartyBotAI::UpdateInCombatAI_Hunter()
                     return;
             }
         }
-        else
-        {
-            if (m_spells.hunter.pAspectOfTheHawk &&
-                CanTryToCastSpell(me, m_spells.hunter.pAspectOfTheHawk))
-            {
-                DoCastSpell(me, m_spells.hunter.pAspectOfTheHawk);
-            }
-        }
 
         if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() == DISTANCING_MOTION_TYPE)
             return;
-                
+
         if (m_spells.hunter.pVolley &&
            (me->GetEnemyCountInRadiusAround(pVictim, 10.0f) > 2) &&
             CanTryToCastSpell(pVictim, m_spells.hunter.pVolley))
