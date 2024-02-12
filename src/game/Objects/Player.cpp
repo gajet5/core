@@ -13699,6 +13699,10 @@ void Player::RewardQuest(Quest const* pQuest, uint32 reward, WorldObject* questE
                 if (!HasAura(itr->second->spellId, EFFECT_INDEX_0))
                     CastSpell(this, itr->second->spellId, true);
     }
+
+    // daily quest recall Player::SaveToDB() at quest reward
+    if (quest_id == 10004 || quest_id == 10005 || quest_id == 10006)
+        SaveToDB();
 }
 
 void Player::FailQuest(uint32 questId)
@@ -13747,18 +13751,18 @@ uint32 getTodayStartTimestamp()
 
 bool Player::SatisfyQuestDaily(Quest const* qInfo, bool msg) const
 {
-    uint32 questId = qInfo->GetQuestId();
-    if (!(questId == 10004 || questId == 10005 || questId == 10006))
+    uint32 quest_id = qInfo->GetQuestId();
+    if (!(quest_id == 10004 || quest_id == 10005 || quest_id == 10006))
         return true;
 
     uint32 todayStart = getTodayStartTimestamp();
     uint32 todayEnd = todayStart + 86399;
-    QueryResult* result = CharacterDatabase.PQuery("SELECT `quest` FROM `character_queststatus` WHERE `guid`='%u' and `quest`='%u' and `timer`>='%u' and `timer`<='%u'", GetGUIDLow(), questId, todayStart, todayEnd);
+    QueryResult* result = CharacterDatabase.PQuery("SELECT `quest` FROM `character_queststatus` WHERE `guid`='%u' and `quest`='%u' and `timer`>='%u' and `timer`<='%u' and `status`=0 and `rewarded`=1 and `mob_count1`=1 and `mob_count2`=1 and `mob_count3`=1", GetGUIDLow(), quest_id, todayStart, todayEnd);
     if (result)
     {
         uint32 id = result->Fetch()[0].GetUInt32();
         delete result;
-        GetSession()->SendNotification("Daily quest %u can only be accepted once a day.", id);
+        GetSession()->SendNotification("Daily quest %u can only be completed once a day.", id);
         if (msg)
             SendCanTakeQuestResponse(INVALIDREASON_DONT_HAVE_REQ);
         return false;
