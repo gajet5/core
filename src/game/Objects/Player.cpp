@@ -13753,7 +13753,7 @@ bool Player::SatisfyQuestDaily(Quest const* qInfo, bool msg) const
 
     uint32 todayStart = getTodayStartTimestamp();
     uint32 todayEnd = todayStart + 86399;
-    QueryResult* result = CharacterDatabase.PQuery("SELECT `quest` FROM `character_queststatus` WHERE `guid`='%u' and `quest`='%u' and `timer`>='%u' and `timer`<='%u'", GetGUIDLow(), questId, todayStart, todayEnd);
+    QueryResult* result = CharacterDatabase.PQuery("SELECT `quest` FROM `character_queststatus` WHERE `guid`='%u' and `quest`='%u' and `timer`>='%u' and `timer`<='%u' and `rewarded`=1", GetGUIDLow(), questId, todayStart, todayEnd);
     if (result)
     {
         uint32 id = result->Fetch()[0].GetUInt32();
