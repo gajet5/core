@@ -2203,7 +2203,7 @@ bool CombatBotBaseAI::IsValidDispelTarget(Unit const* pTarget, SpellEntry const*
                                 if (FactionTemplateEntry const* ft2 = me->GetFactionTemplateEntry())
                                     if (charm->GetOriginalFactionTemplate()->IsFriendlyTo(*ft2))
                                         bFoundOneDispell = true;
-                    if (positive == friendly_dispel || holder->GetSpellProto()->Id == 24321)
+                    if (positive == friendly_dispel || holder->GetSpellProto()->Id == 24321 || holder->GetSpellProto()->Id == 16468)
                         continue;
                 }
                 bFoundOneDispell = true;
