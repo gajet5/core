@@ -13735,6 +13735,38 @@ void Player::FailQuest(uint32 questId)
     }
 }
 
+uint32 getTodayStartTimestamp()
+{
+    time_t rawtime = time(NULL);
+    struct tm *timeinfo = localtime(&rawtime);
+    timeinfo->tm_hour = 0;
+    timeinfo->tm_min = 0;
+    timeinfo->tm_sec = 0;
+    return mktime(timeinfo);
+}
+
+bool Player::SatisfyQuestDaily(Quest const* qInfo, bool msg) const
+{
+    uint32 questId = qInfo->GetQuestId();
+    if (!(questId == 10004 || questId == 10005 || questId == 10006))
+        return true;
+
+    unit32 todayStart = getTodayStartTimestamp();
+    unit32 todayEnd = todayStart + 86399;
+    QueryResult* result = CharacterDatabase.PQuery("SELECT `quest` FROM `character_queststatus` WHERE `guid`='%u' and `quest`='%u' and `timer`>='%u' and `timer`<='%u'", GetGUIDLow(), questId, todayStart, todayEnd);
+    if (result)
+    {
+        uint32 id = result->Fetch()[0].GetUInt32();
+        delete result;
+        GetSession()->SendNotification("Daily quest %u can only be completed once a day.", id);
+        if (msg)
+            SendCanTakeQuestResponse(INVALIDREASON_DONT_HAVE_REQ);
+        return false;
+    }
+
+    return true;
+}
+
 bool Player::SatisfyQuestSkill(Quest const* qInfo, bool msg) const
 {
     uint32 skill = qInfo->GetRequiredSkill();
