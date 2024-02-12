@@ -13753,12 +13753,13 @@ bool Player::SatisfyQuestDaily(Quest const* qInfo, bool msg) const
 
     uint32 todayStart = getTodayStartTimestamp();
     uint32 todayEnd = todayStart + 86399;
-    QueryResult* result = CharacterDatabase.PQuery("SELECT `Title` FROM `character_queststatus` WHERE `guid`='%u' and `quest`='%u' and `timer`>='%u' and `timer`<='%u'", GetGUIDLow(), questId, todayStart, todayEnd);
+    QueryResult* result = CharacterDatabase.PQuery("SELECT `quest` FROM `character_queststatus` WHERE `guid`='%u' and `quest`='%u' and `timer`>='%u' and `timer`<='%u'", GetGUIDLow(), questId, todayStart, todayEnd);
     if (result)
     {
-        std::string title = result->Fetch()[0].GetString();
+        uint32 id = result->Fetch()[0].GetUInt32();
         delete result;
-        GetSession()->SendNotification("Daily quest: %s can only be completed once a day.", title);
+        std::string title = qInfo->GetTitle();
+        GetSession()->SendNotification("Daily quest %u: %s can only be completed once a day.", id, title);
         if (msg)
             SendCanTakeQuestResponse(INVALIDREASON_DONT_HAVE_REQ);
         return false;
