@@ -13751,8 +13751,8 @@ bool Player::SatisfyQuestDaily(Quest const* qInfo, bool msg) const
     if (!(questId == 10004 || questId == 10005 || questId == 10006))
         return true;
 
-    unit32 todayStart = getTodayStartTimestamp();
-    unit32 todayEnd = todayStart + 86399;
+    uint32 todayStart = getTodayStartTimestamp();
+    uint32 todayEnd = todayStart + 86399;
     QueryResult* result = CharacterDatabase.PQuery("SELECT `quest` FROM `character_queststatus` WHERE `guid`='%u' and `quest`='%u' and `timer`>='%u' and `timer`<='%u'", GetGUIDLow(), questId, todayStart, todayEnd);
     if (result)
     {
