@@ -387,6 +387,7 @@ public:
             SpellEntry const* pDivineSpirit;
             SpellEntry const* pPrayerofSpirit;
             SpellEntry const* pPrayerofFortitude;
+            SpellEntry const* pPrayerofShadowProtection;
             SpellEntry const* pInnerFire;
             SpellEntry const* pShadowProtection;
             SpellEntry const* pPowerWordShield;
