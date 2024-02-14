@@ -13762,7 +13762,8 @@ bool Player::SatisfyQuestDaily(Quest const* qInfo, bool msg) const
     {
         uint32 id = result->Fetch()[0].GetUInt32();
         delete result;
-        GetSession()->SendNotification("Daily quest %u can only be completed once a day.", id);
+        std::string title = qInfo->GetTitle();
+        GetSession()->SendNotification("Daily quest %s(%u) can only be completed once a day.", title, id);
         if (msg)
             SendCanTakeQuestResponse(INVALIDREASON_DONT_HAVE_REQ);
         return false;
