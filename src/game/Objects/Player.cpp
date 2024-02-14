@@ -13765,13 +13765,13 @@ bool Player::SatisfyQuestDaily(Quest const* qInfo, bool msg) const
         switch (id)
         {
             case 10004:
-                GetSession()->SendNotification("Daily quest: Hello, Blackrock Mountain! can only be completed once a day.");
+                GetSession()->SendNotification("Hello, Blackrock Mountain! can only be completed once a day.");
                 break;
             case 10005:
-                GetSession()->SendNotification("Daily quest: Hello, Plaguelands! can only be completed once a day.");
+                GetSession()->SendNotification("Hello, Plaguelands! can only be completed once a day.");
                 break;
             case 10006:
-                GetSession()->SendNotification("Daily quest: Hello, Dire Maul! can only be completed once a day.");
+                GetSession()->SendNotification("Hello, Dire Maul! can only be completed once a day.");
                 break;
         }
         if (msg)
