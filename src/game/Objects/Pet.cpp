@@ -789,7 +789,7 @@ void Pet::LooseHappiness()
         addvalue = int32(addvalue * 1.5);
     
     Player* pOwner = (Player*)GetOwner();
-    if (pOwner->IsBot())
+    if (pOwner->IsBot() && sWorld.getConfig(CONFIG_BOT_HUNTER_PET_LOSE_HAPPINESS) == 0)
     {
         if (curValue == 1050000)
             return;

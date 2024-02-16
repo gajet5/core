@@ -616,6 +616,10 @@ void World::LoadConfigSettings(bool reload)
     setConfig(CONFIG_WARLOCK_BOT_SUMMON_PET,    "WarlockBotSummonPet",  1);
     setConfig(CONFIG_DRUID_BOT_SUMMON_PET,      "DruidBotSummonPet",    1);
 
+    setConfig(CONFIG_BOT_HUNTER_PET_LOSE_HAPPINESS,    "BotHunterPetLoseHappiness",  0);
+    setConfig(CONFIG_BOT_ENVIRONMENTAL_DAMAGE,    "BotEnvironmentalDamage",  0);
+    setConfig(CONFIG_BOT_DURABILITY_POINTS_LOSS,    "BotDurabilityPointsLoss",  0);
+
     setConfig(CONFIG_UINT32_STRICT_PLAYER_NAMES,  "StrictPlayerNames",  0);
     setConfig(CONFIG_UINT32_STRICT_CHARTER_NAMES, "StrictCharterNames", 0);
     setConfig(CONFIG_UINT32_STRICT_PET_NAMES,     "StrictPetNames",     0);

@@ -1529,70 +1529,6 @@ void PartyBotAI::UpdateInCombatAI_Hunter()
         {
             me->GetMotionMaster()->MoveChase(pVictim, 25.0f);
         }
-        else if (!me->HasUnitState(UNIT_STAT_ROOT) &&
-                (me->GetCombatDistance(pVictim) < 8.0f) &&
-                (GetRole() != ROLE_MELEE_DPS) &&
-                me->GetMotionMaster()->GetCurrentMovementGeneratorType() != DISTANCING_MOTION_TYPE)
-        {
-            if (m_spells.hunter.pWingClip &&
-                CanTryToCastSpell(pVictim, m_spells.hunter.pWingClip))
-            {
-                DoCastSpell(pVictim, m_spells.hunter.pWingClip);
-            }
-
-            if (m_spells.hunter.pMongooseBite &&
-                CanTryToCastSpell(pVictim, m_spells.hunter.pMongooseBite))
-            {
-                DoCastSpell(pVictim, m_spells.hunter.pMongooseBite);
-            }
-            
-            if (m_spells.hunter.pRaptorStrike &&
-                CanTryToCastSpell(pVictim, m_spells.hunter.pRaptorStrike))
-            {
-                DoCastSpell(pVictim, m_spells.hunter.pRaptorStrike);
-            }
-
-            me->SetCasterChaseDistance(25.0f);
-            if (me->GetMotionMaster()->MoveDistance(pVictim, 25.0f))
-                return;
-        }
-
-        if (GetAttackersInRangeCount(10.0f))
-        {
-            Unit* pAttacker = *me->GetAttackers().begin();
-
-            if (m_spells.hunter.pScareBeast &&
-                CanTryToCastSpell(pAttacker, m_spells.hunter.pScareBeast))
-            {
-                if (DoCastSpell(pAttacker, m_spells.hunter.pScareBeast) == SPELL_CAST_OK)
-                    return;
-            }
-
-            if (m_spells.hunter.pDisengage &&
-                CanTryToCastSpell(pAttacker, m_spells.hunter.pDisengage))
-            {
-                if (DoCastSpell(pAttacker, m_spells.hunter.pDisengage) == SPELL_CAST_OK)
-                    return;
-            }
-
-            if (m_spells.hunter.pAspectOfTheMonkey &&
-                CanTryToCastSpell(me, m_spells.hunter.pAspectOfTheMonkey))
-            {
-                if (DoCastSpell(me, m_spells.hunter.pAspectOfTheMonkey) == SPELL_CAST_OK)
-                    return;
-            }
-
-            if (m_spells.hunter.pFeignDeath &&
-               (me->GetHealthPercent() < 20.0f) &&
-                CanTryToCastSpell(me, m_spells.hunter.pFeignDeath))
-            {
-                if (DoCastSpell(me, m_spells.hunter.pFeignDeath) == SPELL_CAST_OK)
-                    return;
-            }
-        }
-
-        if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() == DISTANCING_MOTION_TYPE)
-            return;
 
         if (m_spells.hunter.pVolley &&
            (me->GetEnemyCountInRadiusAround(pVictim, 10.0f) > 2) &&
@@ -1651,6 +1587,82 @@ void PartyBotAI::UpdateInCombatAI_Hunter()
             CanTryToCastSpell(pVictim, m_spells.hunter.pMultiShot))
         {
             if (DoCastSpell(pVictim, m_spells.hunter.pMultiShot) == SPELL_CAST_OK)
+                return;
+        }
+
+        if (GetAttackersInRangeCount(8.0f))
+        {
+            Unit* pAttacker = *me->GetAttackers().begin();
+
+            if (m_spells.hunter.pScareBeast &&
+                CanTryToCastSpell(pAttacker, m_spells.hunter.pScareBeast))
+            {
+                if (DoCastSpell(pAttacker, m_spells.hunter.pScareBeast) == SPELL_CAST_OK)
+                    return;
+            }
+
+            if (m_spells.hunter.pDisengage &&
+                CanTryToCastSpell(pAttacker, m_spells.hunter.pDisengage))
+            {
+                if (DoCastSpell(pAttacker, m_spells.hunter.pDisengage) == SPELL_CAST_OK)
+                    return;
+            }
+
+            if (m_spells.hunter.pAspectOfTheMonkey &&
+                CanTryToCastSpell(me, m_spells.hunter.pAspectOfTheMonkey))
+            {
+                if (DoCastSpell(me, m_spells.hunter.pAspectOfTheMonkey) == SPELL_CAST_OK)
+                    return;
+            }
+
+            if (m_spells.hunter.pFeignDeath &&
+               (me->GetHealthPercent() < 20.0f) &&
+                CanTryToCastSpell(me, m_spells.hunter.pFeignDeath))
+            {
+                if (DoCastSpell(me, m_spells.hunter.pFeignDeath) == SPELL_CAST_OK)
+                    return;
+            }
+        }
+
+        if (pVictim->CanReachWithMeleeAutoAttack(me))
+        {
+            if (m_spells.hunter.pWingClip &&
+                CanTryToCastSpell(pVictim, m_spells.hunter.pWingClip))
+            {
+                DoCastSpell(pVictim, m_spells.hunter.pWingClip);
+            }
+
+            if (m_spells.hunter.pMongooseBite &&
+                CanTryToCastSpell(pVictim, m_spells.hunter.pMongooseBite))
+            {
+                DoCastSpell(pVictim, m_spells.hunter.pMongooseBite);
+            }
+
+            if (m_spells.hunter.pRaptorStrike &&
+                CanTryToCastSpell(pVictim, m_spells.hunter.pRaptorStrike))
+            {
+                DoCastSpell(pVictim, m_spells.hunter.pRaptorStrike);
+            }
+        }
+        else
+        {
+            if (m_spells.hunter.pAspectOfTheHawk &&
+                CanTryToCastSpell(me, m_spells.hunter.pAspectOfTheHawk))
+            {
+                if (DoCastSpell(me, m_spells.hunter.pAspectOfTheHawk) == SPELL_CAST_OK)
+                    return;
+            }
+        }
+
+        if (!me->HasUnitState(UNIT_STAT_ROOT) &&
+            (me->GetCombatDistance(pVictim) < 8.0f) &&
+            (GetRole() != ROLE_MELEE_DPS) &&
+             me->GetMotionMaster()->GetCurrentMovementGeneratorType() != DISTANCING_MOTION_TYPE)
+        {
+            if (!me->IsStopped())
+                me->StopMoving();
+            me->GetMotionMaster()->Clear();
+            if (RunAwayFromTarget(pVictim))
                 return;
         }
     }

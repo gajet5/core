@@ -2961,6 +2961,10 @@ MageBotSummonPet    = 1
 WarlockBotSummonPet = 1
 DruidBotSummonPet   = 1
 
+BotHunterPetLoseHappiness = 0
+BotEnvironmentalDamage    = 0
+BotDurabilityPointsLoss   = 0
+
 ###################################################################################################################
 #    Database-based chat
 ###################################################################################################################
