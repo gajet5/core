@@ -1126,6 +1126,7 @@ BeepAtStart = 1
 ShowProgressBars = 0
 WaitAtStartupError = 0
 Motd = "Welcome to World of Warcraft!"
+Instance.IgnoreAQGate = 1
 
 ###################################################################################################################
 # PLAYER INTERACTION
