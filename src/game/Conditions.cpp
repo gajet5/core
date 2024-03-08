@@ -241,7 +241,7 @@ bool inline ConditionEntry::Evaluate(WorldObject const* target, Map const* map, 
         }
         case CONDITION_ACTIVE_GAME_EVENT:
         {
-            if (conditionSourceType = 10 && m_value1 = 83 && sWorld.getConfig(CONFIG_BOOL_INSTANCE_IGNORE_AQ_GATE))
+            if (conditionSourceToStr[conditionSourceType] = "areatrigger" && m_value1 = 83 && sWorld.getConfig(CONFIG_BOOL_INSTANCE_IGNORE_AQ_GATE))
                 return true;
             return sGameEventMgr.IsActiveEvent(m_value1);
         }
