@@ -442,7 +442,8 @@ void ThreatManager::addThreat(Unit* pVictim, float threat, bool crit, SpellSchoo
                          pThreatSpell->Id == 34116 ||
                          pThreatSpell->Id == 34117 ||
                          pThreatSpell->Id == 34123 ||
-                         pThreatSpell->Id == 34125))
+                         pThreatSpell->Id == 34125 ||
+                         pThreatSpell->Id == 34150))
         return;
     
     MANGOS_ASSERT(getOwner()->GetTypeId() == TYPEID_UNIT);

@@ -774,6 +774,60 @@ SpellAuraProcResult Unit::HandleDummyAuraProc(Unit* pVictim, uint32 amount, uint
                     triggered_spell_id = 34125;
                     break;                               // no hidden cooldown
                 }
+                // melee blood drain + 1%
+                case 34144:
+                {
+                    // heal amount
+                    basepoints[0] = dither(triggerAmount * amount / 100);
+                    target = this;
+                    triggered_spell_id = 34150;
+                    break;                               // no hidden cooldown
+                }
+                // melee blood drain + 2%
+                case 34145:
+                {
+                    // heal amount
+                    basepoints[0] = dither(triggerAmount * amount / 100);
+                    target = this;
+                    triggered_spell_id = 34150;
+                    break;                               // no hidden cooldown
+                }
+                // range blood drain + 1%
+                case 34146:
+                {
+                    // heal amount
+                    basepoints[0] = dither(triggerAmount * amount / 100);
+                    target = this;
+                    triggered_spell_id = 34150;
+                    break;                               // no hidden cooldown
+                }
+                // range blood drain + 2%
+                case 34147:
+                {
+                    // heal amount
+                    basepoints[0] = dither(triggerAmount * amount / 100);
+                    target = this;
+                    triggered_spell_id = 34150;
+                    break;                               // no hidden cooldown
+                }
+                // cast blood drain + 1%
+                case 34148:
+                {
+                    // heal amount
+                    basepoints[0] = dither(triggerAmount * amount / 100);
+                    target = this;
+                    triggered_spell_id = 34150;
+                    break;                               // no hidden cooldown
+                }
+                // cast blood drain + 2%
+                case 34149:
+                {
+                    // heal amount
+                    basepoints[0] = dither(triggerAmount * amount / 100);
+                    target = this;
+                    triggered_spell_id = 34150;
+                    break;                               // no hidden cooldown
+                }
                 // Obsidian Armor (Justice Bearer`s Pauldrons shoulder)
                 case 27539:
                 {
