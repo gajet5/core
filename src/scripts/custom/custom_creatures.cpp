@@ -639,6 +639,41 @@ bool GossipSelect_TransmogNPC(Player* player, Creature* creature, uint32 sender,
     return true;
 }
 
+bool GossipHello_ReforgeNPC(Player* player, Creature* creature)
+{
+    player->ADD_GOSSIP_ITEM(1, "重铸",      GOSSIP_SENDER_MAIN, 1);
+
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(creature), creature->GetGUID());
+    return true;
+}
+
+bool GossipSelect_ReforgeNPC(Player* player, Creature* creature, uint32 sender, uint32 action)
+{
+    if (sender != GOSSIP_SENDER_MAIN)
+        return true;
+
+    Item* item = nullptr;
+    switch (action)
+    {
+        case 1:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, INVENTORY_SLOT_ITEM_START);
+            break;
+    }
+
+    if (!item){
+        player->GetSession()->SendNotification("行囊首格未检测到待重铸装备。");
+    }else if(item->GetProto()->RandomProperty == 9000 || item->GetProto()->RandomProperty == 9001 || item->GetProto()->RandomProperty == 9002){
+        player->GetSession()->SendNotification("行囊首格装备重铸成功。");
+        player->DestroyItem(item->GetBagSlot(), item->GetSlot(), true);
+        player->AddItem(item->GetProto()->ItemId);
+    }
+    else{
+        player->GetSession()->SendNotification("行囊首格装备无法重铸。");
+    }
+    player->CLOSE_GOSSIP_MENU();
+    return true;
+}
+
 enum Enchants
 {
     WEP2H_SUPERIOR_IMPACT = 20,
@@ -1309,6 +1344,12 @@ void AddSC_custom_creatures()
     newscript->Name = "custom_transmog_npc";
     newscript->pGossipHello = &GossipHello_TransmogNPC;
     newscript->pGossipSelect = &GossipSelect_TransmogNPC;
+    newscript->RegisterSelf(false);
+
+    newscript = new Script;
+    newscript->Name = "custom_reforge_npc";
+    newscript->pGossipHello = &GossipHello_ReforgeNPC;
+    newscript->pGossipSelect = &GossipSelect_ReforgeNPC;
     newscript->RegisterSelf(false);
 
     newscript = new Script;
