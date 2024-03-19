@@ -664,7 +664,6 @@ bool GossipSelect_ReforgeNPC(Player* player, Creature* creature, uint32 sender, 
         player->GetSession()->SendNotification("行囊首格未检测到待重铸装备。");
     }else if(player->GetMoney() < 100 * GOLD){
         player->GetSession()->SendNotification("重铸装备需要100金币。");
-    }
     }else if(item->GetProto()->RandomProperty == 9000 || item->GetProto()->RandomProperty == 9001 || item->GetProto()->RandomProperty == 9002){
         player->GetSession()->SendNotification("行囊首格装备重铸成功。");
         player->DestroyItem(item->GetBagSlot(), item->GetSlot(), true);
