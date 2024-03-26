@@ -3272,8 +3272,8 @@ bool Unit::AddSpellAuraHolder(SpellAuraHolder* holder)
     }
 
     // passive and persistent auras can stack with themselves any number of times
-    // pet 1% 2% damage auras can stack with themselves
-    if (((!holder->IsPassive() && !holder->IsPersistent()) || holder->IsAreaAura()) && aurSpellInfo->Id != 34167 && aurSpellInfo->Id != 34169)
+    //if (((!holder->IsPassive() && !holder->IsPersistent()) || holder->IsAreaAura()) && aurSpellInfo->Id != 34167 && aurSpellInfo->Id != 34169)
+    if ((!holder->IsPassive() && !holder->IsPersistent()) || holder->IsAreaAura())
     {
         SpellAuraHolderBounds spair = GetSpellAuraHolderBounds(aurSpellInfo->Id);
 
