@@ -2024,7 +2024,13 @@ bool ChatHandler::HandleCharacterPremadeGearCommand(char* args)
         SendSysMessage(LANG_NO_CHAR_SELECTED);
         return false;
     }
-        
+
+    if (!pPlayer->IsBot() && !m_session->GetPlayer()->IsGameMaster())
+    {
+        PSendSysMessage("Permission denied.");
+        return false;
+    }
+
     if (!*args)
     {
         PSendSysMessage("Listing available premade templates for %s:", pPlayer->GetName());
@@ -2123,6 +2129,12 @@ bool ChatHandler::HandleCharacterPremadeSpecCommand(char* args)
     if (!pPlayer)
     {
         SendSysMessage(LANG_NO_CHAR_SELECTED);
+        return false;
+    }
+
+    if (!pPlayer->IsBot() && !m_session->GetPlayer()->IsGameMaster())
+    {
+        PSendSysMessage("Permission denied.");
         return false;
     }
 
