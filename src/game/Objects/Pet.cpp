@@ -1323,7 +1323,7 @@ bool Pet::CreateBaseAtCreature(Creature* creature)
     return true;
 }
 
-bool Pet::InitStatsForLevel(uint32 petlevel, Unit* owner)
+bool Pet::InitStatsForLevel(uint32 petlevel, Unit const* owner)
 {
     CreatureInfo const* cinfo = GetCreatureInfo();
     MANGOS_ASSERT(cinfo);
@@ -2419,38 +2419,38 @@ void Pet::ToggleAutocast(uint32 spellid, bool apply)
     }
 }
 
-bool Pet::IsPermanentPetFor(Player* owner) const
+bool Pet::IsPermanentPetFor(Player const* owner) const
 {
     switch (getPetType())
     {
-    case SUMMON_PET:
-        switch (owner->GetClass())
-        {
-            // oddly enough, Mage's Water Elemental is still treated as temporary pet with Glyph of Eternal Water
-            // i.e. does not unsummon at mounting, gets dismissed at teleport etc.
-            case CLASS_WARLOCK:
-                return GetCreatureInfo()->type == CREATURE_TYPE_DEMON;
-            case CLASS_MAGE:
-                return GetCreatureInfo()->type == CREATURE_TYPE_ELEMENTAL;
-            case CLASS_PRIEST:
-                return GetCreatureInfo()->type == CREATURE_TYPE_HUMANOID;
-            case CLASS_DRUID:
-                return GetCreatureInfo()->type == CREATURE_TYPE_BEAST;
-            case CLASS_SHAMAN:
-                return GetCreatureInfo()->type == CREATURE_TYPE_NOT_SPECIFIED;
-            case CLASS_PALADIN:
-                return GetCreatureInfo()->type == CREATURE_TYPE_MECHANICAL;
-            case CLASS_ROGUE:
-                return GetCreatureInfo()->type == CREATURE_TYPE_UNDEAD;
-            case CLASS_WARRIOR:
-                return GetCreatureInfo()->type == CREATURE_TYPE_UNDEAD;
-            default:
-                return false;
-        }
-    case HUNTER_PET:
-        return true;
-    default:
-        return false;
+        case SUMMON_PET:
+            switch (owner->GetClass())
+            {
+                // oddly enough, Mage's Water Elemental is still treated as temporary pet with Glyph of Eternal Water
+                // i.e. does not unsummon at mounting, gets dismissed at teleport etc.
+                case CLASS_WARLOCK:
+                    return GetCreatureInfo()->type == CREATURE_TYPE_DEMON;
+                case CLASS_MAGE:
+                    return GetCreatureInfo()->type == CREATURE_TYPE_ELEMENTAL;
+                case CLASS_PRIEST:
+                    return GetCreatureInfo()->type == CREATURE_TYPE_HUMANOID;
+                case CLASS_DRUID:
+                    return GetCreatureInfo()->type == CREATURE_TYPE_BEAST;
+                case CLASS_SHAMAN:
+                    return GetCreatureInfo()->type == CREATURE_TYPE_NOT_SPECIFIED;
+                case CLASS_PALADIN:
+                    return GetCreatureInfo()->type == CREATURE_TYPE_MECHANICAL;
+                case CLASS_ROGUE:
+                    return GetCreatureInfo()->type == CREATURE_TYPE_UNDEAD;
+                case CLASS_WARRIOR:
+                    return GetCreatureInfo()->type == CREATURE_TYPE_UNDEAD;
+                default:
+                    return false;
+            }
+        case HUNTER_PET:
+            return true;
+        default:
+            return false;
     }
 }
 
