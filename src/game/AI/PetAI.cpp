@@ -43,12 +43,21 @@ int PetAI::Permissible(Creature const* creature)
 PetAI::PetAI(Creature* c) : CreatureAI(c), m_updateAlliesTimer(0)
 {
     UpdateAllies();
+
     // Warlock imp has no melee attack
     // Mage Water Elemental has no melee attack
     // Shaman Obsidian Destroyer has no melee attack
     // Rogue Bone Clinkz has no melee attack
     // Warrior Bane has no melee attack
     m_bMeleeAttack = (c->GetEntry() != 416 && c->GetEntry() != 200009 && c->GetEntry() != 200012 && c->GetEntry() != 200014 && c->GetEntry() != 200015);
+
+    // World of Warcraft Client Patch 1.7.0 (2005-09-13)
+    //- If you call a tamed Deepmoss Hatchling, you are no longer notified
+    //  that you hatched.
+#if SUPPORTED_CLIENT_BUILD <= CLIENT_BUILD_1_6_1
+    if (c->GetEntry() == 4263)
+        DoScriptText(1413, c);
+#endif
 }
 
 bool PetAI::_needToStop() const
