@@ -716,7 +716,7 @@ void SendDefaultMenu_TeleportNPC(Player *player, Creature *_Creature, uint32 act
                 break;
             }
             player->ModifyMoney(-5 * GOLD);
-            player->TeleportTo(533, 3005.87f, -3435.0f, 293.89f, 0.0f);
+            player->TeleportTo(0, 3081.08f, -3777.97f, 129.12f, 0.497555f);
             break;
         case 601: // Kalimdor -> Ashenvale
             player->CLOSE_GOSSIP_MENU();
