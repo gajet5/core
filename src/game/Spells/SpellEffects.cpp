@@ -3314,26 +3314,36 @@ void Spell::EffectDispel(SpellEffectIndex effIdx)
                     return;
 
                 uint32 healSpell = 0;
+                uint32 basepoint = 0;
                 switch (m_spellInfo->Id)
                 {
                     case 19505:
                         healSpell = 19658;
+                        basepoint = 234;
                         break;
                     case 19731:
                         healSpell = 19732;
+                        basepoint = 319;
                         break;
                     case 19734:
                         healSpell = 19733;
+                        basepoint = 438;
                         break;
                     case 19736:
                         healSpell = 19735;
+                        basepoint = 579;
                         break;
                     default:
                         sLog.Out(LOG_BASIC, LOG_LVL_DEBUG, "Spell for Devour Magic %d not handled in Spell::EffectDispel", m_spellInfo->Id);
                         break;
                 }
                 if (healSpell)
-                    m_casterUnit->CastSpell(m_casterUnit, healSpell, true);
+                {
+                    // Devour Magic - 25% max health bonus
+                    uint32 modpoint = basepoint + dither(m_casterUnit->GetMaxHealth() * 0.25f);
+                    //m_casterUnit->CastSpell(m_casterUnit, healSpell, true);
+                    m_casterUnit->CastCustomSpell(m_casterUnit, healSpell, modpoint, {}, {}, true, nullptr);
+                }
             }
         }
         // Send fail log to client
