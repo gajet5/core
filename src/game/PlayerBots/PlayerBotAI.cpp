@@ -76,7 +76,8 @@ enum
 bool PlayerBotAI::SpawnNewPlayer(WorldSession* sess, uint8 class_, uint32 race_, uint32 mapId, uint32 instanceId, float x, float y, float z, float o, Player* pClone)
 {
     ASSERT(botEntry);
-    std::string name = sObjectMgr.GeneratePetName(1863); // Succubus name
+    //std::string name = sObjectMgr.GeneratePetName(1863); // Succubus name
+    std::string name = sObjectMgr.GeneratePetName(2000); // Bot use custom name
     normalizePlayerName(name);
     uint8 gender = pClone ? pClone->GetByteValue(UNIT_FIELD_BYTES_0, UNIT_BYTES_0_OFFSET_GENDER) : urand(0, 1);
     uint8 skin = pClone ? pClone->GetByteValue(PLAYER_BYTES, PLAYER_BYTES_OFFSET_SKIN_ID) : urand(0, 5);
