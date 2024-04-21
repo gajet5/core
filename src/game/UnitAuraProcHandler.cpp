@@ -1794,14 +1794,14 @@ SpellAuraProcResult Unit::HandleProcTriggerDamageAuraProc(Unit* pVictim, uint32 
     SpellNonMeleeDamage damageInfo(this, pVictim, spellInfo->Id, SpellSchools(spellInfo->School));
     float fdamage = CalculateSpellEffectValue(pVictim, spellInfo, triggeredByAura->GetEffIndex());
 
-    // Paladin - Holy Shield : damage bonus 15% max health
+    // Paladin - Holy Shield : damage bonus 20% max health
     switch (spellInfo->Id)
     {
         case 20925: // Rank 1
         case 20927: // Rank 2
         case 20928: // Rank 3
         {
-            fdamage += triggeredByAura->GetCaster()->GetMaxHealth() * 0.15f;
+            fdamage += triggeredByAura->GetCaster()->GetMaxHealth() * 0.2f;
         }
         break; 
     }
