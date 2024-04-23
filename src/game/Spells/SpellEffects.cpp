@@ -5481,6 +5481,10 @@ void Spell::EffectScriptEffect(SpellEffectIndex effIdx)
                     break;
                 }
 
+                // Judgement of Justice - taunt target for 3 seconds
+                if (spellId2 == 20184)
+                    m_caster->CastSpell(unitTarget, 34172, true);
+
                 m_caster->CastSpell(unitTarget, spellId2, true);
                 return;
             }
