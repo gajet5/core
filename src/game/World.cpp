@@ -1839,6 +1839,9 @@ void World::SetInitialWorldSettings()
     sLog.Out(LOG_BASIC, LOG_LVL_MINIMAL, "Loading AH bot");
     sAuctionHouseBotMgr.Load();
 
+    sLog.Out(LOG_BASIC, LOG_LVL_MINIMAL, "Updating AH bot");
+    sAuctionHouseBotMgr.Update(true);
+
     sLog.Out(LOG_BASIC, LOG_LVL_MINIMAL, "Caching player phases (obsolete)");
     sObjectMgr.LoadPlayerPhaseFromDb();
 
