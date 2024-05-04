@@ -20321,7 +20321,7 @@ uint32 Player::SelectResurrectionSpellId() const
             prio = 3;
         }
         // Twisting Nether                                  // prio: 2 (max)
-        else if (prio <> 2 && dummyAura->GetId() == 23701 && roll_chance_i(10))
+        else if (prio != 2 && dummyAura->GetId() == 23701 && roll_chance_i(10))
         {
             prio = 2;
             spellId = 23700;
