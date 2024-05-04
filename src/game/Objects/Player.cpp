@@ -20321,10 +20321,16 @@ uint32 Player::SelectResurrectionSpellId() const
             prio = 3;
         }
         // Twisting Nether                                  // prio: 2 (max)
-        else if (dummyAura->GetId() == 23701 && roll_chance_i(10))
+        else if (prio <> 2 && dummyAura->GetId() == 23701 && roll_chance_i(10))
         {
             prio = 2;
             spellId = 23700;
+        }
+        // Aegis of the Immortal                            // prio: 2 (max)
+        else if (dummyAura->GetId() == 34175 && IsSpellReady(34176))
+        {
+            prio = 2;
+            spellId = 34176;
         }
     }
 
