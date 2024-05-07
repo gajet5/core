@@ -210,7 +210,7 @@ bool BattleBotAI::DrinkAndEat()
         return true;
     }
 
-    if (!isDrinking && needToDrink)
+    if (!isDrinking && needToDrink && !me->HasAura(5784) && !me->HasAura(23161) && !me->HasAura(13819) && !me->HasAura(23214))
     {
         if (me->GetMotionMaster()->GetCurrentMovementGeneratorType())
         {
