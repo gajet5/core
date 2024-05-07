@@ -213,7 +213,7 @@ bool PartyBotAI::DrinkAndEat()
         return true;
     }
 
-    if (!isDrinking && needToDrink && !me->HasAura(5784) && !me->HasAura(23161) && !me->HasAura(13819) && !me->HasAura(23214))
+    if (!isDrinking && needToDrink)
     {
         if (me->GetMotionMaster()->GetCurrentMovementGeneratorType())
         {
@@ -839,11 +839,14 @@ void PartyBotAI::UpdateAI(uint32 const diff)
                 auto auraList = pLeader->GetAurasByType(SPELL_AURA_MOUNTED);
                 if (!auraList.empty())
                 {
-                    bool oldState = me->HasCheatOption(PLAYER_CHEAT_NO_CAST_TIME);
+                    bool oldStateNoCastTime = me->HasCheatOption(PLAYER_CHEAT_NO_CAST_TIME);
+                    bool oldStateNoPower = me->HasCheatOption(PLAYER_CHEAT_NO_POWER);
                     me->SetCheatOption(PLAYER_CHEAT_NO_CAST_TIME, true);
+                    me->SetCheatOption(PLAYER_CHEAT_NO_POWER, true);
                     me->CastSpell(me, (*auraList.begin())->GetId(), true);
-                    me->SetCheatOption(PLAYER_CHEAT_NO_CAST_TIME, oldState);
-                } 
+                    me->SetCheatOption(PLAYER_CHEAT_NO_CAST_TIME, oldStateNoCastTime);
+                    me->SetCheatOption(PLAYER_CHEAT_NO_POWER, oldStateNoPower);
+                }
             }
         }
         else if (me->IsMounted())
