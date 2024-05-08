@@ -778,7 +778,7 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
         }
     }
 
-    if (health <= damage && pVictim->GetInvincibilityHpThreshold() == 0)
+    if (health <= damage && pVictim->GetInvincibilityHpThreshold() == 0 && !pVictim->HasAura(34183))
     {
         DEBUG_FILTER_LOG(LOG_FILTER_DAMAGE, "DealDamage: victim just died");
         Kill(pVictim, spellProto, durabilityLoss); // Function too long, we cut
@@ -798,9 +798,17 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
     }
     else                                                    // if (health <= damage)
     {
-        if (health > pVictim->GetInvincibilityHpThreshold())
+        if (health > pVictim->GetInvincibilityHpThreshold() || pVictim->HasAura(34183))
         {
-            uint32 dmg = std::min<uint32>(health - pVictim->GetInvincibilityHpThreshold(), damage);
+            uint32 dmg;
+            if (pVictim->HasAura(34183))
+            {
+                dmg = std::min<uint32>(health - 1, damage);
+            }
+            else
+            {
+                dmg = std::min<uint32>(health - pVictim->GetInvincibilityHpThreshold(), damage);
+            }
             pVictim->ModifyHealth(-(int32)dmg);
         }
 
