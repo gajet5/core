@@ -798,7 +798,7 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
     }
     else                                                    // if (health <= damage)
     {
-        if (health > pVictim->GetInvincibilityHpThreshold() || pVictim->HasAura(34183))
+        if (health > pVictim->GetInvincibilityHpThreshold())
         {
             uint32 dmg;
             if (pVictim->HasAura(34183))
