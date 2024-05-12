@@ -6968,11 +6968,18 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (!m_caster->IsPlayer())
                     return SPELL_FAILED_BAD_TARGETS;
 
+                // creature 200017 can not be possessed
+                if (m_targets.getUnitTarget()->GetEntry() == 200017)
+                    return SPELL_FAILED_BAD_TARGETS;
                 // no break
             }
             case SPELL_AURA_MOD_CHARM:
             {
                 if (!m_casterUnit)
+                    return SPELL_FAILED_BAD_TARGETS;
+
+                // creature 200017 can not be charmed
+                if (m_targets.getUnitTarget()->GetEntry() == 200017)
                     return SPELL_FAILED_BAD_TARGETS;
 
                 if (!IsScriptTarget(m_spellInfo->EffectImplicitTargetA[i]))
