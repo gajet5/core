@@ -341,15 +341,31 @@ void PlayerBotMgr::Update(uint32 diff)
                 ASSERT(minLevel <= PLAYER_MAX_LEVEL);
                 uint32 const maxLevel = std::min<uint32>(minLevel + 9, PLAYER_MAX_LEVEL);
 
-                for (uint32 i = queuedAllianceCount[bracketId]; i < bg->GetMinPlayersPerTeam(); ++i)
+                if(sWorld.getConfig(CONFIG_BATTLE_BOT_QUEUED_MAX_COUNT) == 0)
                 {
-                    uint32 const botLevel = urand(minLevel, maxLevel);
-                    AddBattleBot(BattleGroundQueueTypeId(queueType), ALLIANCE, botLevel, true);
+                    for (uint32 i = queuedAllianceCount[bracketId]; i < bg->GetMinPlayersPerTeam(); ++i)
+                    {
+                        uint32 const botLevel = urand(minLevel, maxLevel);
+                        AddBattleBot(BattleGroundQueueTypeId(queueType), ALLIANCE, botLevel, true);
+                    }
+                    for (uint32 i = queuedHordeCount[bracketId]; i < bg->GetMinPlayersPerTeam(); ++i)
+                    {
+                        uint32 const botLevel = urand(minLevel, maxLevel);
+                        AddBattleBot(BattleGroundQueueTypeId(queueType), HORDE, botLevel, true);
+                    }
                 }
-                for (uint32 i = queuedHordeCount[bracketId]; i < bg->GetMinPlayersPerTeam(); ++i)
+                else
                 {
-                    uint32 const botLevel = urand(minLevel, maxLevel);
-                    AddBattleBot(BattleGroundQueueTypeId(queueType), HORDE, botLevel, true);
+                    for (uint32 i = queuedAllianceCount[bracketId]; i < bg->GetMaxPlayersPerTeam(); ++i)
+                    {
+                        uint32 const botLevel = urand(minLevel, maxLevel);
+                        AddBattleBot(BattleGroundQueueTypeId(queueType), ALLIANCE, botLevel, true);
+                    }
+                    for (uint32 i = queuedHordeCount[bracketId]; i < bg->GetMaxPlayersPerTeam(); ++i)
+                    {
+                        uint32 const botLevel = urand(minLevel, maxLevel);
+                        AddBattleBot(BattleGroundQueueTypeId(queueType), HORDE, botLevel, true);
+                    }
                 }
             }
         }

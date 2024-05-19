@@ -2972,6 +2972,7 @@ PartyBot.RandomGearLevelDifference = 10
 
 BattleBot.AutoEquip = 1
 BattleBot.AutoJoin = 0
+BattleBot.QueuedMaxCount = 0
 
 WarriorBotSummonPet = 1
 PaladinBotSummonPet = 1
