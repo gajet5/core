@@ -553,7 +553,6 @@ void WorldSession::HandleMailReturnToSender(WorldPacket& recv_data)
             }
         }
 
-        // try to fix bot equipment mail to player after delete
         if (!(m->receiverGuid.GetCounter() == m->sender && m->subject == "This item(s) have problems with equipping/storing in inventory." && m->itemTextId == 0))
         {
             draft.SetMoney(m->money).SendReturnToSender(GetAccountId(), m->receiverGuid, ObjectGuid(HIGHGUID_PLAYER, m->sender));
