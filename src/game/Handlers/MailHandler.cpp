@@ -553,10 +553,7 @@ void WorldSession::HandleMailReturnToSender(WorldPacket& recv_data)
             }
         }
 
-        if (!(m->receiverGuid.GetCounter() == m->sender && m->stationery == 61))
-        {
-            draft.SetMoney(m->money).SendReturnToSender(GetAccountId(), m->receiverGuid, ObjectGuid(HIGHGUID_PLAYER, m->sender));
-        }
+        draft.SetMoney(m->money).SendReturnToSender(GetAccountId(), m->receiverGuid, ObjectGuid(HIGHGUID_PLAYER, m->sender));
     }
 
     delete m;                                               // we can deallocate old mail

@@ -257,7 +257,7 @@ void MailDraft::SendReturnToSender(uint32 sender_acc, ObjectGuid sender_guid, Ob
     if (!receiver)
         rc_account = sObjectMgr.GetPlayerAccountIdByGUID(receiver_guid);
 
-    if (!receiver && !rc_account)                           // sender not exist
+    if ((!receiver && !rc_account) || receiver->IsBot())                           // sender not exist
     {
         deleteIncludedItems(true);
         return;
