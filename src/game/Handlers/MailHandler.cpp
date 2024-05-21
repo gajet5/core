@@ -553,7 +553,7 @@ void WorldSession::HandleMailReturnToSender(WorldPacket& recv_data)
             }
         }
 
-        if (!(m->receiverGuid.GetCounter() == m->sender && m->subject == "This item(s) have problems with equipping/storing in inventory." && m->itemTextId == 0))
+        if (!(m->receiverGuid.GetCounter() == m->sender && m->stationery == 61))
         {
             draft.SetMoney(m->money).SendReturnToSender(GetAccountId(), m->receiverGuid, ObjectGuid(HIGHGUID_PLAYER, m->sender));
         }
