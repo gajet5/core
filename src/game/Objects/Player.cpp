@@ -4897,11 +4897,7 @@ void Player::DeleteFromDB(ObjectGuid playerGuid, uint32 accountId, bool updateRe
 
                     uint32 pl_account = sObjectMgr.GetPlayerAccountIdByGUID(playerGuid);
 
-                    // try to fix bot equipment mail to player after delete
-                    if (!(sender == lowguid && subject == "This item(s) have problems with equipping/storing in inventory." && itemTextId == 0))
-                    {
-                        draft.SetMoney(money).SendReturnToSender(pl_account, playerGuid, ObjectGuid(HIGHGUID_PLAYER, sender));
-                    }
+                    draft.SetMoney(money).SendReturnToSender(pl_account, playerGuid, ObjectGuid(HIGHGUID_PLAYER, sender));
                 }
                 while (resultMail->NextRow());
 
