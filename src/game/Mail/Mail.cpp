@@ -257,7 +257,7 @@ void MailDraft::SendReturnToSender(uint32 sender_acc, ObjectGuid sender_guid, Ob
     if (!receiver)
         rc_account = sObjectMgr.GetPlayerAccountIdByGUID(receiver_guid);
 
-    if ((!receiver && !rc_account) || receiver->IsBot())                           // sender not exist
+    if (!receiver && !rc_account) // sender not exist
     {
         deleteIncludedItems(true);
         return;
@@ -300,6 +300,12 @@ void MailDraft::SendReturnToSender(uint32 sender_acc, ObjectGuid sender_guid, Ob
 void MailDraft::SendMailTo(MailReceiver const& receiver, MailSender const& sender, MailCheckMask checked, uint32 deliver_delay, uint32 expire_delay)
 {
     Player* pReceiver = receiver.GetPlayer();               // can be nullptr
+
+    if (pReceiver->IsBot())
+    {
+        return;
+    }
+
     MasterPlayer* masterReceiver = sObjectAccessor.FindMasterPlayer(receiver.GetPlayerGuid());
 
     bool has_items = !m_items.empty();
