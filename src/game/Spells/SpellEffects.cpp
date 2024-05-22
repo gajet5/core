@@ -3341,8 +3341,8 @@ void Spell::EffectDispel(SpellEffectIndex effIdx)
                 }
                 if (healSpell)
                 {
-                    // Devour Magic - 25% max health bonus
-                    uint32 modPoint = basePoint + dither(m_casterUnit->GetMaxHealth() * 0.25f);
+                    // Devour Magic - 35% max health bonus
+                    uint32 modPoint = basePoint + dither(m_casterUnit->GetMaxHealth() * 0.35f);
                     //m_casterUnit->CastSpell(m_casterUnit, healSpell, true);
                     m_casterUnit->CastCustomSpell(m_casterUnit, healSpell, modPoint, {}, {}, true, nullptr);
                 }

@@ -6017,8 +6017,8 @@ void Aura::HandleSchoolAbsorb(bool apply, bool Real)
                     // Voidwalker - Sacrifice
                     if (spellProto->SpellIconID == 693)
                     {
-                        //+75% from max health bonus
-                        DoneActualBenefit = caster->GetMaxHealth() * 0.75f;
+                        //+100% from max health bonus
+                        DoneActualBenefit = caster->GetMaxHealth() * 1.0f;
                         break;
                     }
                     break;
