@@ -625,6 +625,8 @@ void World::LoadConfigSettings(bool reload)
     setConfig(CONFIG_BOT_LOOT_MONEY,    "BotLootMoney",  0);
     setConfig(CONFIG_BATTLE_BOT_QUEUED_MAX_COUNT,    "BattleBot.QueuedMaxCount",  0);
 
+    setConfig(CONFIG_UINT32_BUFF_JIEFUFUTI,    "Buff.JieFuFuTi",  99);
+
     setConfig(CONFIG_UINT32_STRICT_PLAYER_NAMES,  "StrictPlayerNames",  0);
     setConfig(CONFIG_UINT32_STRICT_CHARTER_NAMES, "StrictCharterNames", 0);
     setConfig(CONFIG_UINT32_STRICT_PET_NAMES,     "StrictPetNames",     0);

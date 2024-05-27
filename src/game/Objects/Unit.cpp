@@ -3237,7 +3237,19 @@ float Unit::GetTotalAuraMultiplierByMiscMask(AuraType auratype, uint32 misc_mask
     {
         Modifier* mod = i->GetModifier();
         if (mod->m_miscvalue & misc_mask)
-            multiplier *= (100.0f + mod->m_amount) / 100.0f;
+        {
+            if (auratype == 87 && i->GetId() == 34001)
+            {
+                uint32 jiefufuti = sWorld.getConfig(CONFIG_UINT32_BUFF_JIEFUFUTI);
+                if (jiefufuti < 0)
+                    jiefufuti = 0;
+                if (jiefufuti > 99)
+                    jiefufuti = 99;
+                multiplier *= (100.0f - jiefufuti) / 100.0f;
+            }
+            else
+                multiplier *= (100.0f + mod->m_amount) / 100.0f;
+        }
     }
     return multiplier;
 }
