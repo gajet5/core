@@ -301,9 +301,10 @@ void MailDraft::SendMailTo(MailReceiver const& receiver, MailSender const& sende
 {
     Player* pReceiver = receiver.GetPlayer();               // can be nullptr
 
-    if (pReceiver->IsBot())
+    if (pReceiver)
     {
-        return;
+        if (pReceiver->IsBot())
+            return;
     }
 
     MasterPlayer* masterReceiver = sObjectAccessor.FindMasterPlayer(receiver.GetPlayerGuid());
