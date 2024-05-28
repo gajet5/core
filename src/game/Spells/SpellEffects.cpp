@@ -1781,8 +1781,6 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                 //JieFuFuTi(34001) reduce taken damage do not work on life tap.
                 if(m_casterUnit->HasAura(34001)){
                     uint32 jiefufuti = sWorld.getConfig(CONFIG_UINT32_BUFF_JIEFUFUTI);
-                    if (jiefufuti < 0)
-                        jiefufuti = 0;
                     if (jiefufuti > 99)
                         jiefufuti = 99;
                     dmg = (100.0f / (100.0f - jiefufuti)) * dmg;
