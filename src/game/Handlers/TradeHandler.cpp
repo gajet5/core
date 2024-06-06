@@ -801,7 +801,6 @@ void WorldSession::HandleSetTradeItemOpcode(WorldPacket& recvPacket)
         SendTradeStatus(TRADE_STATUS_TRADE_CANCELED);
         return;
     }
-    // Modification - trading in loot for two hours.
 
     his_trade->SetAccepted(false);
     his_trade->SetLastModificationTime(time(nullptr));

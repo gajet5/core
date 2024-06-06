@@ -1569,7 +1569,6 @@ void Player::Update(uint32 update_diff, uint32 p_time)
 
     // Modification - trading in loot for two hours.
     UpdateItemsInBags();
-    // Modification - trading in loot for two hours.
 
     if (m_cameraUpdateTimer)
     {
@@ -10807,7 +10806,6 @@ Item* Player::StoreNewItem(ItemPosCountVec const& dest, uint32 item, bool update
             }
             pItem->SetRaidGroup(ss.str().c_str());
         }
-        // Modification - trading in loot for two hours.
 
         ItemAddedQuestCheck(item, count);
         if (randomPropertyId)
@@ -10871,7 +10869,6 @@ Item* Player::_StoreItem(uint16 pos, Item* pItem, uint32 count, bool clone, bool
             pItem->SetBinding(false);
         else if (pItem->GetProto()->Bonding == BIND_WHEN_PICKED_UP || pItem->GetProto()->Bonding == BIND_QUEST_ITEM || (pItem->GetProto()->Bonding == BIND_WHEN_EQUIPPED && IsBagPos(pos)))
             pItem->SetBinding(true);
-        // Modification - trading in loot for two hours.
 
         if (bag == INVENTORY_SLOT_BAG_0)
         {
@@ -10918,7 +10915,6 @@ Item* Player::_StoreItem(uint16 pos, Item* pItem, uint32 count, bool clone, bool
             pItem2->SetBinding(false);
         else if (pItem->GetProto()->Bonding == BIND_WHEN_PICKED_UP || pItem->GetProto()->Bonding == BIND_QUEST_ITEM || (pItem->GetProto()->Bonding == BIND_WHEN_EQUIPPED && IsBagPos(pos)))
             pItem2->SetBinding(true);
-        // Modification - trading in loot for two hours.
 
         pItem2->SetCount(pItem2->GetCount() + count);
         if (IsInWorld() && update)
@@ -11059,7 +11055,6 @@ Item* Player::EquipItem(uint16 pos, Item* pItem, bool update)
         pItem->SetRaidGroup("");
         pItem->SetBinding(true);        
     }
-    // Modification - trading in loot for two hours.
 
     return pItem;
 }
@@ -11124,7 +11119,6 @@ void Player::VisualizeItem(uint8 slot, Item* pItem)
         pItem->SetBinding(false);
     else if (pItem->GetProto()->Bonding == BIND_WHEN_EQUIPPED || pItem->GetProto()->Bonding == BIND_WHEN_PICKED_UP || pItem->GetProto()->Bonding == BIND_QUEST_ITEM)
         pItem->SetBinding(true);
-    // Modification - trading in loot for two hours.
 
     sLog.Out(LOG_BASIC, LOG_LVL_DEBUG, "STORAGE: EquipItem slot = %u, item = %u", slot, pItem->GetEntry());
 
@@ -12283,7 +12277,6 @@ void Player::UpdateItemsInBags()
         }
     }
 }
-// Modification - trading in loot for two hours.
 
 void Player::UpdateEnchantTime(uint32 time)
 {
@@ -16285,7 +16278,6 @@ bool Player::_LoadInventory(QueryResult* result, uint32 timediff, bool& hasEpicM
                     item->SetLootingTime(0);
                     item->SetBinding(true);
                 }
-                // Modification - trading in loot for two hours.
             }
             else
             {
@@ -17419,7 +17411,6 @@ void Player::_SaveInventory()
             item->SetLootingTime(0);
             item->SetRaidGroup("");
         }
-        // Modification - trading in loot for two hours.
 
         switch (item->GetState())
         {

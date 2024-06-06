@@ -247,7 +247,6 @@ void WorldSession::HandleSendMail(WorldPacket& recv_data)
             }
         }        
     }
-    // Modification - trading in loot for two hours.
 
     req->receiverPtr = sObjectMgr.GetPlayer(req->receiver);
 
