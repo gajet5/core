@@ -155,7 +155,7 @@ void WorldSession::HandleCharEnum(std::unique_ptr<QueryResult> result)
                 m_characterMaxLevel = level;
 
             sLog.Out(LOG_BASIC, LOG_LVL_DETAIL, "Build enum data for char guid %u from account %u.", guidlow, GetAccountId());
-            if (Player::BuildEnumData(result, &data, GetSecurity()))
+            if (Player::BuildEnumData(result, &data))
                 ++num;
         }
         while (result->NextRow());
