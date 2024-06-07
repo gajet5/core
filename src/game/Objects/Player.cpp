@@ -23078,7 +23078,7 @@ void Player::ClearTemporaryWarWithFactions()
 void Player::_LoadAlternativeSpec() {
 
 	m_altspec_talents.clear();
-	QueryResult *result = CharacterDatabase.PQuery("SELECT spells FROM character_swap_spec WHERE guid = '%u'",GetGUIDLow());
+	std::unique_ptr<QueryResult> result = CharacterDatabase.PQuery("SELECT spells FROM character_swap_spec WHERE guid = '%u'",GetGUIDLow());
 
 	if (result)
 	{
@@ -23091,7 +23091,6 @@ void Player::_LoadAlternativeSpec() {
 			m_altspec_talents.push_back(atoi(spell.c_str()));
 		}
 	}
-	delete result;
 
 };
 
@@ -23119,14 +23118,13 @@ uint32 Player::SwapSpec()
 
 	//Time check
     uint32 ts = uint32(time(NULL)) - 7200;
-    QueryResult *result = CharacterDatabase.PQuery("SELECT timestamp FROM character_swap_spec WHERE guid = '%u'",GetGUIDLow());
+    std::unique_ptr<QueryResult> result = CharacterDatabase.PQuery("SELECT timestamp FROM character_swap_spec WHERE guid = '%u'",GetGUIDLow());
 	if (result)
 	{
 		Field *fields = result->Fetch();
 		std::string str_ts = fields[0].GetString();
         ts = uint32(atoi(str_ts.c_str()));
 	}
-	delete result;
 
 	if (uint32(time(NULL) - ts) < sWorld.getConfig(CONFIG_SWAP_SPEC_INTERVAL))
         return 3;
