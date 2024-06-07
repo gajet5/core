@@ -2530,9 +2530,9 @@ private:
 class BanAccountHandler
 {
 public:
-    void HandleAccountSelectResult(QueryResult*, SqlQueryHolder* queryHolder)
+    void HandleAccountSelectResult(std::unique_ptr<QueryResult>, SqlQueryHolder* queryHolder)
     {
-        BanQueryHolder* holder = static_cast<BanQueryHolder*>(queryHolder);
+        BanQueryHolder* holder = dynamic_cast<BanQueryHolder*>(queryHolder);
         if (!holder)
             return;
 
@@ -2540,7 +2540,7 @@ public:
 
         WorldSession* session = sWorld.FindSession(holder->GetAuthorAccountId());
 
-        QueryResult* result = holder->GetResult(0);
+        std::unique_ptr<QueryResult> result = holder->TakeResult(0);
         if (!result)
         {
             if (session)
@@ -2901,13 +2901,12 @@ void World::UpdateRealmCharCount(uint32 accountId)
                                   "SELECT COUNT(`guid`) FROM `characters` WHERE `account` = '%u'", accountId);
 }
 
-void World::_UpdateRealmCharCount(QueryResult* resultCharCount, uint32 accountId)
+void World::_UpdateRealmCharCount(std::unique_ptr<QueryResult> resultCharCount, uint32 accountId)
 {
     if (resultCharCount)
     {
         Field* fields = resultCharCount->Fetch();
         uint32 charCount = fields[0].GetUInt32();
-        delete resultCharCount;
 
         LoginDatabase.PExecute("REPLACE INTO `realmcharacters` (`numchars`, `acctid`, `realmid`) VALUES (%u, %u, %u)", charCount, accountId, realmID);
     }
@@ -3121,7 +3120,7 @@ void World::SetSessionDisconnected(WorldSession* sess)
 
 void World::AddAsyncTask(std::function<void()> task) {
     std::lock_guard<std::mutex> lock(m_asyncTaskQueueMutex);
-    _asyncTasks.push_back(task);
+    _asyncTasks.push_back(std::move(task));
 }
 
 void World::LogMoneyTrade(ObjectGuid sender, ObjectGuid receiver, uint32 amount, const char* type, uint32 dataInt)
