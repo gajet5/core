@@ -1378,7 +1378,7 @@ void ChatHandler::LoadRbacPermissions()
         } while (result->NextRow());
     }
 
-    result.reset(LoginDatabase.Query("SELECT `account_id`, `permission_id`, `granted` FROM `rbac_account_permissions`"));
+    result = LoginDatabase.Query("SELECT `account_id`, `permission_id`, `granted` FROM `rbac_account_permissions`");
     if (result)
     {
         do
@@ -1404,7 +1404,7 @@ void ChatHandler::LoadRbacPermissions()
 
     ChatCommand* commandTable = getCommandTable();
 
-    result.reset(LoginDatabase.Query("SELECT `command`, `permission_id` FROM `rbac_command_permissions`"));
+    result = LoginDatabase.Query("SELECT `command`, `permission_id` FROM `rbac_command_permissions`");
     if (result)
     {
         do
