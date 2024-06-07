@@ -10789,7 +10789,7 @@ Item* Player::StoreNewItem(ItemPosCountVec const& dest, uint32 item, bool update
         if (GetMap()->IsRaid() && (pItem->GetProto()->Bonding == BIND_WHEN_PICKED_UP || pItem->GetProto()->Bonding == BIND_QUEST_ITEM))
         {
             pItem->SetLootingTime(time(nullptr));  
-            pItem->SetDurationRaidLooting(this);
+            pItem->SetDurationRaidLooting(this, sWorld.getConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME));
 
             std::ostringstream ss;
             if (Group* pGroup = GetGroup())
@@ -11052,6 +11052,7 @@ Item* Player::EquipItem(uint16 pos, Item* pItem, bool update)
     // Modification - trading in loot for two hours.
     if (pItem->GetLootingTime())
     {
+        pItem->SetDurationRaidLooting(this, 0);
         pItem->SetLootingTime(0);
         pItem->SetRaidGroup("");
         pItem->SetBinding(true);        
