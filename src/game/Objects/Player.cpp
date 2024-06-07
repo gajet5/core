@@ -10920,12 +10920,11 @@ void Player::SetVisibleItemSlot(uint8 slot, Item const* pItem)
         //Transmogrification
         uint64 item_guid = pItem->GetGUIDLow();
         uint64 character_guid = pItem->GetOwnerGuid();
-        QueryResult* result = CharacterDatabase.PQuery("SELECT `entry` FROM `character_transmog` WHERE `guid` = '%u' and `character` = '%u'", item_guid, character_guid);
+        std::unique_ptr<QueryResult> result = CharacterDatabase.PQuery("SELECT `entry` FROM `character_transmog` WHERE `guid` = '%u' and `character` = '%u'", item_guid, character_guid);
         if(result){
             Field* fields = result->Fetch();
             uint64 item_entry = fields[0].GetUInt64();
             SetUInt32Value(VisibleBase + 0, item_entry);
-            delete result;
         }else{
             SetUInt32Value(VisibleBase + 0, pItem->GetEntry());
         }
@@ -13789,11 +13788,10 @@ bool Player::SatisfyQuestDaily(Quest const* qInfo, bool msg) const
 
     uint32 todayStart = getTodayStartTimestamp();
     uint32 todayEnd = todayStart + 86399;
-    QueryResult* result = CharacterDatabase.PQuery("SELECT `quest` FROM `character_queststatus` WHERE `guid`='%u' and `quest`='%u' and `timer`>='%u' and `timer`<='%u' and `status`=0 and `rewarded`=1 and `mob_count1`=1 and `mob_count2`=1 and `mob_count3`=1", GetGUIDLow(), quest_id, todayStart, todayEnd);
+    std::unique_ptr<QueryResult> result = CharacterDatabase.PQuery("SELECT `quest` FROM `character_queststatus` WHERE `guid`='%u' and `quest`='%u' and `timer`>='%u' and `timer`<='%u' and `status`=0 and `rewarded`=1 and `mob_count1`=1 and `mob_count2`=1 and `mob_count3`=1", GetGUIDLow(), quest_id, todayStart, todayEnd);
     if (result)
     {
         uint32 id = result->Fetch()[0].GetUInt32();
-        delete result;
         switch (id)
         {
             case 10004:
