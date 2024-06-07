@@ -12269,16 +12269,17 @@ void Player::UpdateItemsInBags(uint32 diff)
     {
         if (Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
         {
-            if (pItem->GetLootingTime() && pItem->GetLootingTime() + sWorld.getConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME) < time(nullptr))
-            {
-                pItem->SetBinding(true);
-                pItem->SetLootingTime(0);
-                pItem->SetRaidGroup("");
-            }
-            else
+            if (pItem->GetLootingTime())
             {
                 pItem->UpdateDurationRaidLooting(this, diff);
-            }
+
+                if (pItem->GetLootingTime() + sWorld.getConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME) < time(nullptr))
+                {
+                    pItem->SetBinding(true);
+                    pItem->SetLootingTime(0);
+                    pItem->SetRaidGroup("");
+                }
+            }   
         }
     }
 }
