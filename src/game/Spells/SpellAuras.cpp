@@ -1763,6 +1763,8 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                                     if (aura = player->GetAura(spells[i], EFFECT_INDEX_0))
                                     {
                                         times[i] += aura->GetAuraDuration();
+                                        if (times[i] > 7200000)
+                                            times[i] = 7200000;
                                         aura->GetHolder()->SetAuraMaxDuration(0);
                                         aura->GetHolder()->RefreshHolder();
                                     }
