@@ -10783,7 +10783,7 @@ Item* Player::StoreNewItem(ItemPosCountVec const& dest, uint32 item, bool update
         if (GetMap()->IsRaid() && (pItem->GetProto()->Bonding == BIND_WHEN_PICKED_UP || pItem->GetProto()->Bonding == BIND_QUEST_ITEM))
         {
             pItem->SetLootingTime(time(nullptr));  
-            pItem->SetDurationRaidLooting(this, sWorld.getConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME));
+            pItem->SetDurationRaidLooting(sWorld.getConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME));
 
             std::ostringstream ss;
             if (Group* pGroup = GetGroup())
@@ -11046,7 +11046,7 @@ Item* Player::EquipItem(uint16 pos, Item* pItem, bool update)
     // Modification - trading in loot for two hours.
     if (pItem->GetLootingTime())
     {
-        pItem->SetDurationRaidLooting(this, 0);
+        pItem->SetDurationRaidLooting(0);
         pItem->SetLootingTime(0);
         pItem->SetRaidGroup("");
         pItem->SetBinding(true);        
@@ -12266,10 +12266,11 @@ void Player::UpdateItemsInBags(uint32 diff)
         {
             if (pItem->GetLootingTime())
             {
-                pItem->UpdateDurationRaidLooting(this, diff);
+                pItem->UpdateDurationRaidLooting(diff);
 
                 if (pItem->GetLootingTime() + sWorld.getConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME) < time(nullptr))
                 {
+                    pItem->UpdateDurationRaidLooting(0);
                     pItem->SetBinding(true);
                     pItem->SetLootingTime(0);
                     pItem->SetRaidGroup("");
@@ -16267,12 +16268,14 @@ bool Player::_LoadInventory(std::unique_ptr<QueryResult> result, uint32 timediff
                 // Modification - trading in loot for two hours.
                 if (looting_time && looting_time + sWorld.getConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME) >= time(nullptr) && (item->GetState() == ITEM_NEW || item->GetState() == ITEM_UNCHANGED))
                 {
+                    item->SetDurationRaidLooting(time(nullptr) - looting_time);
                     item->SetBinding(false);
                     item->SetRaidGroup(raid_group);
                     item->SetLootingTime(looting_time);
                 }
                 if (looting_time && looting_time + sWorld.getConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME) < time(nullptr))
                 {
+                    item->SetDurationRaidLooting(0);
                     item->SetRaidGroup("");
                     item->SetLootingTime(0);
                     item->SetBinding(true);
