@@ -16275,7 +16275,6 @@ bool Player::_LoadInventory(std::unique_ptr<QueryResult> result, uint32 timediff
                 }
                 if (looting_time && looting_time + sWorld.getConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME) < time(nullptr))
                 {
-                    item->SetDurationRaidLooting(0);
                     item->SetRaidGroup("");
                     item->SetLootingTime(0);
                     item->SetBinding(true);
