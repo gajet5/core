@@ -722,8 +722,8 @@ void Spell::EffectDummy(SpellEffectIndex effIdx)
                 {
                     if (m_caster->GetTypeId() != TYPEID_PLAYER)
                         return;
-                    // immediately finishes the cooldown on hunter's Deterrence & Scatter Shot
-                    auto cdCheck = [](SpellEntry const & spellEntry) -> bool { return ((spellEntry.Id == 19263 || spellEntry.Id == 19503) && spellEntry.GetRecoveryTime() > 0); };
+                    // immediately finishes the cooldown on hunter's Feign Death/Deterrence/Scatter Shot
+                    auto cdCheck = [](SpellEntry const & spellEntry) -> bool { return ((spellEntry.Id == 5384 || spellEntry.Id == 19263 || spellEntry.Id == 19503) && spellEntry.GetRecoveryTime() > 0); };
                     static_cast<Player*>(m_caster)->RemoveSomeCooldown(cdCheck);
                     return;
                 }
