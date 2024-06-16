@@ -450,11 +450,12 @@ void Spell::EffectSchoolDMG(SpellEffectIndex effect_idx)
             }
             case SPELLFAMILY_WARLOCK:
             {
-                // Conflagrate - consumes Immolate
+                // Conflagrate - consumes Immolate/Curse of Agony/Corruption
                 if (m_spellInfo->IsFitToFamilyMask<CF_WARLOCK_CONFLAGRATE>())
                 {
                     // for caster applied auras only
                     Unit::AuraList const& mPeriodic = unitTarget->GetAurasByType(SPELL_AURA_PERIODIC_DAMAGE);
+                    float coefficientImmolate = 0.0f, coefficientCurseOfAgony = 0.0f, coefficientCorruption = 0.0f;
                     for (const auto i : mPeriodic)
                     {
                         // Immolate
@@ -462,9 +463,27 @@ void Spell::EffectSchoolDMG(SpellEffectIndex effect_idx)
                             i->GetCasterGuid() == m_caster->GetObjectGuid())
                         {
                             unitTarget->RemoveAurasByCasterSpell(i->GetId(), m_caster->GetObjectGuid());
-                            break;
+                            coefficientImmolate = 1.0f;
+                            continue;
+                        }
+                        // Curse of Agony
+                        if (i->GetSpellProto()->IsFitToFamily<SPELLFAMILY_WARLOCK, CF_WARLOCK_CURSE_OF_AGONY>() &&
+                            i->GetCasterGuid() == m_caster->GetObjectGuid())
+                        {
+                            unitTarget->RemoveAurasByCasterSpell(i->GetId(), m_caster->GetObjectGuid());
+                            coefficientCurseOfAgony = 2.0f;
+                            continue;
+                        }
+                        // Corruption
+                        if (i->GetSpellProto()->IsFitToFamily<SPELLFAMILY_WARLOCK, CF_WARLOCK_CORRUPTION>() &&
+                            i->GetCasterGuid() == m_caster->GetObjectGuid())
+                        {
+                            unitTarget->RemoveAurasByCasterSpell(i->GetId(), m_caster->GetObjectGuid());
+                            coefficientCorruption = 1.5f;
+                            continue;
                         }
                     }
+                    damage = damage * (coefficientImmolate + coefficientCurseOfAgony + coefficientCorruption);
                 }
                 break;
             }
