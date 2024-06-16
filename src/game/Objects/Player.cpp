@@ -1563,11 +1563,8 @@ void Player::Update(uint32 update_diff, uint32 p_time)
     }
 
     // Update items that have just a limited lifetime
-    if (now > m_lastTick) {
+    if (now > m_lastTick)
         UpdateItemDuration(uint32(now - m_lastTick));
-        // Modification - trading in loot for two hours.
-        UpdateItemsInBags(uint32(now - m_lastTick));
-    }
 
     if (m_cameraUpdateTimer)
     {
@@ -12270,29 +12267,6 @@ void Player::UpdateItemDuration(uint32 time, bool realtimeonly)
 
         if (!realtimeonly || (item->GetProto()->Flags & ITEM_FLAG_REAL_DURATION))
             item->UpdateDuration(this, time);
-    }
-}
-
-// Modification - trading in loot for two hours.
-void Player::UpdateItemsInBags(uint32 diff)
-{
-    for (int i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_ITEM_END; ++i)
-    {
-        if (Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
-        {
-            if (pItem->GetLootingTime())
-            {
-                pItem->UpdateDurationRaidLooting(diff);
-
-                if (pItem->GetLootingTime() + sWorld.getConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME) < time(nullptr))
-                {
-                    pItem->UpdateDurationRaidLooting(0);
-                    pItem->SetBinding(true);
-                    pItem->SetLootingTime(0);
-                    pItem->SetRaidGroup("");
-                }
-            }   
-        }
     }
 }
 
