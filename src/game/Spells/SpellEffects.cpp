@@ -464,23 +464,29 @@ void Spell::EffectSchoolDMG(SpellEffectIndex effect_idx)
                         {
                             unitTarget->RemoveAurasByCasterSpell(i->GetId(), m_caster->GetObjectGuid());
                             coefficientImmolate = 1.0f;
-                            continue;
+                            break;
                         }
+                    }
+                    for (const auto i : mPeriodic)
+                    {
                         // Curse of Agony
                         if (i->GetSpellProto()->IsFitToFamily<SPELLFAMILY_WARLOCK, CF_WARLOCK_CURSE_OF_AGONY>() &&
                             i->GetCasterGuid() == m_caster->GetObjectGuid())
                         {
                             unitTarget->RemoveAurasByCasterSpell(i->GetId(), m_caster->GetObjectGuid());
                             coefficientCurseOfAgony = 2.0f;
-                            continue;
+                            break;
                         }
+                    }
+                    for (const auto i : mPeriodic)
+                    {
                         // Corruption
                         if (i->GetSpellProto()->IsFitToFamily<SPELLFAMILY_WARLOCK, CF_WARLOCK_CORRUPTION>() &&
                             i->GetCasterGuid() == m_caster->GetObjectGuid())
                         {
                             unitTarget->RemoveAurasByCasterSpell(i->GetId(), m_caster->GetObjectGuid());
                             coefficientCorruption = 1.5f;
-                            continue;
+                            break;
                         }
                     }
                     damage = damage * (coefficientImmolate + coefficientCurseOfAgony + coefficientCorruption);
