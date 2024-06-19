@@ -2111,7 +2111,6 @@ void PartyBotAI::UpdateOutOfCombatAI_Priest()
         {
             pPet->ToggleAutocast(34067, true);
             pPet->ToggleAutocast(34068, true);
-            pPet->ToggleAutocast(34069, true);
             if (!pPet->GetVictim())
             {
                 pPet->GetCharmInfo()->SetIsCommandAttack(true);
@@ -2196,7 +2195,6 @@ void PartyBotAI::UpdateInCombatAI_Priest()
                 {
                     pPet->ToggleAutocast(34067, true);
                     pPet->ToggleAutocast(34068, true);
-                    pPet->ToggleAutocast(34069, true);
                     if (!pPet->GetVictim())
                     {
                         pPet->GetCharmInfo()->SetIsCommandAttack(true);

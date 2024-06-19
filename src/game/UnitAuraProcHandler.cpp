@@ -781,6 +781,15 @@ SpellAuraProcResult Unit::HandleDummyAuraProc(Unit* pVictim, uint32 amount, uint
                     target = this;
                     break;
                 }
+                // Sven: mask of madness
+                case 34193:
+                {
+                    // heal amount
+                    basepoints[0] = dither(triggerAmount * amount / 100);
+                    target = this;
+                    triggered_spell_id = 34194;
+                    break;                               // no hidden cooldown
+                }
                 // Azzinoth's Aura
                 case 34124:
                 {
