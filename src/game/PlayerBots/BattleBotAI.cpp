@@ -1869,6 +1869,7 @@ void BattleBotAI::UpdateOutOfCombatAI_Mage()
         {
             pPet->ToggleAutocast(34060, true);
             pPet->ToggleAutocast(34061, true);
+            pPet->ToggleAutocast(34063, true);
             if (!pPet->GetVictim())
             {
                 pPet->GetCharmInfo()->SetIsCommandAttack(true);
@@ -1892,6 +1893,7 @@ void BattleBotAI::UpdateInCombatAI_Mage()
             {
                 pPet->ToggleAutocast(34060, true);
                 pPet->ToggleAutocast(34061, true);
+                pPet->ToggleAutocast(34063, true);
                 if (!pPet->GetVictim())
                 {
                     pPet->GetCharmInfo()->SetIsCommandAttack(true);
@@ -2202,6 +2204,8 @@ void BattleBotAI::UpdateOutOfCombatAI_Priest()
         {
             pPet->ToggleAutocast(34067, true);
             pPet->ToggleAutocast(34068, true);
+            pPet->ToggleAutocast(34070, true);
+            pPet->ToggleAutocast(34192, true);
             if (!pPet->GetVictim())
             {
                 pPet->GetCharmInfo()->SetIsCommandAttack(true);
@@ -2311,6 +2315,8 @@ void BattleBotAI::UpdateInCombatAI_Priest()
             {
                 pPet->ToggleAutocast(34067, true);
                 pPet->ToggleAutocast(34068, true);
+                pPet->ToggleAutocast(34070, true);
+                pPet->ToggleAutocast(34192, true);
                 if (!pPet->GetVictim())
                 {
                     pPet->GetCharmInfo()->SetIsCommandAttack(true);
@@ -3668,6 +3674,7 @@ void BattleBotAI::UpdateOutOfCombatAI_Druid()
             pPet->ToggleAutocast(34078, true);
             pPet->ToggleAutocast(34080, true);
             pPet->ToggleAutocast(34082, true);
+            pPet->ToggleAutocast(34195, true);
             if (!pPet->GetVictim())
             {
                 pPet->GetCharmInfo()->SetIsCommandAttack(true);
@@ -3818,6 +3825,7 @@ void BattleBotAI::UpdateInCombatAI_Druid()
                 pPet->ToggleAutocast(34078, true);
                 pPet->ToggleAutocast(34080, true);
                 pPet->ToggleAutocast(34082, true);
+                pPet->ToggleAutocast(34195, true);
                 if (!pPet->GetVictim())
                 {
                     pPet->GetCharmInfo()->SetIsCommandAttack(true);
