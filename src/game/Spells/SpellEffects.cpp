@@ -4313,7 +4313,7 @@ void Spell::EffectWeaponDmg(SpellEffectIndex effIdx)
                 normalized = true;
                 break;
             case SPELL_EFFECT_WEAPON_PERCENT_DAMAGE:
-                if (m_casterUnit->IsCreature() && !((Creature*)m_casterUnit)->HasWeapon() && !(m_spellInfo->Id == 34105) && !(m_spellInfo->Id == 34112) && !(m_spellInfo->Id == 34078) && !(m_spellInfo->Id == 34115) && !(m_spellInfo->Id == 34096) && !(m_spellInfo->Id == 34097) && !(m_spellInfo->Id == 34067) && !(m_spellInfo->Id == 34071) && !(m_spellInfo->Id == 34060) && !(m_spellInfo->Id == 34061) && !(m_spellInfo->Id == 34085) && !(m_spellInfo->Id == 34091))
+                if (m_casterUnit->IsCreature() && !((Creature*)m_casterUnit)->HasWeapon() && !(m_spellInfo->Id == 34105) && !(m_spellInfo->Id == 34112) && !(m_spellInfo->Id == 34078) && !(m_spellInfo->Id == 34115) && !(m_spellInfo->Id == 34096) && !(m_spellInfo->Id == 34097) && !(m_spellInfo->Id == 34067) && !(m_spellInfo->Id == 34071) && !(m_spellInfo->Id == 34060) && !(m_spellInfo->Id == 34061) && !(m_spellInfo->Id == 34085) && !(m_spellInfo->Id == 34091) && !(m_spellInfo->Id == 34196))
                 {
                     // creatures without weapons do static damage with SPELL_EFFECT_WEAPON_PERCENT_DAMAGE
                     weaponDamagePercentMod = 0.0f;
