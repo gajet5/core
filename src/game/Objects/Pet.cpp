@@ -1647,7 +1647,6 @@ bool Pet::InitStatsForLevel(uint32 petlevel, Unit const* owner)
             {
                 SetCreateHealth((pInfo->health + hunter_max_hp * 0.75 * petlevel / hunter_level) * healthMod);
                 SetCreateResistance(SPELL_SCHOOL_NORMAL, int32(pInfo->armor + hunter_armor * 0.5 * petlevel / hunter_level));
-                //SetModifierValue(UNIT_MOD_ATTACK_POWER, BASE_VALUE, float(cinfo->attack_power));
 
                 for (int i = STAT_STRENGTH; i < MAX_STATS; ++i)
                     SetCreateStat(Stats(i),  float(pInfo->stats[i]));
