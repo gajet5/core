@@ -3220,7 +3220,7 @@ float Unit::GetTotalAuraMultiplierByMiscMask(AuraType auratype, uint32 misc_mask
                     jiefufuti = 99;
                 if (Player const* pPlayer = ToPlayer())
                 {
-                    if (const_cast<Player*>(pPlayer)->GetLevel() < 60 && const_cast<Player*>(pPlayer)->GetQuestStatus(10000) == QUEST_STATUS_COMPLETE)
+                    if (pPlayer->GetLevel() < 60 && pPlayer->GetQuestStatus(10000) == QUEST_STATUS_COMPLETE)
                         jiefufuti = 0;
                 }
                 if (Player* pOwner = ::ToPlayer(GetOwner()))
