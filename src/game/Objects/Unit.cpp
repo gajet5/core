@@ -3218,6 +3218,19 @@ float Unit::GetTotalAuraMultiplierByMiscMask(AuraType auratype, uint32 misc_mask
                 uint32 jiefufuti = sWorld.getConfig(CONFIG_UINT32_BUFF_JIEFUFUTI);
                 if (jiefufuti > 99)
                     jiefufuti = 99;
+                if (IsPlayer())
+                {
+                    if (GetLevel() < 60 && GetQuestStatus(10000) == QUEST_STATUS_COMPLETE)
+                        jiefufuti = 0;
+                }
+                if (IsPet() && GetOwnerGuid().IsPlayer())
+                {
+                    if(Player* pOwner = ::ToPlayer(GetOwner()))
+                    {
+                        if(pOwner->GetLevel() < 60 && pOwner->GetQuestStatus(10000) == QUEST_STATUS_COMPLETE)
+                            jiefufuti = 0;
+                    }
+                }
                 multiplier *= (100.0f - jiefufuti) / 100.0f;
             }
             else
