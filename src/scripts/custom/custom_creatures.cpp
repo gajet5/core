@@ -1192,6 +1192,14 @@ enum Enchants
     BOOTS_AGI,
     BOOTS_SPEED,
     BOOTS_STAM,
+    WEP_CRUSADER_OFFHAND,
+    WEP_LIFESTEAL_OFFHAND,
+    WEP_FIERY_OFFHAND,
+    WEP_ICY_OFFHAND,
+    WEP_DEMONSLAYING_OFFHAND,
+    WEP1H_AGILITY_OFFHAND,
+    WEP_SPELLPOWER_OFFHAND,
+    WEP_HEAL_OFFHAND,
 };
 
 void Enchant(Player* player, Item* item, uint32 enchantid)
@@ -1287,10 +1295,18 @@ bool GossipSelect_EnchantNPC(Player* player, Creature* creature, uint32 sender, 
             player->ADD_GOSSIP_ITEM(5, "屠魔",       GOSSIP_SENDER_MAIN, WEP_DEMONSLAYING);
             break;
         case EQUIPMENT_SLOT_OFFHAND:
-            player->ADD_GOSSIP_ITEM(5, "精神+9",             GOSSIP_SENDER_MAIN, OFFHAND_SPIRIT);
-            player->ADD_GOSSIP_ITEM(5, "耐力+7",            GOSSIP_SENDER_MAIN, OFFHAND_STAM);
-            player->ADD_GOSSIP_ITEM(5, "冰霜抗性+8",   GOSSIP_SENDER_MAIN, OFFHAND_FROSTRES);
-            player->ADD_GOSSIP_ITEM(5, "瑟银盾刺(20-30)",       GOSSIP_SENDER_MAIN, OFFHAND_SHIELDSPIKE);
+            player->ADD_GOSSIP_ITEM(5, "盾牌：精神+9",             GOSSIP_SENDER_MAIN, OFFHAND_SPIRIT);
+            player->ADD_GOSSIP_ITEM(5, "盾牌：耐力+7",            GOSSIP_SENDER_MAIN, OFFHAND_STAM);
+            player->ADD_GOSSIP_ITEM(5, "盾牌：冰霜抗性+8",   GOSSIP_SENDER_MAIN, OFFHAND_FROSTRES);
+            player->ADD_GOSSIP_ITEM(5, "盾牌：瑟银盾刺(20-30)",       GOSSIP_SENDER_MAIN, OFFHAND_SHIELDSPIKE);
+            player->ADD_GOSSIP_ITEM(5, "武器：十字军",       GOSSIP_SENDER_MAIN, WEP_CRUSADER_OFFHAND);
+            player->ADD_GOSSIP_ITEM(5, "武器：生命偷取",       GOSSIP_SENDER_MAIN, WEP_LIFESTEAL_OFFHAND);
+            player->ADD_GOSSIP_ITEM(5, "武器：灼热武器",       GOSSIP_SENDER_MAIN, WEP_FIERY_OFFHAND);
+            player->ADD_GOSSIP_ITEM(5, "武器：冰冷武器",       GOSSIP_SENDER_MAIN, WEP_ICY_OFFHAND);
+            player->ADD_GOSSIP_ITEM(5, "武器：屠魔",       GOSSIP_SENDER_MAIN, WEP_DEMONSLAYING_OFFHAND);
+            player->ADD_GOSSIP_ITEM(5, "武器：敏捷+15",       GOSSIP_SENDER_MAIN, WEP1H_AGILITY_OFFHAND);
+            player->ADD_GOSSIP_ITEM(5, "武器：法术伤害+30",       GOSSIP_SENDER_MAIN, WEP_SPELLPOWER_OFFHAND);
+            player->ADD_GOSSIP_ITEM(5, "武器：治疗法术+55",       GOSSIP_SENDER_MAIN, WEP_HEAL_OFFHAND);
             break;
         }
         player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
@@ -1459,6 +1475,38 @@ bool GossipSelect_EnchantNPC(Player* player, Creature* creature, uint32 sender, 
             case BOOTS_STAM:
                 item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_FEET);
                 id = 929;
+                break;
+            case WEP_CRUSADER_OFFHAND:
+            case WEP_LIFESTEAL_OFFHAND:
+            case WEP_FIERY_OFFHAND:
+            case WEP_ICY_OFFHAND:
+            case WEP_DEMONSLAYING_OFFHAND:
+            case WEP1H_AGILITY_OFFHAND:
+            case WEP_SPELLPOWER_OFFHAND:
+            case WEP_HEAL_OFFHAND:
+                item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND);
+                if (item && item->GetProto()->Class != ITEM_CLASS_WEAPON)
+                {
+                    player->GetSession()->SendNotification("需要武器");
+                    player->CLOSE_GOSSIP_MENU();
+                    return true;
+                }
+                if (action == WEP_CRUSADER_OFFHAND)
+                    id = 1900;
+                else if (action == WEP_LIFESTEAL_OFFHAND)
+                    id = 1898;
+                else if (action == WEP_FIERY_OFFHAND)
+                    id = 803;
+                else if (action == WEP_ICY_OFFHAND)
+                    id = 1894;
+                else if (action == WEP_DEMONSLAYING_OFFHAND)
+                    id = 912;
+                else if (action == WEP1H_AGILITY_OFFHAND)
+                    id = 2564;
+                else if (action == WEP_SPELLPOWER_OFFHAND)
+                    id = 2504;
+                else if (action == WEP_HEAL_OFFHAND)
+                    id = 2505;
                 break;
         }
         Enchant(player, item, id);
