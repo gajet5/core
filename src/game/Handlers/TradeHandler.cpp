@@ -616,11 +616,25 @@ void WorldSession::HandleInitiateTradeOpcode(WorldPacket& recvPacket)
         return;
     }
 
+    // Hardcore Challenger Can Not Trade Other
+    if (GetPlayer()->GetLevel()<60 && GetPlayer()->GetQuestStatus(10000) == QUEST_STATUS_COMPLETE)
+    {
+        SendTradeStatus(TRADE_STATUS_BUSY);
+        return;
+    }
+
     Player* pOther = GetPlayer()->GetMap()->GetPlayer(otherGuid);
 
     if (!pOther)
     {
         SendTradeStatus(TRADE_STATUS_NO_TARGET);
+        return;
+    }
+
+    // Other Can Not Trade Hardcore Challenger
+    if (pOther->GetLevel()<60 && pOther->GetQuestStatus(10000) == QUEST_STATUS_COMPLETE)
+    {
+        SendTradeStatus(TRADE_STATUS_BUSY);
         return;
     }
 

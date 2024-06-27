@@ -226,6 +226,22 @@ void WorldSession::HandleSendMail(WorldPacket& recv_data)
         return;
     }
 
+    // Hardcore Challenger Can Not Mail
+    if (sObjectMgr.GetPlayer(pl->GetObjectGuid())->GetLevel()<60 && sObjectMgr.GetPlayer(pl->GetObjectGuid())->GetQuestStatus(10000) == QUEST_STATUS_COMPLETE)
+    {
+        SendMailResult(0, MAIL_SEND, MAIL_ERR_RECIPIENT_NOT_FOUND);
+        delete req;
+        return;
+    }
+
+    // Hardcore Challenger Can Not Be Mailed To
+    if (sObjectMgr.GetPlayer(req->receiver)->GetLevel()<60 && sObjectMgr.GetPlayer(req->receiver)->GetQuestStatus(10000) == QUEST_STATUS_COMPLETE)
+    {
+        SendMailResult(0, MAIL_SEND, MAIL_ERR_RECIPIENT_NOT_FOUND);
+        delete req;
+        return;
+    }
+
     // Modification - trading in loot for two hours.
     if (!req->itemGuid.IsEmpty())
     {
