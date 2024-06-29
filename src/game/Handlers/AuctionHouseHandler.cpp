@@ -50,7 +50,7 @@ void WorldSession::HandleAuctionHelloOpcode(WorldPacket& recv_data)
     }
 
     // Hardcore Challenger Can Not Auction
-    if (GetPlayer()->GetLevel()<60 && GetPlayer()->GetQuestStatus(10000) == QUEST_STATUS_COMPLETE)
+    if (sWorld.getConfig(CONFIG_HARDCORECHALLENGER_BAN_AUCTION) == 1 && GetPlayer()->GetLevel()<60 && GetPlayer()->GetQuestStatus(10000) == QUEST_STATUS_COMPLETE)
     {
         GetPlayer()->GetSession()->SendNotification("Hardcore Challenger Can Not Auction.");
         return;

@@ -617,7 +617,7 @@ void WorldSession::HandleInitiateTradeOpcode(WorldPacket& recvPacket)
     }
 
     // Hardcore Challenger Can Not Trade Other
-    if (GetPlayer()->GetLevel()<60 && GetPlayer()->GetQuestStatus(10000) == QUEST_STATUS_COMPLETE)
+    if (sWorld.getConfig(CONFIG_HARDCORECHALLENGER_BAN_TRADE) == 1 && GetPlayer()->GetLevel()<60 && GetPlayer()->GetQuestStatus(10000) == QUEST_STATUS_COMPLETE)
     {
         SendTradeStatus(TRADE_STATUS_BUSY);
         return;
@@ -632,7 +632,7 @@ void WorldSession::HandleInitiateTradeOpcode(WorldPacket& recvPacket)
     }
 
     // Other Can Not Trade Hardcore Challenger
-    if (pOther->GetLevel()<60 && pOther->GetQuestStatus(10000) == QUEST_STATUS_COMPLETE)
+    if (sWorld.getConfig(CONFIG_HARDCORECHALLENGER_BAN_TRADE) == 1 && pOther->GetLevel()<60 && pOther->GetQuestStatus(10000) == QUEST_STATUS_COMPLETE)
     {
         SendTradeStatus(TRADE_STATUS_BUSY);
         return;

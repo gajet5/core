@@ -627,6 +627,12 @@ void World::LoadConfigSettings(bool reload)
 
     setConfig(CONFIG_UINT32_BUFF_JIEFUFUTI,    "Buff.JieFuFuTi",  99);
 
+    setConfig(CONFIG_HARDCORECHALLENGER_BAN_INVITE,    "HardcoreChallenger.Ban.Invite",  1);
+    setConfig(CONFIG_HARDCORECHALLENGER_BAN_PARTYBOT,    "HardcoreChallenger.Ban.PartyBot",  1);
+    setConfig(CONFIG_HARDCORECHALLENGER_BAN_TRADE,    "HardcoreChallenger.Ban.Trade",  1);
+    setConfig(CONFIG_HARDCORECHALLENGER_BAN_MAIL,    "HardcoreChallenger.Ban.Mail",  1);
+    setConfig(CONFIG_HARDCORECHALLENGER_BAN_AUCTION,    "HardcoreChallenger.Ban.Auction",  1);
+
     setConfig(CONFIG_UINT32_STRICT_PLAYER_NAMES,  "StrictPlayerNames",  0);
     setConfig(CONFIG_UINT32_STRICT_CHARTER_NAMES, "StrictCharterNames", 0);
     setConfig(CONFIG_UINT32_STRICT_PET_NAMES,     "StrictPetNames",     0);

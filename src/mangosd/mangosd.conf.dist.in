@@ -3019,6 +3019,12 @@ BotLootMoney = 0
 
 Buff.JieFuFuTi = 99
 
+HardcoreChallenger.Ban.Invite = 1
+HardcoreChallenger.Ban.PartyBot = 1
+HardcoreChallenger.Ban.Trade = 1
+HardcoreChallenger.Ban.Mail = 1
+HardcoreChallenger.Ban.Auction = 1
+
 ###################################################################################################################
 #    Mail flooding mitigation
 ###################################################################################################################

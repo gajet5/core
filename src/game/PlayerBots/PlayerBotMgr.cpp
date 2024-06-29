@@ -765,7 +765,7 @@ bool ChatHandler::HandleBotStartCommand(char * args)
 bool ChatHandler::PartyBotAddRequirementCheck(Player const* pPlayer, Player const* pTarget)
 {
     // Hardcore Challenger Can Not Add Bots
-    if (pPlayer->GetLevel()<60 && pPlayer->GetQuestStatus(10000) == QUEST_STATUS_COMPLETE)
+    if (sWorld.getConfig(CONFIG_HARDCORECHALLENGER_BAN_PARTYBOT) == 1 && pPlayer->GetLevel()<60 && pPlayer->GetQuestStatus(10000) == QUEST_STATUS_COMPLETE)
     {
         SendSysMessage("Hardcore Challenger Cannot add bots.");
         return false;
