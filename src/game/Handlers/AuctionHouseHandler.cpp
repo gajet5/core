@@ -257,11 +257,13 @@ void WorldSession::HandleAuctionSellItem(WorldPacket& recv_data)
     // Client limit
     if (bid > 2000000000 || buyout > 2000000000)
     {
+        SendAuctionCommandResult(nullptr, AUCTION_STARTED, AUCTION_ERR_NOT_ENOUGH_MONEY);
         ProcessAnticheatAction("GoldDupe", "Putting too high auction price", CHEAT_ACTION_LOG);
         return;
     }
     if (buyout && bid > buyout)
     {
+        SendAuctionCommandResult(nullptr, AUCTION_STARTED, AUCTION_ERR_HIGHER_BID);
         ProcessAnticheatAction("GoldDupe", "bid > buyout", CHEAT_ACTION_LOG);
         return;
     }
@@ -273,13 +275,25 @@ void WorldSession::HandleAuctionSellItem(WorldPacket& recv_data)
     }
 
     if (!sWorld.getConfig(CONFIG_BOOL_GM_ALLOW_TRADES) && GetSecurity() > SEC_PLAYER)
+    {
+        SendAuctionCommandResult(nullptr, AUCTION_STARTED, AUCTION_ERR_RESTRICTED_ACCOUNT);
         return;
+    }
+
+    if (HasTrialRestrictions())
+    {
+        SendAuctionCommandResult(nullptr, AUCTION_STARTED, AUCTION_ERR_RESTRICTED_ACCOUNT);
+        return;
+    }
 
     Player* pl = GetPlayer();
 
     AuctionHouseEntry const* auctionHouseEntry = GetCheckedAuctionHouseForAuctioneer(auctioneerGuid);
     if (!auctionHouseEntry)
+    {
+        SendAuctionCommandResult(nullptr, AUCTION_STARTED, AUCTION_ERR_DATABASE);
         return;
+    }
 
     // always return pointer
     AuctionHouseObject* auctionHouse = sAuctionMgr.GetAuctionsMap(auctionHouseEntry);
@@ -305,6 +319,7 @@ void WorldSession::HandleAuctionSellItem(WorldPacket& recv_data)
         case 12*MIN_AUCTION_TIME:
             break;
         default:
+            SendAuctionCommandResult(nullptr, AUCTION_STARTED, AUCTION_ERR_DATABASE);
             return;
     }
 
@@ -313,7 +328,10 @@ void WorldSession::HandleAuctionSellItem(WorldPacket& recv_data)
         GetPlayer()->RemoveSpellsCausingAura(SPELL_AURA_FEIGN_DEATH);
 
     if (!itemGuid)
+    {
+        SendAuctionCommandResult(nullptr, AUCTION_STARTED, AUCTION_ERR_ITEM_NOT_FOUND);
         return;
+    }
 
     Item *it = pl->GetItemByGuid(itemGuid);
 
@@ -445,14 +463,29 @@ void WorldSession::HandleAuctionPlaceBid(WorldPacket& recv_data)
     recv_data >> auctionId >> price;
 
     if (!sWorld.getConfig(CONFIG_BOOL_GM_ALLOW_TRADES) && GetSecurity() > SEC_PLAYER)
+    {
+        SendAuctionCommandResult(nullptr, AUCTION_BID_PLACED, AUCTION_ERR_RESTRICTED_ACCOUNT);
         return;
+    }
+
+    if (HasTrialRestrictions())
+    {
+        SendAuctionCommandResult(nullptr, AUCTION_BID_PLACED, AUCTION_ERR_RESTRICTED_ACCOUNT);
+        return;
+    }
 
     if (!auctionId || !price)
-        return;                                             // check for cheaters
+    {
+        SendAuctionCommandResult(nullptr, AUCTION_BID_PLACED, AUCTION_ERR_ITEM_NOT_FOUND);
+        return;
+    }
 
     AuctionHouseEntry const* auctionHouseEntry = GetCheckedAuctionHouseForAuctioneer(auctioneerGuid);
     if (!auctionHouseEntry)
+    {
+        SendAuctionCommandResult(nullptr, AUCTION_BID_PLACED, AUCTION_ERR_ITEM_NOT_FOUND);
         return;
+    }
 
     // always return pointer
     AuctionHouseObject* auctionHouse = sAuctionMgr.GetAuctionsMap(auctionHouseEntry);
@@ -468,7 +501,6 @@ void WorldSession::HandleAuctionPlaceBid(WorldPacket& recv_data)
     {
         // item not found; auction may have expired, or been bought out
         SendAuctionCommandResult(nullptr, AUCTION_BID_PLACED, AUCTION_ERR_ITEM_NOT_FOUND);
-
         return;
     }
 
@@ -492,7 +524,10 @@ void WorldSession::HandleAuctionPlaceBid(WorldPacket& recv_data)
 
     // cheating
     if (price < auction->startbid)
+    {
+        SendAuctionCommandResult(nullptr, AUCTION_BID_PLACED, AUCTION_ERR_BID_INCREMENT);
         return;
+    }
 
     // cheating or client lags
     if (price <= auction->bid)
