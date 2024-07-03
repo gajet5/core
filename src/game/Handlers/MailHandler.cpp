@@ -147,6 +147,10 @@ void WorldSession::HandleSendMail(WorldPacket& recv_data)
         return;
     }
 
+    // hardcore
+    if (GetPlayer()->IsHardcore()) // Prevent hardcore players from sending mails
+        return;
+
     WorldSession::AsyncMailSendRequest* req = new WorldSession::AsyncMailSendRequest();
     req->accountId = GetAccountId();
     req->senderGuid = GetMasterPlayer()->GetObjectGuid();
@@ -229,6 +233,23 @@ void WorldSession::HandleSendMail(WorldPacket& recv_data)
         SendMailResult(0, MAIL_SEND, MAIL_ERR_CANNOT_SEND_TO_SELF);
         delete req;
         return;
+    }
+
+    // Modification - trading in loot for two hours.
+    if (!req->itemGuid.IsEmpty())
+    {
+        if (Player* pPlayer = GetPlayer())
+        {
+            if (Item* it = pPlayer->GetItemByGuid(req->itemGuid))
+            {
+                if (it->GetLootingTime())
+                {
+                    SendMailResult(0, MAIL_SEND, MAIL_ERR_EQUIP_ERROR);
+                    delete req;
+                    return;
+                }
+            }
+        }        
     }
 
     req->receiverPtr = sObjectMgr.GetPlayer(req->receiver);
@@ -791,6 +812,9 @@ void WorldSession::HandleGetMailList(WorldPacket& recv_data)
     data << uint8(0);                                       // mail's count
     time_t cur_time = time(nullptr);
 
+    //hardcore
+    Player* player = GetPlayer();
+
     uint32 mailsCount = 0;                                  // real send to client mails amount
     for (PlayerMails::iterator itr = pl->GetMailBegin(); itr != pl->GetMailEnd(); ++itr)
     {
@@ -800,6 +824,10 @@ void WorldSession::HandleGetMailList(WorldPacket& recv_data)
 
         // skip deleted or not delivered (deliver delay not expired) mails
         if ((*itr)->state == MAIL_STATE_DELETED || cur_time < (*itr)->deliver_time || cur_time > (*itr)->expire_time)
+            continue;
+
+        // Hardcore players can only view emails from gm's
+        if ((player->IsHardcore()) && (*itr)->stationery != MAIL_STATIONERY_GM)
             continue;
 
         data << uint32((*itr)->messageID);                  // Message ID
