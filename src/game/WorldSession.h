@@ -283,6 +283,7 @@ class WorldSession
 
         uint32 GetGUID() const { return m_guid; }
         AccountTypes GetSecurity() const { return m_security; }
+        bool GetPremiumAccount() const { return m_premiumAccount; } // Premium Account
         uint32 GetAccountId() const { return m_accountId; }
         std::string GetUsername() const { return m_username; }
         void SetUsername(std::string const& s) { m_username = s; }
@@ -304,6 +305,7 @@ class WorldSession
         Player* GetPlayer() const { return _player; }
         char const* GetPlayerName() const;
         void SetSecurity(AccountTypes security) { m_security = security; }
+        void SetPremiumAccount(uint8 payload) { m_premiumAccount = payload; } // Premium Account
         std::string const& GetRemoteAddress() const { return m_address; }
         void SetPlayer(Player* plr) { _player = plr; }
         void SetMasterPlayer(MasterPlayer* plr) { m_masterPlayer = plr; }
@@ -895,6 +897,7 @@ class WorldSession
         uint32 m_accountId;
         std::string m_username;
         AccountTypes m_security;
+        bool m_premiumAccount;
         uint32 m_accountFlags;
         LocaleConstant m_sessionDbcLocale;
         int m_sessionDbLocaleIndex;

@@ -3491,6 +3491,12 @@ void Player::SendLogXPGain(uint32 givenXP, Unit const* victim, uint32 restXP) co
 
 void Player::GiveXP(uint32 xp, Unit const* victim)
 {
+    // Premium Account
+    if (m_session->GetPremiumAccount() && !IsHardcore())
+    {
+        xp = xp * 2;
+    }
+
 #if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_7_1
     if (HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_PLAY_TIME))
         return;
@@ -7027,7 +7033,13 @@ int32 Player::CalculateReputationGain(ReputationSource source, int32 rep, int32 
         percent *= repRate;
     }
 
-    return int32(round_float(sWorld.getConfig(CONFIG_FLOAT_RATE_REPUTATION_GAIN) * rep * percent / 100.0f));
+    // Premium Account
+    int32 result = int32(round_float(sWorld.getConfig(CONFIG_FLOAT_RATE_REPUTATION_GAIN) * rep * percent / 100.0f));    
+    if (m_session->GetPremiumAccount() && !IsHardcore())
+    {
+        return round_float(result + result * 0.5);
+    }
+    return result;
 }
 
 //Calculates how many reputation points player gains in victim's enemy factions
@@ -15640,6 +15652,9 @@ bool Player::LoadFromDB(ObjectGuid guid, SqlQueryHolder* holder)
 
     _LoadSpells(holder->TakeResult(PLAYER_LOGIN_QUERY_LOADSPELLS));
 
+    //Dual Talent Specialization
+    _LoadAlternativeSpec();
+
     // after spell load
     InitTalentForLevel();
     LearnDefaultSpells();
@@ -22811,7 +22826,16 @@ void Player::AddCooldown(SpellEntry const& spellEntry, ItemPrototype const* item
 
         // ready to add the cooldown
         if (recTime || categoryRecTime) // only send event if was permanent but no cds
+        {
+            // Premium Account
+            if (m_session->GetPremiumAccount() && itemId == 6948 && !IsHardcore())
+            {
+                categoryRecTime = categoryRecTime / 2;
+            }
+
             m_cooldownMap.AddCooldown(sWorld.GetCurrentClockTime(), spellEntry.Id, recTime, spellCategory, categoryRecTime, itemId);
+        }
+            
 
         // after some aura fade or potion activation we have to send cooldown event to start cd client side
         if (haveToSendEvent)
@@ -23276,4 +23300,129 @@ void Player::ClearTemporaryWarWithFactions()
         }
         m_temporaryAtWarFactions.clear();
     }
+}
+
+//Dual Talent Specialization
+void Player::_LoadAlternativeSpec() {
+
+    m_altspec_talents.clear();
+    std::unique_ptr<QueryResult> result = CharacterDatabase.PQuery("SELECT spells FROM character_double_spec WHERE guid = '%u'", GetGUIDLow());
+
+    if (result)
+    {
+        Field* fields = result->Fetch();
+        std::string spells = fields[0].GetString();
+        std::istringstream ss(spells);
+        std::string spell;
+
+        while (std::getline(ss, spell, ' '))
+            m_altspec_talents.push_back(atoi(spell.c_str()));
+    }
+};
+
+//Dual Talent Specialization
+void Player::_SaveAlternativeSpec()
+{
+    uint32 ts = uint32(time(NULL));
+    std::ostringstream ss;
+
+    ss << "REPLACE INTO character_double_spec (guid, spells, timestamp) VALUES ('" << GetGUIDLow() << "', '";
+
+    for (SpellIDList::iterator it = m_altspec_talents.begin(); it != m_altspec_talents.end(); it++)
+        ss << *it << " ";
+
+    ss << "', '" << std::to_string(ts) << "')";
+
+    CharacterDatabase.PExecute(ss.str().c_str());
+}
+
+//Dual Talent Specialization
+uint32 Player::SwapSpec()
+{
+    //Time check
+    uint32 ts = uint32(time(NULL)) - 7200;
+    std::unique_ptr<QueryResult> result = CharacterDatabase.PQuery("SELECT timestamp FROM character_double_spec WHERE guid = '%u'", GetGUIDLow());
+    if (result)
+    {
+        Field* fields = result->Fetch();
+        std::string str_ts = fields[0].GetString();
+        ts = uint32(atoi(str_ts.c_str()));
+    }
+
+    if (uint32(time(NULL) - ts) < 900)
+    {
+        ChatHandler(this).SendSysMessage("Please try again later!");
+        return 0;
+    }        
+
+    /*********************************************************/
+    /***                   SAVE TALENTS                    ***/
+    /*********************************************************/
+    //copy current talents list
+    SpellIDList tmp = m_altspec_talents;
+
+    //erase it for populating using current talents
+    m_altspec_talents.clear();
+
+    //Find all talents, general idea from Player::resetTalents
+    for (unsigned int i = 0; i < sTalentStore.GetNumRows(); ++i) 
+    {
+        TalentEntry const* talentInfo = sTalentStore.LookupEntry(i);
+
+        if (!talentInfo) continue;
+
+        TalentTabEntry const* talentTabInfo = sTalentTabStore.LookupEntry(talentInfo->TalentTab);
+
+        if (!talentTabInfo) continue;
+
+        if ((GetClassMask() & talentTabInfo->ClassMask) == 0) continue;
+
+        for (int j = 0; j < 5; ++j) 
+        {
+            for (PlayerSpellMap::iterator itr = GetSpellMap().begin(); itr != GetSpellMap().end();) 
+            {
+
+                //skip disabled talents like Pyroblast or some else
+                if (itr->second.state == PLAYERSPELL_REMOVED || itr->second.disabled)
+                {
+                    ++itr;
+                    continue;
+                }
+
+                //for spells, which can be updated via trainers(like Pyroblast), we can'n just compare, cuz
+                // >1 ranks are not in talens store. So, first rank it is. We can just get lowerest rank of skill
+                // and search it in the talents storage.
+                uint32 itrFirstId = sSpellMgr.GetFirstSpellInChain(itr->first);
+
+                //now - just compare. Also, it make sense to add "|| spellmgr.IsSpellLearnToSpell(talentInfo->RankID[j],itrFirstId)"
+                //but i have no idea what it is, it uses in the Player::resetTalents function and it may be needed.
+                //Also, there is a some spells like Prayer of Spirit, which not in talents tree, but its depends on talents.
+                //So, we need just to get required spell by current spell and find is it in player spellbook.
+                if (itrFirstId == talentInfo->RankID[j]
+                    || sSpellMgr.IsSpellLearnToSpell(talentInfo->RankID[j], itrFirstId)
+                    )//|| HasSpell(spellmgr.GetSpellRequired(itrFirstId)))
+                    m_altspec_talents.push_back(itr->first);
+                ++itr;
+            }
+        }
+    }
+
+    /*********************************************************/
+    /***                   LOAD TALENTS                    ***/
+    /*********************************************************/
+    ResetTalents(true);
+    for (SpellIDList::iterator it = tmp.begin(); it != tmp.end(); it++)
+    {
+        LearnSpell(*it, false, true);
+    }
+    InitTalentForLevel();
+    //learnSkillRewardedSpells();
+
+    //Drop mana and health to minimum for preventing of profit from swappings
+    SetHealth(12);
+    SetPower(POWER_MANA, 12);
+    _SaveAlternativeSpec();
+
+    //Okay
+    return 1;
 }

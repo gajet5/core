@@ -1434,8 +1434,10 @@ class Player final: public Unit
 #endif
         void LoadSkillsFromFields();
         void _LoadSpells(std::unique_ptr<QueryResult> result);
-        bool _LoadHomeBind(std::unique_ptr<QueryResult> result);
-        void _LoadBGData(std::unique_ptr<QueryResult> result);
+        //Dual Talent Specialization
+        void _LoadAlternativeSpec();
+        bool _LoadHomeBind(std::unique_ptr<QueryResult> result);        
+        void _LoadBGData(std::unique_ptr<QueryResult> result);        
         void _LoadIntoDataField(char const* data, uint32 startOffset, uint32 count);
         void _LoadGuild(std::unique_ptr<QueryResult> result);
         uint32 m_atLoginFlags;
@@ -1463,6 +1465,8 @@ class Player final: public Unit
         void _SaveQuestStatus();
         void _SaveSkills();
         void _SaveSpells();
+        //Dual Talent Specialization
+        void _SaveAlternativeSpec();
         void _SaveBGData();
         void _SaveStats();
         uint32 m_nextSave;
@@ -1608,6 +1612,11 @@ class Player final: public Unit
                     ++spellCDItr;
             }
         }
+
+        //Dual Talent Specialization
+        typedef std::list<uint32> SpellIDList;
+        SpellIDList m_altspec_talents;
+        uint32 SwapSpec();
 
         /*********************************************************/
         /***                   TALENT SYSTEM                   ***/

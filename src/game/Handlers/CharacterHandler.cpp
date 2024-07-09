@@ -297,7 +297,8 @@ void WorldSession::HandleCharCreateOpcode(WorldPacket& recv_data)
         return;
     }
 
-    bool AllowTwoSideAccounts = !sWorld.IsPvPRealm() || sWorld.getConfig(CONFIG_BOOL_ALLOW_TWO_SIDE_ACCOUNTS) || GetSecurity() > SEC_PLAYER;
+    // Premium Account
+    bool AllowTwoSideAccounts = !sWorld.IsPvPRealm() || sWorld.getConfig(CONFIG_BOOL_ALLOW_TWO_SIDE_ACCOUNTS) || GetSecurity() > SEC_PLAYER || GetPremiumAccount();
 
     if (!AllowTwoSideAccounts)
     {

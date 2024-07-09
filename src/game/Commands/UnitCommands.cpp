@@ -2906,3 +2906,117 @@ bool ChatHandler::HandleGetItlCommand(char* args)
     }
     return false;
 }
+
+// Premium Account
+bool ChatHandler::HandleWBCommand(char* args)
+{
+    if (!m_session->GetPremiumAccount())
+    {
+        SendSysMessage("Available only on a premium account.");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    if (m_session->GetPlayer()->IsHardcore())
+    {
+        SendSysMessage("Not available in Hardcore mode.");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    bool castspells = true;
+    uint32 spells[7] = { 24425, 22888, 15366, 16609, 22817, 22818, 22820 };
+    uint32 times[7] = {};
+    if (Player* player = m_session->GetPlayer())
+    {
+        for (int i = 0; i < 7; i++)
+        {
+            if (player->HasAura(spells[i]))
+            {
+                castspells = false;
+                break;
+            }
+        }
+
+        Aura* aura = NULL;
+        SpellAuraHolder* auraH = NULL;
+        std::unique_ptr<QueryResult> result = CharacterDatabase.PQuery("SELECT `spell_24425`, `spell_22888`, `spell_15366`, `spell_16609`, `spell_22817`, `spell_22818`, `spell_22820` FROM `character_wb` WHERE `guid` = %u", player->GetGUIDLow());
+        
+        if (castspells)
+        {
+            if (result)
+            {
+                Field* fields = result->Fetch();
+                for (int i = 0; i < 7; i++)
+                {
+                    if (fields[i].GetUInt32() != 0)
+                    {
+                        auraH = player->AddAura(spells[i], ADD_AURA_POSITIVE, player);
+                        auraH->SetAuraDuration(fields[i].GetUInt32());
+                        auraH->SetAuraMaxDuration(fields[i].GetUInt32());
+                        auraH->RefreshHolder();
+                    }
+                }
+                CharacterDatabase.PExecute("DELETE FROM `character_wb` WHERE `guid` = '%u'", player->GetGUIDLow());
+            }
+            else
+                player->GetSession()->SendAreaTriggerMessage("No Buffs stored.");
+        }
+        else
+        {
+            if (result)
+            {
+                Field* fields = result->Fetch();
+                for (int i = 0; i < 7; i++)
+                {
+                    times[i] = fields[i].GetUInt32();
+                }
+            }
+            for (int i = 0; i < 7; i++)
+            {
+                if (aura = player->GetAura(spells[i], EFFECT_INDEX_0))
+                {
+                    times[i] += aura->GetAuraDuration();
+                    if (times[i] > 7200000)
+                        times[i] = 7200000;
+                    aura->GetHolder()->SetAuraMaxDuration(0);
+                    aura->GetHolder()->RefreshHolder();
+                }
+            }
+            if (result)
+                CharacterDatabase.PExecute("UPDATE `character_wb` SET `spell_24425` = %u, `spell_22888` = %u, `spell_15366` = %u, `spell_16609` = %u, `spell_22817` = %u, `spell_22818` = %u, `spell_22820` = %u WHERE `guid` = %u", times[0], times[1], times[2], times[3], times[4], times[5], times[6], player->GetGUIDLow());
+            else
+                CharacterDatabase.PExecute("INSERT INTO `character_wb` (`guid`, `spell_24425`, `spell_22888`, `spell_15366`, `spell_16609`, `spell_22817`, `spell_22818`, `spell_22820`) VALUES (%u, %u, %u, %u, %u, %u, %u, %u)", player->GetGUIDLow(), times[0], times[1], times[2], times[3], times[4], times[5], times[6]);
+        }
+    }
+
+    return false;
+}
+
+// Premium Account
+bool ChatHandler::HandleSwapSpec(char* args)
+{
+    if (!m_session->GetPremiumAccount())
+    {
+        SendSysMessage("Available only on a premium account.");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    if (m_session->GetPlayer()->GetLevel() <= 10)
+    {
+        SendSysMessage("Level above 10 required.");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    if (m_session->GetPlayer()->IsHardcore())
+    {
+        SendSysMessage("Not available in Hardcore mode.");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    m_session->GetPlayer()->SwapSpec();
+    return true;    
+}

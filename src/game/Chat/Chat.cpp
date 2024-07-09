@@ -1178,7 +1178,7 @@ ChatCommand * ChatHandler::getCommandTable()
         { nullptr,          0,                false, nullptr,                                          "", nullptr }
     };
 
-    //hardcore
+    // Hardcore
     static ChatCommand hardcoreCommandTable[] =
     {
         { "on",       SEC_PLAYER, false,  &ChatHandler::HandleHardcoreONCommand,            "", nullptr },
@@ -1186,8 +1186,17 @@ ChatCommand * ChatHandler::getCommandTable()
         { nullptr,    0,          false, nullptr,                                          "", nullptr }
     };
 
+    // Premium Account
+    static ChatCommand paCommandTable[] =
+    {
+        { "wb",       SEC_PLAYER, false,  &ChatHandler::HandleWBCommand,                               "", nullptr },
+        { "ss",       SEC_PLAYER, false,  &ChatHandler::HandleSwapSpec,                                "", nullptr },
+        { nullptr,    0,          false,  nullptr,                                                     "", nullptr }
+    };
+
     static ChatCommand commandTable[] =
     {
+        { "pa",             SEC_PLAYER,         false,  nullptr,                                       "", paCommandTable }, // Premium Account
         { "account",        SEC_PLAYER,         true, nullptr,                                         "", accountCommandTable  },
         { "auction",        SEC_TICKETMASTER,   false, nullptr,                                        "", auctionCommandTable  },
         { "cast",           SEC_DEVELOPER,      false, nullptr,                                        "", castCommandTable     },
@@ -1297,7 +1306,7 @@ ChatCommand * ChatHandler::getCommandTable()
         { "unmute",         SEC_TICKETMASTER,   true,  &ChatHandler::HandleUnmuteCommand,              "", nullptr },
         { "movegens",       SEC_TICKETMASTER,   false, &ChatHandler::HandleMovegensCommand,            "", nullptr },
         { "cometome",       SEC_GAMEMASTER,     false, &ChatHandler::HandleComeToMeCommand,            "", nullptr },
-        { "aoedamage",      SEC_GAMEMASTER,     false, &ChatHandler::HandleAoEDamageCommand,              "", nullptr },
+        { "aoedamage",      SEC_GAMEMASTER,     false, &ChatHandler::HandleAoEDamageCommand,           "", nullptr },
         { "damage",         SEC_GAMEMASTER,     false, &ChatHandler::HandleDamageCommand,              "", nullptr },
         { "combatstop",     SEC_GAMEMASTER,     false, &ChatHandler::HandleCombatStopCommand,          "", nullptr },
         { "repairitems",    SEC_GAMEMASTER,     true,  &ChatHandler::HandleRepairitemsCommand,         "", nullptr },
@@ -1316,10 +1325,9 @@ ChatCommand * ChatHandler::getCommandTable()
         { "spamer",         SEC_MODERATOR,      true, nullptr,                                         "", spamerCommandTable },
         { "antispam",       SEC_TICKETMASTER,   true, nullptr,                                         "", AntiSpamCommandTable },
         { "gold",           SEC_BASIC_ADMIN,    true, nullptr,                                         "", goldCommandTable },
-        { "wareffort",      SEC_DEVELOPER,      true, nullptr,                                         "", warEffortCommandTable },
-        //hardcore
-        { "hardcore",       SEC_PLAYER,         false,  nullptr,                                        "", hardcoreCommandTable },
-        { "itl",            SEC_PLAYER,         false,  &ChatHandler::HandleGetItlCommand,              "", nullptr },
+        { "wareffort",      SEC_DEVELOPER,      true, nullptr,                                         "", warEffortCommandTable },        
+        { "hardcore",       SEC_PLAYER,         false,  nullptr,                                       "", hardcoreCommandTable }, // Hardcore
+        { "itl",            SEC_PLAYER,         false,  &ChatHandler::HandleGetItlCommand,             "", nullptr },
         { nullptr,          0,                  false, nullptr,                                        "", nullptr }
     };
 

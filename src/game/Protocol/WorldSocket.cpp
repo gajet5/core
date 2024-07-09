@@ -179,8 +179,8 @@ int WorldSocket::HandleAuthSession(WorldPacket& recvPacket)
     // No SQL injection, username escaped.
     //                                                                  0        1            2               3            4      5      6             7           8       9             10
     std::unique_ptr<QueryResult> result(LoginDatabase.PQuery("SELECT a.`id`, aa.`gmLevel`, a.`sessionkey`, a.`last_ip`, a.`v`, a.`s`, a.`mutetime`, a.`locale`, a.`os`, a.`platform`, a.`flags`, "
-    //      11         12                13
-        "a.`email`, a.`email_verif`, ab.`unbandate` > UNIX_TIMESTAMP() OR ab.`unbandate` = ab.`bandate` FROM `account` a LEFT JOIN `account_access` aa ON a.`id` = aa.`id` AND aa.`RealmID` IN (-1, %u) "
+    //      11         12                13                                                              14
+        "a.`email`, a.`email_verif`, ab.`unbandate` > UNIX_TIMESTAMP() OR ab.`unbandate` = ab.`bandate`, a.`premium_account` FROM `account` a LEFT JOIN `account_access` aa ON a.`id` = aa.`id` AND aa.`RealmID` IN (-1, %u) "
         "LEFT JOIN `account_banned` ab ON a.`id` = ab.`id` AND ab.`active` = 1 WHERE a.`username` = '%s' && DATEDIFF(NOW(), a.`last_login`) < 1 ORDER BY aa.`RealmID` DESC LIMIT 1", realmID, safe_account.c_str()));
 
     // Stop if the account is not found
@@ -229,6 +229,7 @@ int WorldSocket::HandleAuthSession(WorldPacket& recvPacket)
     std::string email = fields[11].GetCppString();
     bool verifiedEmail = fields[12].GetBool() || email.empty(); // treat no email as verified (created from console)
     bool isBanned = fields[13].GetBool();
+    bool premiumAccount = fields[14].GetBool(); // Premium Account
 
     if (isBanned || sAccountMgr.IsIPBanned(GetRemoteAddress()))
     {
@@ -323,6 +324,7 @@ int WorldSocket::HandleAuthSession(WorldPacket& recvPacket)
     m_Session->SetOS(clientOs);
     m_Session->SetPlatform(clientPlatform);
     m_Session->SetVerifiedEmail(verifiedEmail);
+    m_Session->SetPremiumAccount(premiumAccount); // Premium Account
     m_Session->SetSessionKey(K);
     m_Session->LoadGlobalAccountData();
     m_Session->LoadTutorialsData();
