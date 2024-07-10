@@ -3010,6 +3010,13 @@ bool ChatHandler::HandleSwapSpec(char* args)
         return false;
     }
 
+    if (m_session->GetPlayer()->IsInCombat())
+    {
+        SendSysMessage("Not available in combat.");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
     if (m_session->GetPlayer()->IsHardcore())
     {
         SendSysMessage("Not available in Hardcore mode.");
