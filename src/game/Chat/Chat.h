@@ -1036,8 +1036,8 @@ class ChatHandler
         bool HandleHCAnnounceRestrictionCommand(char* args);
 
         // Premium Account
-        bool ChatHandler::HandleWBCommand(char* args);
-        bool ChatHandler::HandleSwapSpec(char* args);
+        bool HandleWBCommand(char* args);
+        bool HandleSwapSpec(char* args);
 
         bool HandleGetItlCommand(char* args);
 
