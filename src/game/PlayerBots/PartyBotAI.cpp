@@ -2128,14 +2128,6 @@ void PartyBotAI::UpdateInCombatAI_Mage()
                 return;
         } 
 
-        if (m_spells.mage.pScorch &&
-           (pVictim->GetHealthPercent() < 20.0f) &&
-            CanTryToCastSpell(pVictim, m_spells.mage.pScorch))
-        {
-            if (DoCastSpell(pVictim, m_spells.mage.pScorch) == SPELL_CAST_OK)
-                return;
-        }
-
         if (m_spells.mage.pFrostbolt &&
             CanTryToCastSpell(pVictim, m_spells.mage.pFrostbolt))
         {
