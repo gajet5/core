@@ -581,6 +581,10 @@ Player* PartyBotAI::SelectResurrectionTarget() const
     if (IsInDuel())
         return nullptr;
 
+    if (Player* pLeader = GetPartyLeader())
+        if (pLeader->IsDead())
+            return pLeader;        
+
     std::vector<Player*> pMembersNeedRevive;
     Group* pGroup = me->GetGroup();
     for (GroupReference* itr = pGroup->GetFirstMember(); itr != nullptr; itr = itr->next())
