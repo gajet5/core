@@ -2924,6 +2924,13 @@ bool ChatHandler::HandleWBCommand(char* args)
         return false;
     }
 
+    if (m_session->GetPlayer()->IsInCombat())
+    {
+        SendSysMessage("Not available in combat.");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
     bool castspells = true;
     uint32 spells[7] = { 24425, 22888, 15366, 16609, 22817, 22818, 22820 };
     uint32 times[7] = {};
