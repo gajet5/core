@@ -1466,7 +1466,7 @@ class Player final: public Unit
         void _SaveSkills();
         void _SaveSpells();
         //Dual Talent Specialization
-        void _SaveAlternativeSpec();
+        void _SaveAlternativeSpec(bool in_db);
         void _SaveBGData();
         void _SaveStats();
         uint32 m_nextSave;

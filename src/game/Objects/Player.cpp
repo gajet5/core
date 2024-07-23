@@ -23321,17 +23321,25 @@ void Player::_LoadAlternativeSpec() {
 };
 
 //Dual Talent Specialization
-void Player::_SaveAlternativeSpec()
+void Player::_SaveAlternativeSpec(bool in_db)
 {
     uint32 ts = uint32(time(NULL));
     std::ostringstream ss;
 
-    ss << "REPLACE INTO character_double_spec (guid, spells, timestamp) VALUES ('" << GetGUIDLow() << "', '";
-
-    for (SpellIDList::iterator it = m_altspec_talents.begin(); it != m_altspec_talents.end(); it++)
-        ss << *it << " ";
-
-    ss << "', '" << std::to_string(ts) << "')";
+    if (in_db)
+    {
+        ss << "UPDATE `character_double_spec` SET `spells` = '";
+        for (SpellIDList::iterator it = m_altspec_talents.begin(); it != m_altspec_talents.end(); it++)
+            ss << *it << " ";
+        ss << "', `timestamp` = '" << std::to_string(ts) << "' WHERE `guid` = " << GetGUIDLow();
+    }
+    else
+    {
+        ss << "INSERT INTO `character_double_spec` (guid, spells, timestamp) VALUES ('" << GetGUIDLow() << "', '";
+        for (SpellIDList::iterator it = m_altspec_talents.begin(); it != m_altspec_talents.end(); it++)
+            ss << *it << " ";
+        ss << "', '" << std::to_string(ts) << "')";
+    }    
 
     CharacterDatabase.PExecute(ss.str().c_str());
 }
@@ -23339,21 +23347,23 @@ void Player::_SaveAlternativeSpec()
 //Dual Talent Specialization
 uint32 Player::SwapSpec()
 {
+    bool in_db = false;
     //Time check
-    uint32 ts = uint32(time(NULL)) - 7200;
+    uint32 ts = 0;
     std::unique_ptr<QueryResult> result = CharacterDatabase.PQuery("SELECT timestamp FROM character_double_spec WHERE guid = '%u'", GetGUIDLow());
     if (result)
     {
+        in_db = true;
         Field* fields = result->Fetch();
         std::string str_ts = fields[0].GetString();
         ts = uint32(atoi(str_ts.c_str()));
-    }
 
-    if (uint32(time(NULL) - ts) < 900)
-    {
-        ChatHandler(this).SendSysMessage("Please try again later!");
-        return 0;
-    }        
+        if (uint32(time(NULL) - ts) < 900)
+        {
+            ChatHandler(this).SendSysMessage("Only once every 15 minutes.");
+            return 0;
+        }
+    }      
 
     /*********************************************************/
     /***                   SAVE TALENTS                    ***/
@@ -23421,7 +23431,7 @@ uint32 Player::SwapSpec()
     //Drop mana and health to minimum for preventing of profit from swappings
     SetHealth(12);
     SetPower(POWER_MANA, 12);
-    _SaveAlternativeSpec();
+    _SaveAlternativeSpec(in_db);
 
     //Okay
     return 1;
