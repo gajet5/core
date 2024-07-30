@@ -11134,7 +11134,23 @@ void Player::SetVisibleItemSlot(uint8 slot, Item const* pItem)
         SetGuidValue(PLAYER_VISIBLE_ITEM_1_CREATOR + (slot * MAX_VISIBLE_ITEM_OFFSET), pItem->GetGuidValue(ITEM_FIELD_CREATOR));
 
         int VisibleBase = PLAYER_VISIBLE_ITEM_1_0 + (slot * MAX_VISIBLE_ITEM_OFFSET);
-        SetUInt32Value(VisibleBase + 0, pItem->GetEntry());
+        
+        //Transmogrification // Premium Account
+        uint64 item_guid = pItem->GetGUIDLow();
+        uint64 character_guid = pItem->GetOwnerGuid();
+
+        std::unique_ptr<QueryResult> result = CharacterDatabase.PQuery("SELECT `entry` FROM `character_transmog` WHERE `guid` = '%u' and `character` = '%u'", item_guid, character_guid);
+
+        if (result) 
+        {
+            Field* fields = result->Fetch();
+            uint64 item_entry = fields[0].GetUInt64();
+            SetUInt32Value(VisibleBase + 0, item_entry);
+        }
+        else 
+        {
+            SetUInt32Value(VisibleBase + 0, pItem->GetEntry());
+        }
 
         for (int i = 0; i < MAX_INSPECTED_ENCHANTMENT_SLOT; ++i)
             SetUInt32Value(VisibleBase + 1 + i, pItem->GetEnchantmentId(EnchantmentSlot(i)));
@@ -11156,6 +11172,23 @@ void Player::SetVisibleItemSlot(uint8 slot, Item const* pItem)
         SetUInt32Value(PLAYER_VISIBLE_ITEM_1_PROPERTIES + 0 + (slot * MAX_VISIBLE_ITEM_OFFSET), 0);
         SetUInt32Value(PLAYER_VISIBLE_ITEM_1_PROPERTIES + 1 + (slot * MAX_VISIBLE_ITEM_OFFSET), 0);
     }
+}
+
+//Transmogrification // Premium Account
+void Player::ReplaceCharacterTransmog(uint64 guid, uint64 entry, uint64 character)
+{
+    std::unique_ptr<QueryResult> result = CharacterDatabase.PQuery("SELECT `entry` FROM `character_transmog` WHERE `guid` = '%u' and `character` = '%u'", guid, character);
+
+    if (result)
+        CharacterDatabase.PExecute("UPDATE `character_transmog` SET `entry` = '%u' WHERE `guid` = '%u' and `character` = '%u'", entry, guid, character);
+    else
+        CharacterDatabase.PExecute("INSERT INTO `character_transmog` (`guid`, `entry`, `character`) VALUES (%u, %u, %u)", guid, entry, character);
+}
+
+//Transmogrification // Premium Account
+void Player::ResetCharacterTransmog(uint64 guid, uint64 character)
+{
+    CharacterDatabase.PExecute("DELETE FROM `character_transmog` WHERE `guid` = '%u' and `character` = '%u'", guid, character);
 }
 
 void Player::VisualizeItem(uint8 slot, Item* pItem)

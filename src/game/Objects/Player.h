@@ -1106,6 +1106,8 @@ class Player final: public Unit
         void SendItemDurations() const;
         uint32 CountFreeInventorySlots() const;
     public:
+        void ReplaceCharacterTransmog(uint64 guid, uint64 entry, uint64 character); //Transmogrification // Premium Account
+        void ResetCharacterTransmog(uint64 guid, uint64 character); //Transmogrification // Premium Account
         Item* AddItem(uint32 itemId, uint32 count = 1);
         void InterruptSpellsWithCastItem(Item const* item);
         uint8 GetITL(); //equip

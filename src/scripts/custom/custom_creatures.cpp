@@ -1206,6 +1206,112 @@ CreatureAI* GetAI_custom_summon_debug(Creature *creature)
     return new npc_summon_debugAI(creature);
 }
 
+//Transmogrification // Premium Account
+bool GossipHello_TransmogNPC(Player* player, Creature* creature)
+{
+    if (!player->GetSession()->GetPremiumAccount())
+    {
+        player->GetSession()->SendNotification("Premium Account only.");
+        return false;
+    }
+
+    player->ADD_GOSSIP_ITEM(5, "Head", GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_HEAD);
+    player->ADD_GOSSIP_ITEM(5, "Shoulders", GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_SHOULDERS);
+    player->ADD_GOSSIP_ITEM(5, "Chest", GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_CHEST);
+    player->ADD_GOSSIP_ITEM(5, "Waist", GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_WAIST);
+    player->ADD_GOSSIP_ITEM(5, "Legs", GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_LEGS);
+    player->ADD_GOSSIP_ITEM(5, "Feet", GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_FEET);
+    player->ADD_GOSSIP_ITEM(5, "Wrists", GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_WRISTS);
+    player->ADD_GOSSIP_ITEM(5, "Hands", GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_HANDS);
+    player->ADD_GOSSIP_ITEM(5, "Back", GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_BACK);
+    player->ADD_GOSSIP_ITEM(5, "Mainhand", GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_MAINHAND);
+    player->ADD_GOSSIP_ITEM(5, "Offhand", GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_OFFHAND);
+    player->ADD_GOSSIP_ITEM(5, "Ranged", GOSSIP_SENDER_MAIN, EQUIPMENT_SLOT_RANGED);
+
+    player->SEND_GOSSIP_MENU(player->GetGossipTextId(creature), creature->GetGUID());
+    return true;
+}
+
+//Transmogrification // Premium Account
+bool GossipSelect_TransmogNPC(Player* player, Creature* creature, uint32 sender, uint32 action)
+{
+    if (sender != GOSSIP_SENDER_MAIN)
+        return true;
+
+    Item* item = nullptr;
+    Item* item_transmog = nullptr;
+
+    switch (action)
+    {
+        case EQUIPMENT_SLOT_HEAD:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_HEAD);
+            break;
+        case EQUIPMENT_SLOT_SHOULDERS:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_SHOULDERS);
+            break;
+        case EQUIPMENT_SLOT_CHEST:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_CHEST);
+            break;
+        case EQUIPMENT_SLOT_WAIST:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_WAIST);
+            break;
+        case EQUIPMENT_SLOT_LEGS:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_LEGS);
+            break;
+        case EQUIPMENT_SLOT_FEET:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_FEET);
+            break;
+        case EQUIPMENT_SLOT_WRISTS:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_WRISTS);
+            break;
+        case EQUIPMENT_SLOT_HANDS:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_HANDS);
+            break;
+        case EQUIPMENT_SLOT_BACK:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_BACK);
+            break;
+        case EQUIPMENT_SLOT_MAINHAND:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_MAINHAND);
+            break;
+        case EQUIPMENT_SLOT_OFFHAND:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND);
+            break;
+        case EQUIPMENT_SLOT_RANGED:
+            item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_RANGED);
+            break;
+    }
+
+    item_transmog = player->GetItemByPos(INVENTORY_SLOT_BAG_0, INVENTORY_SLOT_ITEM_START);
+
+    if (!item || !item_transmog) 
+    {
+        player->GetSession()->SendNotification("No equipment or transmog area is empty.");
+        return false;
+    }
+
+    uint64 item_guid = item->GetGUIDLow();
+    uint64 item_entry = item_transmog->GetEntry();
+    uint64 character_guid = item->GetOwnerGuid();
+
+    if (item_transmog->GetEntry() == 6948)
+    {
+        player->ResetCharacterTransmog(item_guid, character_guid);
+        player->GetSession()->SendNotification("Reset success. Re-equip item.");
+    }    
+    else if (item->GetProto()->Class == item_transmog->GetProto()->Class && player->CanUseItem(item_transmog) == EQUIP_ERR_OK)
+    {
+        player->ReplaceCharacterTransmog(item_guid, item_entry, character_guid);
+        player->GetSession()->SendNotification("Transmog success. Re-equip item.");
+    }
+    else 
+    {
+        player->GetSession()->SendNotification("Transmog fail, incorect item or type.");
+    }
+
+    player->CLOSE_GOSSIP_MENU();
+    return true;
+}
+
 void AddSC_custom_creatures()
 {
     Script* newscript;
@@ -1248,5 +1354,12 @@ void AddSC_custom_creatures()
     newscript = new Script;
     newscript->Name = "custom_npc_summon_debugAI";
     newscript->GetAI = &GetAI_custom_summon_debug;
+    newscript->RegisterSelf(false);
+
+    // Premium Account
+    newscript = new Script;
+    newscript->Name = "custom_transmog_npc";
+    newscript->pGossipHello = &GossipHello_TransmogNPC;
+    newscript->pGossipSelect = &GossipSelect_TransmogNPC;
     newscript->RegisterSelf(false);
 }
