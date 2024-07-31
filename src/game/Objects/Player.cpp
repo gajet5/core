@@ -11132,22 +11132,22 @@ void Player::SetVisibleItemSlot(uint8 slot, Item const* pItem)
         SetGuidValue(PLAYER_VISIBLE_ITEM_1_CREATOR + (slot * MAX_VISIBLE_ITEM_OFFSET), pItem->GetGuidValue(ITEM_FIELD_CREATOR));
 
         int VisibleBase = PLAYER_VISIBLE_ITEM_1_0 + (slot * MAX_VISIBLE_ITEM_OFFSET);
-        
+        SetUInt32Value(VisibleBase + 0, pItem->GetEntry());
+
         //Transmogrification // Premium Account
         uint64 item_guid = pItem->GetGUIDLow();
         uint64 character_guid = pItem->GetOwnerGuid();
 
-        std::unique_ptr<QueryResult> result = CharacterDatabase.PQuery("SELECT `entry` FROM `character_transmog` WHERE `guid` = '%u' and `character` = '%u'", item_guid, character_guid);
+        if (m_session->GetPremiumAccount())
+        {
+            std::unique_ptr<QueryResult> result = CharacterDatabase.PQuery("SELECT `entry` FROM `character_transmog` WHERE `guid` = '%u' and `character` = '%u'", item_guid, character_guid);
 
-        if (result && m_session->GetPremiumAccount()) 
-        {
-            Field* fields = result->Fetch();
-            uint64 item_entry = fields[0].GetUInt64();
-            SetUInt32Value(VisibleBase + 0, item_entry);
-        }
-        else 
-        {
-            SetUInt32Value(VisibleBase + 0, pItem->GetEntry());
+            if (result)
+            {
+                Field* fields = result->Fetch();
+                uint64 item_entry = fields[0].GetUInt64();
+                SetUInt32Value(VisibleBase + 0, item_entry);
+            }
         }
 
         for (int i = 0; i < MAX_INSPECTED_ENCHANTMENT_SLOT; ++i)
