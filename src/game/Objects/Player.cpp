@@ -11101,8 +11101,6 @@ Item* Player::EquipItem(uint16 pos, Item* pItem, bool update)
     if (pItem->GetLootingTime())
     {
         pItem->SetDurationRaidLooting(0);
-        pItem->SetLootingTime(0);
-        pItem->SetRaidGroup("");
         pItem->SetBinding(true);        
     }
 
@@ -16350,8 +16348,6 @@ bool Player::_LoadInventory(std::unique_ptr<QueryResult> result, uint32 timediff
                 }
                 if (looting_time && looting_time + sWorld.getConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME) < time(nullptr))
                 {
-                    item->SetRaidGroup("");
-                    item->SetLootingTime(0);
                     item->SetBinding(true);
                 }
             }
@@ -17480,13 +17476,6 @@ void Player::_SaveInventory()
 
         Bag* container = item->GetContainer();
         uint32 bag_guid = container ? container->GetGUIDLow() : 0;
-
-        // Modification - trading in loot for two hours.
-        if (item->GetLootingTime() && item->GetLootingTime() + sWorld.getConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME) < time(nullptr))
-        {
-            item->SetLootingTime(0);
-            item->SetRaidGroup("");
-        }
 
         switch (item->GetState())
         {

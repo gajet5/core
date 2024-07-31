@@ -247,8 +247,6 @@ void Item::UpdateDuration(Player* owner, uint32 diff)
         {
             SetUInt32Value(ITEM_FIELD_DURATION, 0);
             SetBinding(true);
-            SetLootingTime(0);
-            SetRaidGroup("");
         }
         else
         {
