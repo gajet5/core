@@ -11139,7 +11139,7 @@ void Player::SetVisibleItemSlot(uint8 slot, Item const* pItem)
 
         std::unique_ptr<QueryResult> result = CharacterDatabase.PQuery("SELECT `entry` FROM `character_transmog` WHERE `guid` = '%u' and `character` = '%u'", item_guid, character_guid);
 
-        if (result) 
+        if (result && m_session->GetPremiumAccount()) 
         {
             Field* fields = result->Fetch();
             uint64 item_entry = fields[0].GetUInt64();
