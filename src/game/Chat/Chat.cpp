@@ -1191,6 +1191,7 @@ ChatCommand * ChatHandler::getCommandTable()
     {
         { "wb",       SEC_PLAYER, false,  &ChatHandler::HandleWBCommand,                               "", nullptr },
         { "ss",       SEC_PLAYER, false,  &ChatHandler::HandleSwapSpec,                                "", nullptr },
+        { "status",   SEC_PLAYER, false,  &ChatHandler::HandlePAStatus,                                "", nullptr },
         { nullptr,    0,          false,  nullptr,                                                     "", nullptr }
     };
 

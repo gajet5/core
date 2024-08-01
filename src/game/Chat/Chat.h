@@ -1038,6 +1038,7 @@ class ChatHandler
         // Premium Account
         bool HandleWBCommand(char* args);
         bool HandleSwapSpec(char* args);
+        bool HandlePAStatus(char* args);
 
         bool HandleGetItlCommand(char* args);
 

@@ -3034,3 +3034,18 @@ bool ChatHandler::HandleSwapSpec(char* args)
     m_session->GetPlayer()->SwapSpec();
     return true;    
 }
+
+// Premium Account
+bool ChatHandler::HandlePAStatus(char* args)
+{
+    if (m_session->GetPremiumAccount())
+    {
+        SendSysMessage("Premium Account is: ON.");
+        return true;
+    }
+    else
+    {
+        SendSysMessage("Premium Account is: OFF.");
+        return true;
+    }
+}
