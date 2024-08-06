@@ -597,3 +597,32 @@ void PartyBotAI::RaidStratsInOnyxiaBosses() {
         }
     }
 }
+
+void PartyBotAI::RaidStratsInBWLBosses()
+{
+    if (me->GetZoneId() != 2677)
+    {
+        return;
+    }
+
+    //Flamegor
+    if (Unit* pVictim = me->GetVictim())
+    {
+        if (pVictim->GetEntry() == 11981)
+        {
+            // HUNTER
+            if (me->GetClass() == CLASS_HUNTER)
+            {
+                if (pVictim->HasAura(23342))
+                {
+                    if (m_spells.hunter.pTranquilizingShot
+                        && CanTryToCastSpell(me, m_spells.hunter.pTranquilizingShot))
+                    {
+                        if (DoCastSpell(pVictim, m_spells.hunter.pTranquilizingShot) == SPELL_CAST_OK)
+                            return;
+                    }
+                }
+            }
+        }
+    }
+}

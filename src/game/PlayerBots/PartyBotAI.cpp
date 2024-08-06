@@ -1281,6 +1281,7 @@ void PartyBotAI::UpdateInCombatAI()
         RaidStratsInZGBosses();
         RaidStratsInMKBosses();
         RaidStratsInOnyxiaBosses();
+        RaidStratsInBWLBosses();
     }
 
     switch (me->GetClass())

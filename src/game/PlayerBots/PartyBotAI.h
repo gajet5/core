@@ -108,6 +108,7 @@ public:
     void RaidStratsInZGBosses();
     void RaidStratsInMKBosses();
     void RaidStratsInOnyxiaBosses();
+    void RaidStratsInBWLBosses();
 
     void PartyBotEquipPremadeGear(uint8 pLeaderItl, Player* pPlayer);
 
