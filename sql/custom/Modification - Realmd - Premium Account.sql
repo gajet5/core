@@ -1,0 +1,1 @@
+ALTER TABLE account ADD premium_account TINYINT NOT NULL DEFAULT 0;

@@ -1519,6 +1519,11 @@ void Player::Update(uint32 update_diff, uint32 p_time)
     if (!IsInWorld())
         return;
 
+    if (IsHardcore() && !pvpInfo.timerPvPRemaining)
+    {
+        SetPvP(false);
+    }
+
     UpdateMirrorTimers(update_diff);
 
     //used to implement delayed far teleports
@@ -2030,15 +2035,14 @@ void Player::AutoReSummonPet()
     pet->SetHealth(pet->GetMaxHealth());
 }
 
-
 bool Player::BuildEnumData(const std::unique_ptr<QueryResult>& result, WorldPacket* pData)
 {
     //                0                1                2                3                 4                  5                6                7                      8                      9                       10
     //    "SELECT characters.guid, characters.name, characters.race, characters.class, characters.gender, characters.skin, characters.face, characters.hair_style, characters.hair_color, characters.facial_hair, characters.level, "
     //         11               12              13                     14                     15                     16                     17
     //    "characters.zone, characters.map, characters.position_x, characters.position_y, characters.position_z, guild_member.guild_id, characters.player_flags, "
-    //         18                         19                   20                        21                   22
-    //    "characters.at_login_flags, character_pet.entry, character_pet.display_id, character_pet.level, characters.equipment_cache "
+    //         18                         19                   20                        21                   22                          23
+    //    "characters.at_login_flags, character_pet.entry, character_pet.display_id, character_pet.level, characters.equipment_cache, characters.extra_flags "
 
     Field* fields = result->Fetch();
 
@@ -2053,8 +2057,25 @@ bool Player::BuildEnumData(const std::unique_ptr<QueryResult>& result, WorldPack
         return false;
     }
 
-    *pData << ObjectGuid(HIGHGUID_PLAYER, guid);
-    *pData << fields[1].GetString();                       // name
+    *pData << ObjectGuid(HIGHGUID_PLAYER, guid);  
+    //hardcore
+    if (fields[23].GetUInt32() & PLAYER_EXTRA_HARDCORE_DEATH)
+    {
+        char name[24];
+        sprintf(name, "%s %s", fields[1].GetString(), " [DEATH]");
+        *pData << name;                                    // name [DEATH]
+    }
+    else if (fields[23].GetUInt32() & PLAYER_EXTRA_HARDCORE)
+    {
+        char name[24];
+        sprintf(name, "[HC] %s", fields[1].GetString());
+        *pData << name;                                    // [HC] name
+    }
+    else
+    {
+      *pData << fields[1].GetString();                     // name
+    }
+    //hardcore
     *pData << uint8(pRace);                                // race
     *pData << uint8(pClass);                               // class
     *pData << uint8(fields[4].GetUInt8());                 // gender
@@ -2925,6 +2946,9 @@ Creature* Player::GetNPCIfCanInteractWith(ObjectGuid guid, uint32 npcflagmask) c
     if (!guid || !IsInWorld())
         return nullptr;
 
+    if ((npcflagmask == UNIT_NPC_FLAG_AUCTIONEER) && (IsHardcore())) // Prevent Hardcore players interacting with autioneers
+        return nullptr;
+
     // exist (we need look pets also for some interaction (quest/etc)
     Creature* pCreature = GetMap()->GetAnyTypeCreature(guid);
     
@@ -2997,6 +3021,9 @@ GameObject* Player::GetGameObjectIfCanInteractWith(ObjectGuid guid, uint32 gameo
 {
     // some basic checks
     if (!guid || !IsInWorld())
+        return nullptr;
+
+    if ((gameobject_type == GAMEOBJECT_TYPE_MEETINGSTONE) && (IsHardcore())) // Prevent Hardcore player interacting with meeting stones
         return nullptr;
 
     GameObject* pGo = GetMap()->GetGameObject(guid);
@@ -3464,6 +3491,12 @@ void Player::SendLogXPGain(uint32 givenXP, Unit const* victim, uint32 restXP) co
 
 void Player::GiveXP(uint32 xp, Unit const* victim)
 {
+    // Premium Account
+    if (m_session->GetPremiumAccount() && !IsHardcore())
+    {
+        xp = xp * 2;
+    }
+
 #if SUPPORTED_CLIENT_BUILD > CLIENT_BUILD_1_7_1
     if (HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_NO_PLAY_TIME))
         return;
@@ -3516,6 +3549,58 @@ void Player::GiveLevel(uint32 level)
 {
     if (level == GetLevel())
         return;
+
+    // Hardcore
+    if (IsHardcore())
+    {
+        if (level == 60)
+        {
+            SetHardcore(false);
+
+            std::stringstream message;
+            message << GetName() << " has reached level 60!";
+
+            sWorld.SendHardcoreWorldText(LANG_HARDCORE, message.str().c_str());
+
+            //Add Mount
+            MailDraft draftMount;
+            draftMount.SetSubjectAndBody("Congratulations!", "You did it! You beat Hardcore!");
+            MailSender senderMount(MAIL_NORMAL, m_session ? m_session->GetPlayer()->GetObjectGuid().GetCounter() : 0, MAIL_STATIONERY_GM);
+
+            Item* itemMount = Item::CreateItem(23720, 1, 0);
+            itemMount->SaveToDB();
+            draftMount.AddItem(itemMount);
+            draftMount.SendMailTo(MailReceiver(this), senderMount);
+
+            // Add Pet
+            MailDraft draftPet;
+            draftPet.SetSubjectAndBody("Congratulations!", "You did it! You beat Hardcore!");
+            MailSender senderPet(MAIL_NORMAL, m_session ? m_session->GetPlayer()->GetObjectGuid().GetCounter() : 0, MAIL_STATIONERY_GM);
+
+            std::vector<uint32> ITEM_PETS = { 13582, 13584 };
+
+            Item* itemPet = Item::CreateItem(ITEM_PETS[rand() % ITEM_PETS.size()], 1, 0);
+            itemPet->SaveToDB();
+            draftPet.AddItem(itemPet);
+            draftPet.SendMailTo(MailReceiver(this), senderPet);
+
+            // Add bags
+            for (size_t i = 0; i < 4; i++)
+            {
+                
+                MailDraft draftBags;
+                draftBags.SetSubjectAndBody("Congratulations!", "You did it! You beat Hardcore!");
+                MailSender senderBags(MAIL_NORMAL, m_session ? m_session->GetPlayer()->GetObjectGuid().GetCounter() : 0, MAIL_STATIONERY_GM);
+
+                std::vector<uint32> ITEM_PETS = { 13582, 13584 };
+
+                Item* itemBags = Item::CreateItem(1977, 1, 0);
+                itemBags->SaveToDB();
+                draftBags.AddItem(itemBags);
+                draftBags.SendMailTo(MailReceiver(this), senderBags);
+            }            
+        }
+    }
 
     uint32 numInstanceMembers = 0;
     uint32 numGroupMembers = 0;
@@ -5172,6 +5257,15 @@ void Player::KillPlayer()
 
     UpdateCorpseReclaimDelay();                             // dependent at use SetDeathPvP() call before kill
 
+    if (IsHardcore())
+    {
+        ChatHandler(this).PSendSysMessage("[Hardcore] Game over! Exiting game in 15 seconds.");
+        SetHardcorePermaDeath();
+        SaveToDB();
+        m_saveDisabled = true;
+        pvpInfo.timerHardcoreForcedLogout = 15 * 1000; // 15 sec to forced logout
+    }
+
     // don't create corpse at this moment, player might be falling
 
     // update visibility
@@ -5326,8 +5420,8 @@ void Player::DurabilityPointsLossAll(int32 points, bool inventory)
 
 void Player::DurabilityPointsLoss(Item* item, int32 points)
 {
-    if (!sWorld.getConfig(CONFIG_BOOL_DURABILITY_LOSS_ENABLE))
-        return;
+  if (!sWorld.getConfig(CONFIG_BOOL_DURABILITY_LOSS_ENABLE) || IsBot())
+    return;        
 
     int32 pMaxDurability = item->GetUInt32Value(ITEM_FIELD_MAXDURABILITY);
     int32 pOldDurability = item->GetUInt32Value(ITEM_FIELD_DURABILITY);
@@ -6939,7 +7033,13 @@ int32 Player::CalculateReputationGain(ReputationSource source, int32 rep, int32 
         percent *= repRate;
     }
 
-    return int32(round_float(sWorld.getConfig(CONFIG_FLOAT_RATE_REPUTATION_GAIN) * rep * percent / 100.0f));
+    // Premium Account
+    int32 result = int32(round_float(sWorld.getConfig(CONFIG_FLOAT_RATE_REPUTATION_GAIN) * rep * percent / 100.0f));    
+    if (m_session->GetPremiumAccount() && !IsHardcore())
+    {
+        return round_float(result + result * 0.5);
+    }
+    return result;
 }
 
 //Calculates how many reputation points player gains in victim's enemy factions
@@ -7220,6 +7320,23 @@ void Player::UpdateZone(uint32 newZone, uint32 newArea)
             break;
     }
 
+    // hardcore play as PvE server
+    if (IsHardcore())
+    {
+        if (zoneEntry->Team == AREATEAM_ALLY)
+        {
+            pvpInfo.inPvPEnforcedArea = GetTeam() != ALLIANCE && zoneEntry->Flags & AREA_FLAG_CAPITAL;
+        }
+        else if (zoneEntry->Team == AREATEAM_HORDE)
+        {
+            pvpInfo.inPvPEnforcedArea = GetTeam() != HORDE && zoneEntry->Flags & AREA_FLAG_CAPITAL;
+        }
+        else
+        {
+            pvpInfo.inPvPEnforcedArea = false;
+        }        
+    }
+
     if (pvpInfo.inPvPEnforcedArea && !IsTaxiFlying()) // in hostile area
         UpdatePvP(true);
 
@@ -7308,6 +7425,12 @@ void Player::CheckDuelDistance(time_t currTime)
 
 bool Player::IsOutdoorPvPActive() const
 {
+    // hardcore play as PvE server
+    if (IsHardcore() && IsAlive() && !IsGameMaster())
+    {
+        return false;
+    }
+
     return (IsAlive() && !IsGameMaster() && !HasInvisibilityAura() && !HasStealthAura() &&
             (IsPvPDesired() || sWorld.IsPvPRealm()) && !IsTaxiFlying());
 }
@@ -8846,6 +8969,34 @@ void Player::SendPetSkillWipeConfirm() const
 /*********************************************************/
 /***                    STORAGE SYSTEM                 ***/
 /*********************************************************/
+
+uint8 Player::GetITL()
+{
+    uint32 itl = 0;
+    uint32 count = 0;
+
+    for (int i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; i++)
+    {
+        if (i == EQUIPMENT_SLOT_BODY || i == EQUIPMENT_SLOT_TABARD)
+        {
+            continue;
+        }
+
+        if (Item* pItem = GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+        {
+            ItemPrototype const* pProto = pItem->GetProto();
+            itl += pProto->ItemLevel;
+            count += 1;
+        }
+    }
+
+    if (count < 16)
+    {
+        return 0;
+    }
+
+    return itl / count;
+}
 
 uint8 Player::FindEquipSlot(ItemPrototype const* proto, uint32 slot, bool swap) const
 {
@@ -10682,6 +10833,29 @@ Item* Player::StoreNewItem(ItemPosCountVec const& dest, uint32 item, bool update
     Item* pItem = Item::CreateItem(item, count, GetObjectGuid());
     if (pItem)
     {
+        // Modification - trading in loot for two hours.
+        if (GetMap()->IsRaid() && (pItem->GetProto()->Bonding == BIND_WHEN_PICKED_UP || pItem->GetProto()->Bonding == BIND_QUEST_ITEM))
+        {
+            pItem->SetLootingTime(time(nullptr));  
+            pItem->SetDurationRaidLooting(sWorld.getConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME));
+
+            std::ostringstream ss;
+            if (Group* pGroup = GetGroup())
+            {
+                ss << ":";
+                for (GroupReference* itr = pGroup->GetFirstMember(); itr != nullptr; itr = itr->next())
+                {
+                    if (Player* pMember = itr->getSource())
+                    {
+                        if (pMember->IsBot() || !pMember->GetMap()->IsRaid() || !IsInSameRaidWith(pMember))
+                            continue;
+                        ss << pMember->GetGUIDLow() << ":";
+                    }
+                }
+            }
+            pItem->SetRaidGroup(ss.str().c_str());
+        }
+
         ItemAddedQuestCheck(item, count);
         if (randomPropertyId)
             pItem->SetItemRandomProperties(randomPropertyId);
@@ -10739,9 +10913,10 @@ Item* Player::_StoreItem(uint16 pos, Item* pItem, uint32 count, bool clone, bool
         if (!pItem)
             return nullptr;
 
-        if (pItem->GetProto()->Bonding == BIND_WHEN_PICKED_UP ||
-                pItem->GetProto()->Bonding == BIND_QUEST_ITEM ||
-                (pItem->GetProto()->Bonding == BIND_WHEN_EQUIPPED && IsBagPos(pos)))
+        // Modification - trading in loot for two hours.
+        if (pItem->GetLootingTime() && pItem->GetLootingTime() + sWorld.getConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME) >= time(nullptr))
+            pItem->SetBinding(false);
+        else if (pItem->GetProto()->Bonding == BIND_WHEN_PICKED_UP || pItem->GetProto()->Bonding == BIND_QUEST_ITEM || (pItem->GetProto()->Bonding == BIND_WHEN_EQUIPPED && IsBagPos(pos)))
             pItem->SetBinding(true);
 
         if (bag == INVENTORY_SLOT_BAG_0)
@@ -10784,9 +10959,10 @@ Item* Player::_StoreItem(uint16 pos, Item* pItem, uint32 count, bool clone, bool
     }
     else
     {
-        if (pItem2->GetProto()->Bonding == BIND_WHEN_PICKED_UP ||
-                pItem2->GetProto()->Bonding == BIND_QUEST_ITEM ||
-                (pItem2->GetProto()->Bonding == BIND_WHEN_EQUIPPED && IsBagPos(pos)))
+        // Modification - trading in loot for two hours.
+        if (pItem2->GetLootingTime() && pItem2->GetLootingTime() + sWorld.getConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME) >= time(nullptr))
+            pItem2->SetBinding(false);
+        else if (pItem->GetProto()->Bonding == BIND_WHEN_PICKED_UP || pItem->GetProto()->Bonding == BIND_QUEST_ITEM || (pItem->GetProto()->Bonding == BIND_WHEN_EQUIPPED && IsBagPos(pos)))
             pItem2->SetBinding(true);
 
         pItem2->SetCount(pItem2->GetCount() + count);
@@ -10921,6 +11097,13 @@ Item* Player::EquipItem(uint16 pos, Item* pItem, bool update)
         return pItem2;
     }
 
+    // Modification - trading in loot for two hours.
+    if (pItem->GetLootingTime())
+    {
+        pItem->SetDurationRaidLooting(0);
+        pItem->SetBinding(true);        
+    }
+
     return pItem;
 }
 
@@ -10951,6 +11134,22 @@ void Player::SetVisibleItemSlot(uint8 slot, Item const* pItem)
         int VisibleBase = PLAYER_VISIBLE_ITEM_1_0 + (slot * MAX_VISIBLE_ITEM_OFFSET);
         SetUInt32Value(VisibleBase + 0, pItem->GetEntry());
 
+        //Transmogrification // Premium Account
+        uint64 item_guid = pItem->GetGUIDLow();
+        uint64 character_guid = pItem->GetOwnerGuid();
+
+        if (m_session->GetPremiumAccount())
+        {
+            std::unique_ptr<QueryResult> result = CharacterDatabase.PQuery("SELECT `entry` FROM `character_transmog` WHERE `guid` = '%u' and `character` = '%u'", item_guid, character_guid);
+
+            if (result)
+            {
+                Field* fields = result->Fetch();
+                uint64 item_entry = fields[0].GetUInt64();
+                SetUInt32Value(VisibleBase + 0, item_entry);
+            }
+        }
+
         for (int i = 0; i < MAX_INSPECTED_ENCHANTMENT_SLOT; ++i)
             SetUInt32Value(VisibleBase + 1 + i, pItem->GetEnchantmentId(EnchantmentSlot(i)));
 
@@ -10973,13 +11172,33 @@ void Player::SetVisibleItemSlot(uint8 slot, Item const* pItem)
     }
 }
 
+//Transmogrification // Premium Account
+void Player::ReplaceCharacterTransmog(uint64 guid, uint64 entry, uint64 character)
+{
+    std::unique_ptr<QueryResult> result = CharacterDatabase.PQuery("SELECT `entry` FROM `character_transmog` WHERE `guid` = '%u' and `character` = '%u'", guid, character);
+
+    if (result)
+        CharacterDatabase.PExecute("UPDATE `character_transmog` SET `entry` = '%u' WHERE `guid` = '%u' and `character` = '%u'", entry, guid, character);
+    else
+        CharacterDatabase.PExecute("INSERT INTO `character_transmog` (`guid`, `entry`, `character`) VALUES (%u, %u, %u)", guid, entry, character);
+}
+
+//Transmogrification // Premium Account
+void Player::ResetCharacterTransmog(uint64 guid, uint64 character)
+{
+    CharacterDatabase.PExecute("DELETE FROM `character_transmog` WHERE `guid` = '%u' and `character` = '%u'", guid, character);
+}
+
 void Player::VisualizeItem(uint8 slot, Item* pItem)
 {
     if (!pItem)
         return;
 
     // check also  BIND_WHEN_PICKED_UP and BIND_QUEST_ITEM for .additem or .additemset case by GM (not binded at adding to inventory)
-    if (pItem->GetProto()->Bonding == BIND_WHEN_EQUIPPED || pItem->GetProto()->Bonding == BIND_WHEN_PICKED_UP || pItem->GetProto()->Bonding == BIND_QUEST_ITEM)
+    // Modification - trading in loot for two hours.
+    if (pItem->GetLootingTime() && pItem->GetLootingTime() + sWorld.getConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME) >= time(nullptr))
+        pItem->SetBinding(false);
+    else if (pItem->GetProto()->Bonding == BIND_WHEN_EQUIPPED || pItem->GetProto()->Bonding == BIND_WHEN_PICKED_UP || pItem->GetProto()->Bonding == BIND_QUEST_ITEM)
         pItem->SetBinding(true);
 
     sLog.Out(LOG_BASIC, LOG_LVL_DEBUG, "STORAGE: EquipItem slot = %u, item = %u", slot, pItem->GetEntry());
@@ -15387,6 +15606,10 @@ bool Player::LoadFromDB(ObjectGuid guid, SqlQueryHolder* holder)
 
     uint32 extraflags = fields[34].GetUInt32();
 
+    // Prevent players from logging in - if they died in hardcode
+    if (extraflags & PLAYER_EXTRA_HARDCORE_DEATH)
+        return false;
+
     m_stableSlots = fields[35].GetUInt32();
     if (m_stableSlots > MAX_PET_STABLES)
     {
@@ -15459,6 +15682,9 @@ bool Player::LoadFromDB(ObjectGuid guid, SqlQueryHolder* holder)
         m_deathState = DEAD;
 
     _LoadSpells(holder->TakeResult(PLAYER_LOGIN_QUERY_LOADSPELLS));
+
+    //Dual Talent Specialization
+    _LoadAlternativeSpec();
 
     // after spell load
     InitTalentForLevel();
@@ -15632,6 +15858,11 @@ bool Player::LoadFromDB(ObjectGuid guid, SqlQueryHolder* holder)
 
         SetCheatGod(sWorld.getConfig(CONFIG_BOOL_GM_CHEAT_GOD));
     }
+
+    if (extraflags & PLAYER_EXTRA_HARDCORE)
+        SetHardcore(true);
+
+    SetHardcoreAnnouncements(extraflags & PLAYER_EXTRA_HARDCORE_ANNOUNCE_RESTRICTION);
 
     if (extraflags & PLAYER_EXTRA_WHISP_RESTRICTION)
         SetWhisperRestriction(true);
@@ -15926,8 +16157,8 @@ void Player::LoadCorpse()
 
 bool Player::_LoadInventory(std::unique_ptr<QueryResult> result, uint32 timediff, bool& hasEpicMount)
 {
-    //       0             1                  2      3         4        5      6             7                   8           9     10   11    12         13              14
-    //SELECT creator_guid, gift_creator_guid, count, duration, charges, flags, enchantments, random_property_id, durability, text, bag, slot, item_guid, item_id, generated_loot
+    //       0             1                  2      3         4        5      6             7                   8           9     10   11    12         13              14       15            16
+    //SELECT creator_guid, gift_creator_guid, count, duration, charges, flags, enchantments, random_property_id, durability, text, bag, slot, item_guid, item_id, generated_loot, looting_date, raid_group
 
     if (result)
     {
@@ -15951,6 +16182,8 @@ bool Player::_LoadInventory(std::unique_ptr<QueryResult> result, uint32 timediff
             uint8  slot         = fields[11].GetUInt8();
             uint32 item_lowguid = fields[12].GetUInt32();
             uint32 item_id      = fields[13].GetUInt32();
+            uint64 looting_time = fields[15].GetUInt64(); // Modification - trading in loot for two hours.
+            std::string raid_group = fields[16].GetCppString(); // Modification - trading in loot for two hours.
 
             ItemPrototype const* proto = sObjectMgr.GetItemPrototype(item_id);
 
@@ -16104,6 +16337,19 @@ bool Player::_LoadInventory(std::unique_ptr<QueryResult> result, uint32 timediff
                 // restore container unchanged state also
                 if (item->GetContainer())
                     item->GetContainer()->SetState(ITEM_UNCHANGED, this);
+
+                // Modification - trading in loot for two hours.
+                if (looting_time && looting_time + sWorld.getConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME) >= time(nullptr) && (item->GetState() == ITEM_NEW || item->GetState() == ITEM_UNCHANGED))
+                {
+                    item->SetDurationRaidLooting(time(nullptr) - looting_time);
+                    item->SetBinding(false);
+                    item->SetRaidGroup(raid_group);
+                    item->SetLootingTime(looting_time);
+                }
+                if (looting_time && looting_time + sWorld.getConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME) < time(nullptr))
+                {
+                    item->SetBinding(true);
+                }
             }
             else
             {
@@ -17235,22 +17481,26 @@ void Player::_SaveInventory()
         {
             case ITEM_NEW:
             {
-                SqlStatement stmt = CharacterDatabase.CreateStatement(insertInventory, "INSERT INTO `character_inventory` (`guid`, `bag`, `slot`, `item_guid`, `item_id`) VALUES (?, ?, ?, ?, ?)");
+                SqlStatement stmt = CharacterDatabase.CreateStatement(insertInventory, "INSERT INTO `character_inventory` (`guid`, `bag`, `slot`, `item_guid`, `item_id`, `looting_date`, `raid_group`) VALUES (?, ?, ?, ?, ?, ?, ?)");
                 stmt.addUInt32(GetGUIDLow());
                 stmt.addUInt32(bag_guid);
                 stmt.addUInt8(item->GetSlot());
                 stmt.addUInt32(item->GetGUIDLow());
                 stmt.addUInt32(item->GetEntry());
+                stmt.addUInt64(item->GetLootingTime()); // Modification - trading in loot for two hours.
+                stmt.addString(item->GetRaidGroup()); // Modification - trading in loot for two hours.
                 stmt.Execute();
             }
             break;
             case ITEM_CHANGED:
             {
-                SqlStatement stmt = CharacterDatabase.CreateStatement(updateInventory, "UPDATE `character_inventory` SET `guid` = ?, `bag` = ?, `slot` = ?, `item_id` = ? WHERE `item_guid` = ?");
+                SqlStatement stmt = CharacterDatabase.CreateStatement(updateInventory, "UPDATE `character_inventory` SET `guid` = ?, `bag` = ?, `slot` = ?, `item_id` = ?, `looting_date` = ?, `raid_group` = ? WHERE `item_guid` = ?");
                 stmt.addUInt32(GetGUIDLow());
                 stmt.addUInt32(bag_guid);
                 stmt.addUInt8(item->GetSlot());
                 stmt.addUInt32(item->GetEntry());
+                stmt.addUInt64(item->GetLootingTime()); // Modification - trading in loot for two hours.
+                stmt.addString(item->GetRaidGroup()); // Modification - trading in loot for two hours.
                 stmt.addUInt32(item->GetGUIDLow());
                 stmt.Execute();
             }
@@ -17711,6 +17961,9 @@ void Player::UpdatePvPFlagTimer(uint32 diff)
     // Freeze flag timer while participating in PvP combat, in pvp enforced zone, in capture points, when carrying flag or on player preference
     if (!pvpInfo.inPvPCombat && !pvpInfo.inPvPEnforcedArea && !pvpInfo.inPvPCapturePoint && !pvpInfo.isPvPFlagCarrier && !IsPvPDesired())
         pvpInfo.timerPvPRemaining -= std::min(pvpInfo.timerPvPRemaining, diff);
+
+    // hardcore
+    pvpInfo.timerHardcoreForcedLogout -= std::min(pvpInfo.timerHardcoreForcedLogout, diff);
 
     // Timer tries to drop flag if all conditions are met and time has passed
     UpdatePvP(false);
@@ -18966,6 +19219,13 @@ void Player::UpdateHomebindTime(uint32 time)
 
 void Player::UpdatePvP(bool state, bool overriding)
 {
+    //hardcore
+    if (!pvpInfo.timerHardcoreForcedLogout && (m_ExtraFlags & PLAYER_EXTRA_HARDCORE_DEATH))
+    {
+        sObjectMgr.UpdatePlayerCache(this);
+        m_session->KickPlayer();
+    }
+
     if (!state)
     {
         // Updating into unset state or overriding anything
@@ -22588,7 +22848,16 @@ void Player::AddCooldown(SpellEntry const& spellEntry, ItemPrototype const* item
 
         // ready to add the cooldown
         if (recTime || categoryRecTime) // only send event if was permanent but no cds
+        {
+            // Premium Account
+            if (m_session->GetPremiumAccount() && itemId == 6948 && !IsHardcore())
+            {
+                categoryRecTime = categoryRecTime / 2;
+            }
+
             m_cooldownMap.AddCooldown(sWorld.GetCurrentClockTime(), spellEntry.Id, recTime, spellCategory, categoryRecTime, itemId);
+        }
+            
 
         // after some aura fade or potion activation we have to send cooldown event to start cd client side
         if (haveToSendEvent)
@@ -23053,4 +23322,139 @@ void Player::ClearTemporaryWarWithFactions()
         }
         m_temporaryAtWarFactions.clear();
     }
+}
+
+//Dual Talent Specialization
+void Player::_LoadAlternativeSpec() {
+
+    m_altspec_talents.clear();
+    std::unique_ptr<QueryResult> result = CharacterDatabase.PQuery("SELECT spells FROM character_double_spec WHERE guid = '%u'", GetGUIDLow());
+
+    if (result)
+    {
+        Field* fields = result->Fetch();
+        std::string spells = fields[0].GetString();
+        std::istringstream ss(spells);
+        std::string spell;
+
+        while (std::getline(ss, spell, ' '))
+            m_altspec_talents.push_back(atoi(spell.c_str()));
+    }
+};
+
+//Dual Talent Specialization
+void Player::_SaveAlternativeSpec(bool in_db)
+{
+    uint32 ts = uint32(time(NULL));
+    std::ostringstream ss;
+
+    if (in_db)
+    {
+        ss << "UPDATE `character_double_spec` SET `spells` = '";
+        for (SpellIDList::iterator it = m_altspec_talents.begin(); it != m_altspec_talents.end(); it++)
+            ss << *it << " ";
+        ss << "', `timestamp` = '" << std::to_string(ts) << "' WHERE `guid` = " << GetGUIDLow();
+    }
+    else
+    {
+        ss << "INSERT INTO `character_double_spec` (guid, spells, timestamp) VALUES ('" << GetGUIDLow() << "', '";
+        for (SpellIDList::iterator it = m_altspec_talents.begin(); it != m_altspec_talents.end(); it++)
+            ss << *it << " ";
+        ss << "', '" << std::to_string(ts) << "')";
+    }    
+
+    CharacterDatabase.PExecute(ss.str().c_str());
+}
+
+//Dual Talent Specialization
+uint32 Player::SwapSpec()
+{
+    bool in_db = false;
+    //Time check
+    uint32 ts = 0;
+    std::unique_ptr<QueryResult> result = CharacterDatabase.PQuery("SELECT timestamp FROM character_double_spec WHERE guid = '%u'", GetGUIDLow());
+    if (result)
+    {
+        in_db = true;
+        Field* fields = result->Fetch();
+        std::string str_ts = fields[0].GetString();
+        ts = uint32(atoi(str_ts.c_str()));
+
+        if (uint32(time(NULL) - ts) < 900)
+        {
+            ChatHandler(this).SendSysMessage("Only once every 15 minutes.");
+            return 0;
+        }
+    }      
+
+    /*********************************************************/
+    /***                   SAVE TALENTS                    ***/
+    /*********************************************************/
+    //copy current talents list
+    SpellIDList tmp = m_altspec_talents;
+
+    //erase it for populating using current talents
+    m_altspec_talents.clear();
+
+    //Find all talents, general idea from Player::resetTalents
+    for (unsigned int i = 0; i < sTalentStore.GetNumRows(); ++i) 
+    {
+        TalentEntry const* talentInfo = sTalentStore.LookupEntry(i);
+
+        if (!talentInfo) continue;
+
+        TalentTabEntry const* talentTabInfo = sTalentTabStore.LookupEntry(talentInfo->TalentTab);
+
+        if (!talentTabInfo) continue;
+
+        if ((GetClassMask() & talentTabInfo->ClassMask) == 0) continue;
+
+        for (int j = 0; j < 5; ++j) 
+        {
+            for (PlayerSpellMap::iterator itr = GetSpellMap().begin(); itr != GetSpellMap().end();) 
+            {
+
+                //skip disabled talents like Pyroblast or some else
+                if (itr->second.state == PLAYERSPELL_REMOVED || itr->second.disabled)
+                {
+                    ++itr;
+                    continue;
+                }
+
+                //for spells, which can be updated via trainers(like Pyroblast), we can'n just compare, cuz
+                // >1 ranks are not in talens store. So, first rank it is. We can just get lowerest rank of skill
+                // and search it in the talents storage.
+                uint32 itrFirstId = sSpellMgr.GetFirstSpellInChain(itr->first);
+
+                //now - just compare. Also, it make sense to add "|| spellmgr.IsSpellLearnToSpell(talentInfo->RankID[j],itrFirstId)"
+                //but i have no idea what it is, it uses in the Player::resetTalents function and it may be needed.
+                //Also, there is a some spells like Prayer of Spirit, which not in talents tree, but its depends on talents.
+                //So, we need just to get required spell by current spell and find is it in player spellbook.
+                if (itrFirstId == talentInfo->RankID[j]
+                    || sSpellMgr.IsSpellLearnToSpell(talentInfo->RankID[j], itrFirstId)
+                    )//|| HasSpell(spellmgr.GetSpellRequired(itrFirstId)))
+                    m_altspec_talents.push_back(itr->first);
+                ++itr;
+            }
+        }
+    }
+
+    /*********************************************************/
+    /***                   LOAD TALENTS                    ***/
+    /*********************************************************/
+    ResetTalents(true);
+    for (SpellIDList::iterator it = tmp.begin(); it != tmp.end(); it++)
+    {
+        LearnSpell(*it, false, true);
+    }
+    InitTalentForLevel();
+    //learnSkillRewardedSpells();
+
+    //Drop mana and health to minimum for preventing of profit from swappings
+    SetHealth(12);
+    SetPower(POWER_MANA, 12);
+    _SaveAlternativeSpec(in_db);
+
+    //Okay
+    return 1;
 }

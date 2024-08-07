@@ -26,6 +26,9 @@
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
 #include "CellImpl.h"
+#include "Bag.h"
+#include "Guild.h"
+#include "GuildMgr.h"
 
 bool ChatHandler::HandleGUIDCommand(char* /*args*/)
 {
@@ -2756,4 +2759,293 @@ bool ChatHandler::HandleKnockBackCommand(char* args)
     target->KnockBackFrom(player, horizontalSpeed, verticalSpeed);
 
     return true;
+}
+
+bool ChatHandler::HandleHardcoreONCommand(char* args)
+{
+    if (!sWorld.getConfig(CONFIG_BOOL_HARDCORE_ENABLED))
+    {
+        SendSysMessage("Hardcore is NOT enabled on this server.");
+        return false;
+    }
+
+    Player* pPlayer = m_session->GetPlayer();
+
+    if (pPlayer->IsHardcore())
+    {
+        SendSysMessage("You are already Hardcore!");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    if (pPlayer->GetLevel() != 1)
+    {
+        SendSysMessage("You can only enable Hardcore at level 1!");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    std::vector<uint16> startItem = { 25, 35, 36, 37, 38, 39, 40, 43, 44, 45, 47, 48, 49, 51, 52, 53, 55, 56, 57, 59, 117, 120, 121, 127, 129, 139, 140, 147, 148, 153, 154, 159, 1395, 1396, 2070, 2092, 2101, 2102, 2105, 2361, 2362, 2504, 2508, 2512, 2516, 2947, 3111, 3661, 4536, 4540, 4604, 6096, 6097, 6098, 6116, 6117, 6118, 6119, 6120, 6121, 6122, 6123, 6124, 6125, 6126, 6127, 6129, 6134, 6135, 6136, 6137, 6138, 6139, 6140, 6144, 6948, 12282 };
+
+    for (int i = EQUIPMENT_SLOT_START; i < EQUIPMENT_SLOT_END; ++i)
+    {
+        if (Item* pItem = pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+        {
+            if (std::find(startItem.begin(), startItem.end(), pItem->GetEntry()) != startItem.end())
+                continue;
+                
+            pPlayer->DestroyItem(INVENTORY_SLOT_BAG_0, i, true);
+        }
+    }
+    for (int i = INVENTORY_SLOT_ITEM_START; i < INVENTORY_SLOT_ITEM_END; ++i)
+    {
+        if (Item* pItem = pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+        {
+            if (std::find(startItem.begin(), startItem.end(), pItem->GetEntry()) != startItem.end())
+                continue;
+            pPlayer->DestroyItem(INVENTORY_SLOT_BAG_0, i, true);
+        }
+    }
+    for (int i = INVENTORY_SLOT_BAG_START; i < INVENTORY_SLOT_BAG_END; ++i)
+    {
+        if (Bag* pBag = (Bag*)pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+        {
+            for (uint32 j = 0; j < pBag->GetBagSize(); ++j)
+            {
+                if (Item* pItem = pBag->GetItemByPos(j))
+                {
+                    if (std::find(startItem.begin(), startItem.end(), pItem->GetEntry()) != startItem.end())
+                        continue;
+
+                    pPlayer->DestroyItem(i, j, true);
+                }
+            }
+        }
+    }
+    for (int i = BANK_SLOT_ITEM_START; i < BANK_SLOT_ITEM_END; ++i)
+    {
+        if (Item* pItem = pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+        {
+            if (std::find(startItem.begin(), startItem.end(), pItem->GetEntry()) != startItem.end())
+                continue;
+
+            pPlayer->DestroyItem(INVENTORY_SLOT_BAG_0, i, true);
+        }
+    }
+    for (int i = BANK_SLOT_BAG_START; i < BANK_SLOT_BAG_END; ++i)
+    {
+        if (Bag* pBag = (Bag*)pPlayer->GetItemByPos(INVENTORY_SLOT_BAG_0, i))
+        {
+            for (uint32 j = 0; j < pBag->GetBagSize(); ++j)
+            {
+                if (Item* pItem = pBag->GetItemByPos(j))
+                {
+                    if (std::find(startItem.begin(), startItem.end(), pItem->GetEntry()) != startItem.end())
+                        continue;
+
+                    pPlayer->DestroyItem(i, j, true);
+                }
+            }
+        }
+    }
+
+    pPlayer->SetMoney(0);
+
+    pPlayer->SetHardcore(true);
+    pPlayer->SetHardcoreAnnouncements(true);
+    pPlayer->RemoveFromGroup();
+    SendSysMessage("Hardcore activated!");
+
+    //inv in guild
+    if (pPlayer->GetTeam() == ALLIANCE)
+    {
+        if (Guild* targetGuild = sGuildMgr.GetGuildByName("HardCore"))
+            auto status = targetGuild->AddMember(pPlayer->GetObjectGuid(), targetGuild->GetLowestRank());        
+    }
+    if (pPlayer->GetTeam() == HORDE)
+    {
+        if (Guild* targetGuild = sGuildMgr.GetGuildByName("Hard Core"))
+            auto status = targetGuild->AddMember(pPlayer->GetObjectGuid(), targetGuild->GetLowestRank());
+    }
+
+    return true;
+}
+
+bool ChatHandler::HandleGetItlCommand(char* args)
+{    
+    Player* pTarget;
+    if (char* arg = ExtractArg(&args))
+    {
+        std::string name = arg;
+
+        pTarget = ObjectAccessor::FindPlayerByName(name.c_str());
+
+        if (!pTarget)
+        {
+            SendSysMessage(LANG_NO_CHAR_SELECTED);
+            SetSentErrorMessage(true);
+            return false;
+        }
+    }
+    else
+    {
+        pTarget = GetSelectedPlayer();
+        if (!pTarget)
+        {
+            SendSysMessage(LANG_NO_CHAR_SELECTED);
+            SetSentErrorMessage(true);
+            return false;
+        }
+    }
+
+
+    if (pTarget)
+    {
+        PSendSysMessage("%s has an itl %u.", pTarget->GetName(), pTarget->GetITL());
+        return true;
+    }
+    return false;
+}
+
+// Premium Account
+bool ChatHandler::HandleWBCommand(char* args)
+{
+    if (!m_session->GetPremiumAccount())
+    {
+        SendSysMessage("Available only on a premium account.");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    if (m_session->GetPlayer()->IsHardcore())
+    {
+        SendSysMessage("Not available in Hardcore mode.");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    if (m_session->GetPlayer()->IsInCombat())
+    {
+        SendSysMessage("Not available in combat.");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    bool castspells = true;
+    uint32 spells[7] = { 24425, 22888, 15366, 16609, 22817, 22818, 22820 };
+    uint32 times[7] = {};
+    if (Player* player = m_session->GetPlayer())
+    {
+        for (int i = 0; i < 7; i++)
+        {
+            if (player->HasAura(spells[i]))
+            {
+                castspells = false;
+                break;
+            }
+        }
+
+        Aura* aura = NULL;
+        SpellAuraHolder* auraH = NULL;
+        std::unique_ptr<QueryResult> result = CharacterDatabase.PQuery("SELECT `spell_24425`, `spell_22888`, `spell_15366`, `spell_16609`, `spell_22817`, `spell_22818`, `spell_22820` FROM `character_wb` WHERE `guid` = %u", player->GetGUIDLow());
+        
+        if (castspells)
+        {
+            if (result)
+            {
+                Field* fields = result->Fetch();
+                for (int i = 0; i < 7; i++)
+                {
+                    if (fields[i].GetUInt32() != 0)
+                    {
+                        auraH = player->AddAura(spells[i], ADD_AURA_POSITIVE, player);
+                        auraH->SetAuraDuration(fields[i].GetUInt32());
+                        auraH->SetAuraMaxDuration(fields[i].GetUInt32());
+                        auraH->RefreshHolder();
+                    }
+                }
+                CharacterDatabase.PExecute("DELETE FROM `character_wb` WHERE `guid` = '%u'", player->GetGUIDLow());
+            }
+            else
+                player->GetSession()->SendAreaTriggerMessage("No Buffs stored.");
+        }
+        else
+        {
+            if (result)
+            {
+                Field* fields = result->Fetch();
+                for (int i = 0; i < 7; i++)
+                {
+                    times[i] = fields[i].GetUInt32();
+                }
+            }
+            for (int i = 0; i < 7; i++)
+            {
+                if (aura = player->GetAura(spells[i], EFFECT_INDEX_0))
+                {
+                    times[i] += aura->GetAuraDuration();
+                    if (times[i] > 7200000)
+                        times[i] = 7200000;
+                    aura->GetHolder()->SetAuraMaxDuration(0);
+                    aura->GetHolder()->RefreshHolder();
+                }
+            }
+            if (result)
+                CharacterDatabase.PExecute("UPDATE `character_wb` SET `spell_24425` = %u, `spell_22888` = %u, `spell_15366` = %u, `spell_16609` = %u, `spell_22817` = %u, `spell_22818` = %u, `spell_22820` = %u WHERE `guid` = %u", times[0], times[1], times[2], times[3], times[4], times[5], times[6], player->GetGUIDLow());
+            else
+                CharacterDatabase.PExecute("INSERT INTO `character_wb` (`guid`, `spell_24425`, `spell_22888`, `spell_15366`, `spell_16609`, `spell_22817`, `spell_22818`, `spell_22820`) VALUES (%u, %u, %u, %u, %u, %u, %u, %u)", player->GetGUIDLow(), times[0], times[1], times[2], times[3], times[4], times[5], times[6]);
+        }
+    }
+
+    return false;
+}
+
+// Premium Account
+bool ChatHandler::HandleSwapSpec(char* args)
+{
+    if (!m_session->GetPremiumAccount())
+    {
+        SendSysMessage("Available only on a premium account.");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    if (m_session->GetPlayer()->GetLevel() <= 10)
+    {
+        SendSysMessage("Level above 10 required.");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    if (m_session->GetPlayer()->IsInCombat())
+    {
+        SendSysMessage("Not available in combat.");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    if (m_session->GetPlayer()->IsHardcore())
+    {
+        SendSysMessage("Not available in Hardcore mode.");
+        SetSentErrorMessage(true);
+        return false;
+    }
+
+    m_session->GetPlayer()->SwapSpec();
+    return true;    
+}
+
+// Premium Account
+bool ChatHandler::HandlePAStatus(char* args)
+{
+    if (m_session->GetPremiumAccount())
+    {
+        SendSysMessage("Premium Account is: ON.");
+        return true;
+    }
+    else
+    {
+        SendSysMessage("Premium Account is: OFF.");
+        return true;
+    }
 }

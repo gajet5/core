@@ -997,6 +997,9 @@ void World::LoadConfigSettings(bool reload)
             setConfig(CONFIG_UINT32_DEBUFF_LIMIT, 8);
     }
 
+    // hardcore
+    setConfig(CONFIG_BOOL_HARDCORE_ENABLED, "Hardcore.Enable", 0);
+
     setConfig(CONFIG_UINT32_ANTICRASH_OPTIONS, "Anticrash.Options", 0);
     setConfig(CONFIG_UINT32_ANTICRASH_REARM_TIMER, "Anticrash.Rearm.Timer", 0);
 
@@ -1021,6 +1024,9 @@ void World::LoadConfigSettings(bool reload)
     setConfig(CONFIG_UINT32_DYN_RESPAWN_AFFECT_LEVEL_BELOW, "DynamicRespawn.AffectLevelBelow", 0);
     setConfig(CONFIG_UINT32_DYN_RESPAWN_PLAYERS_THRESHOLD, "DynamicRespawn.PlayersThreshold", 0);
     setConfig(CONFIG_UINT32_DYN_RESPAWN_PLAYERS_LEVELDIFF, "DynamicRespawn.PlayersMaxLevelDiff", 0);
+
+    //Modification - trading in loot for two hours.
+    setConfig(CONFIG_UINT32_TRADINGRAIDLOOT_TIME, "TradingRaidLoot.Time", 7200);
 
     setConfig(CONFIG_UINT32_CHANNEL_INVITE_MIN_LEVEL, "ChannelInvite.MinLevel", 10);
     setConfig(CONFIG_BOOL_WHISPER_RESTRICTION, "WhisperRestriction", false);
@@ -1100,6 +1106,7 @@ void World::LoadConfigSettings(bool reload)
     setConfig(CONFIG_BOOL_AC_MOVEMENT_NOTIFY_CHEATERS, "Anticheat.NotifyCheaters", false);
     setConfig(CONFIG_UINT32_AC_MOVEMENT_BAN_DURATION, "Anticheat.BanDuration", 86400);
     setConfig(CONFIG_BOOL_AC_MOVEMENT_LOG_DATA, "Anticheat.LogData", false);
+    setConfig(CONFIG_BOOL_AC_MOVEMENT_LOG_FILE, "Anticheat.LogFile", false);
     setConfig(CONFIG_UINT32_AC_MOVEMENT_PACKET_LOG_SIZE, "Anticheat.PacketLogSize", 100);
     setConfig(CONFIG_INT32_AC_ANTICHEAT_MAX_ALLOWED_DESYNC, "Anticheat.MaxAllowedDesync", 0);
     setConfig(CONFIG_BOOL_AC_MOVEMENT_CHEAT_REVERSE_TIME_ENABLED, "Anticheat.ReverseTime.Enable", true);
@@ -2308,6 +2315,27 @@ void World::SendBroadcastTextToWorld(uint32 textId)
                 wt_do(player);
         }
     }
+}
+
+/// Send a System Message to all players (except players that have opted out of hardcore announcements)
+void World::SendHardcoreWorldText(int32 string_id, ...)
+{
+    va_list ap;
+    va_start(ap, string_id);
+
+    MaNGOS::WorldWorldTextBuilder wt_builder(string_id, &ap);
+    MaNGOS::LocalizedPacketListDo<MaNGOS::WorldWorldTextBuilder> wt_do(wt_builder);
+    for (const auto& itr : m_sessions)
+    {
+        if (WorldSession* session = itr.second)
+        {
+            Player* player = session->GetPlayer();
+            if (player && player->IsInWorld() && player->IsEnabledHardcoreAnnouncements())
+                wt_do(player);
+        }
+    }
+
+    va_end(ap);
 }
 
 void World::SendGMTicketText(char const* text)
